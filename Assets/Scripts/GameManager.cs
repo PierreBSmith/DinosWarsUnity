@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Tile.Type[,] tileSet = new Tile.Type[24,16];
+        //Initializes the map, friendly units, and enemy units so it can hand it to RulesEngine. Currently uses prefab references that are given to it in the Unity development client.
+        Tile.Type[,] tileSet = new Tile.Type[24,16]; //Placeholder map that is all grass tiles, this can be any map theoretically
         for(int i = 0; i < tileSet.GetLength(0); i++){
             for(int j = 0; j < tileSet.GetLength(1); j++){
                 tileSet[i,j] = Tile.Type.GRASS; 
@@ -37,7 +38,7 @@ public class GameManager : MonoBehaviour
         }
         var RulesEngine = FindObjectOfType<RulesEngine>();
 
-        RulesEngine.init(Enemies, Friends, null, map, tilePrefab);
+        RulesEngine.init(Enemies, Friends, null, map, tilePrefab); //Initializion function that handles the rest of the game.
 
     }
 

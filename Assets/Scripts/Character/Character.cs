@@ -16,17 +16,16 @@ public class Character : MonoBehaviour
     }
     
     public int speed = 3;
-    //moveError = speed/100 PROBABLY UNNECESSARY IN UNITY
     public int moveRange;
     public Type type;
     public int attackRange;
     public int attackDamage;
     public int HP;
     public int currHP;
-    public bool grounded;
+    public bool grounded; //Whether the unit is effected by terrain movement penalties
     public Vector2Int position; //This might not need to be here
-    public CharacterEvent clicked;
-    public UnityEvent doneMoving;
+    public CharacterEvent clicked; //Event for when character is clicked. Is handled by RulesEngine
+    public UnityEvent doneMoving; //Event for when character has stopped moving after a movement command. Is handled by RulesEngine
 
     // Start is called before the first frame update
     void Start()
@@ -39,11 +38,12 @@ public class Character : MonoBehaviour
     {
         
     }
+    //This starts movement along the given path
     public void move(PathToTile path)
     {
         StartCoroutine(followPath(path));
     }
-
+    //This takes in a path and moves the unit along that path
     private IEnumerator followPath(PathToTile path)
     {
         Queue<Vector2Int> actualPath = new Queue<Vector2Int>(path.path);
@@ -71,18 +71,11 @@ public class Character : MonoBehaviour
             yield return null;
         }
     }
+    //Event handler function
     void OnMouseUp()
     {
         clicked.Invoke(this);
     }
-    // public Character(int speed, int moveRange, Type type, int attackRange, int attackDamage, int HP){
-    //     this.speed = speed;
-    //     this.moveRange = moveRange;
-    //     this.type = type;
-    //     this.attackRange = attackRange;
-    //     this.attackDamage = attackDamage;
-    //     this.HP = HP;
-    //     this.currHP = HP;
-    // }
+
 }
 

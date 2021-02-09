@@ -27,8 +27,8 @@ public class Tile : MonoBehaviour
     private GameObject movementMask;
 
     public Character occupied; //will be set dynamically depending on whether unit is there or not. Might not be necessary here 
-    public TileEvent clicked;
-    public Vector2Int positon;
+    public TileEvent clicked; //Even that is thrown when the tile is clicked on
+    public Vector2Int positon; //Logical coords of tile
 
     public void setTile(Type type){
         this.type = type;
@@ -76,6 +76,7 @@ public class Tile : MonoBehaviour
         }
     }
     
+    //This is called when a unit is clicked to show its range of movement
     public void setMask(bool isAttack, Character.Type type){
         movementMask.SetActive(true);
         if (isAttack || type == Character.Type.ENEMY)
@@ -87,12 +88,12 @@ public class Tile : MonoBehaviour
             movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(0, 1, 0, .5f);
         }
     }
-
+    //This is called to undo display of a movement range
     public void clearMask()
     {
         movementMask.SetActive(false);
     }
-
+    //Event handler
     void OnMouseUp()
     {
         clicked.Invoke(this);

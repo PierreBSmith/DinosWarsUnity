@@ -27,7 +27,7 @@ public class RulesEngine : MonoBehaviour
         
     }
 
-    //The 
+    //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<Character> enemies, List<Character> friendlies, List<Character> NPCs, Map1 map, Tile tilePrefab){
         friendlyList = friendlies;
         enemyList = enemies;
@@ -46,11 +46,10 @@ public class RulesEngine : MonoBehaviour
         {
             spawnCharacter(enemies[i], map.enemySpawnPoints[i]);
         }
-        
-
-
+       
     }
 
+    //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
     private void spawnCharacter(Character character, Vector2Int position)
     {
         character.clicked.AddListener(unitClicked);
@@ -60,6 +59,7 @@ public class RulesEngine : MonoBehaviour
         board.getTerrainTile(position).occupied = character;
     }
 
+    //Handles which turn it is. Is called by DoneMoving. Turn cycle is Friendly>Enemy>NPC>Friendly atm. This should probably be Friendly>NPC>Enemy>Friendly.
     private void toggleTurn()
     {
         if(activeTeam == Character.Type.FRIENDLY)
@@ -84,6 +84,8 @@ public class RulesEngine : MonoBehaviour
             loadActiveList(friendlyList);
         }
     }
+    //Handles enemy ai turn movement. Wrapper function for moveCharacter
+    //This will function might cause infinite recursion if enemylist is empty atm. This shouldnt be a problem in the future because the game should end if there are no enemys remaining so I am not fixing this.
     private void enemyTurn()
     {
         if (activeList.Count != 0)
@@ -92,11 +94,13 @@ public class RulesEngine : MonoBehaviour
         }
         else
         {
-            //Beware of infinite recursion
-            toggleTurn();
+
+            toggleTurn(); //This should never be called but is a fail safe
         }
 
     }
+
+    //Helper function that is called from toggleTurn() that loads whichever teams units are going to be active next
     private void loadActiveList(List<Character> load)
     {
         foreach (var unit in load)
@@ -104,6 +108,8 @@ public class RulesEngine : MonoBehaviour
             activeList.Add(unit);
         }
     }
+
+    //Wrapper function for moveCharacter that handles friendly unit movement from player input is called by board event
     private void moveFriendly(PathToTile path)
     {
         if (selected.type == Character.Type.FRIENDLY) {
@@ -111,6 +117,7 @@ public class RulesEngine : MonoBehaviour
         }
         deselectCharacter();
     }
+    //Is called by moveFriendly() and enemyTurn() 
     private void moveCharacter(PathToTile path, Character character)
     {
         moving = true;
@@ -120,15 +127,20 @@ public class RulesEngine : MonoBehaviour
         activeList.Remove(character);
         
     }
+
+    //Helper function that sets what unit is occupying a tile called by moveCharacter()
     private void occupyTile(Tile tile, Character character)
     {
         tile.occupied = character;
     }
 
+    //helper function to deoccupy a tile called by moveCharacter()
     private void deoccupyTile(Tile tile)
     {
         tile.occupied = null;
     }
+
+    //Event handler that is called by character when it stops moving.
     private void doneMoving()
     {
 
@@ -137,25 +149,26 @@ public class RulesEngine : MonoBehaviour
         {
             toggleTurn();
         }
-        if (activeTeam == Character.Type.ENEMY)
+        if (activeTeam == Character.Type.ENEMY) //If active team is enemy calls for next enemy movement
         {
             enemyTurn();
         }
         
     }
+    //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
     private void unitClicked(Character character)
     {
-        if (activeTeam == Character.Type.FRIENDLY && activeList.Contains(character) && !moving)
+        if (activeTeam == Character.Type.FRIENDLY && !moving)
         {
-            if (selected == null)
+            if (selected == null) //if not unit is selected select unit clicked
             {
                 selectCharacter(character);
-            }
-            else if (selected == character)
+            } 
+            else if (selected == character) //if unit clicked is currently selected deselect it
             {
                 deselectCharacter();
             }
-            else
+            else //if unit clicked is not selected and there is already a unit selected. Deselect old unit and select new unit
             {
                 deselectCharacter();
                 selectCharacter(character);
@@ -163,12 +176,14 @@ public class RulesEngine : MonoBehaviour
         }
     }
 
+    //Helper function called from unitClicked()
     private void selectCharacter(Character character)
     {
         selected = character;
         board.showMoveRange(character);
     }
 
+    //helper function called from unitClicked(), moveFriendly(), and board.tileClicked()
     private void deselectCharacter()
     {
         selected = null;

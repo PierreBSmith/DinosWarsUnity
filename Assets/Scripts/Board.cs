@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
     {
         
     }
-    
+    //Initialization function that draws the map given a 2D array of Tile.Type's
     public void init(Map1 map, Tile tilePrefab)
     {
         terrain = new Tile[map.map.GetLength(0), map.map.GetLength(1)];
@@ -40,7 +40,7 @@ public class Board : MonoBehaviour
             }
         }
     }
-    
+    //Tile click event handler. If there is a friendly unit selected at the time of the click and the click is in the range of the unit, move the unit to the location of the click. Otherwise deselect unit.
     private void tileClicked(Tile tile)
     {
         if (activeRange.Any((x)=>x.tile == tile.positon))
@@ -52,6 +52,7 @@ public class Board : MonoBehaviour
             deselectCharacter.Invoke();
         }
     }
+    //Function to find potential tiles that character can move to so that paths can be made out of these tiles
     public List<Vector2Int> GeneratePotentialRange(Character character)
     {
         List<Vector2Int> potentialTiles = new List<Vector2Int>();
@@ -72,7 +73,7 @@ public class Board : MonoBehaviour
 
         return potentialTiles;
     }
-
+    //Returns a list of all walkable tiles if unit is grounded or just all the tiles otherwise
     private List<Vector2Int> allLegalTiles(Character character)
     {
         List<Vector2Int> tileSet = new List<Vector2Int>();
@@ -86,6 +87,7 @@ public class Board : MonoBehaviour
         return tileSet;
     }
     
+    //helper function for if the unit can pass through the tile that is handed to it
     private bool canPassThrough(Tile tile, Character.Type characterType)
     {
         if(tile.occupied == null)
@@ -97,6 +99,7 @@ public class Board : MonoBehaviour
             return !(tile.occupied.type == Character.Type.ENEMY ^ characterType == Character.Type.ENEMY);
         }
     }
+    //Wrapper function for generatePaths() that generates possible friendly unit paths
     public List<PathToTile> generateFriendlyPaths(Character character)
     {
         List<Vector2Int> potentialRanges = GeneratePotentialRange(character);
@@ -104,7 +107,7 @@ public class Board : MonoBehaviour
 
         return sptSet.Where((x) => x.weightedDistance <= character.moveRange && getTerrainTile(x.tile).occupied == null).ToList();
     }
-    
+    //Wrapper function for generate paths that gets a the quickest path to a friendly unit
     public PathToTile generateEnemyPath(Character character)
     {
         List<Vector2Int> searchSpace = allLegalTiles(character);
@@ -131,6 +134,10 @@ public class Board : MonoBehaviour
         return finalPath;
     }
 
+    //Called by generateFriendlyPaths() and generateEnemyPath(). 
+    //If called by generateFriendlyPaths() returns a list of shortest paths to every single possible tile within the characters move range.
+    //If called by generateEnemyPath() returns shortest path to a friendlyUnit()
+    //This is an implementation of Dijkstra algorithm
     private List<PathToTile> generatePaths(List<Vector2Int> searchSpace, Vector2Int startingSpace, Character.Type? targetType = null)
     {
         List<PathToTile> notYetIncluded = new List<PathToTile>();
@@ -155,6 +162,7 @@ public class Board : MonoBehaviour
         }
         return sptSet;
     }
+    //Helper function for generatePaths()
     private List<PathToTile> updateAdjacents(PathToTile tile, List<PathToTile> list)
     {
         foreach(var obj in list)
@@ -166,11 +174,12 @@ public class Board : MonoBehaviour
         }
         return list;
     }
+    //helper function to return a tile at specific coords using a vector2
     public Tile getTerrainTile(Vector2Int coords)
     {
         return terrain[coords.x, coords.y];
     }
-
+    //Function to draw moveRange for a selected unit
     public void showMoveRange(Character character)
     {
         activeRange = generateFriendlyPaths(character);
@@ -180,7 +189,7 @@ public class Board : MonoBehaviour
         }
 
     }
-
+    //Function that clears drawn move range when a character is deselected
     public void clearMoveRange()
     {
         foreach (var path in activeRange)
@@ -190,7 +199,7 @@ public class Board : MonoBehaviour
         activeRange.Clear();
     }
 }
-
+//Utility class that holds Path, Tile, and Distance information for a units path
 public class PathToTile : IComparable<PathToTile>
 {
     public int weightedDistance;

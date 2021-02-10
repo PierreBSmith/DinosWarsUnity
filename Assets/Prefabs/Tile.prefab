@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aac14f03d4068e48ab6ae69455b5043, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tile: {fileID: 11400000, guid: 3fa3017cd732d774f9f17712dd57f6a0, type: 2}
   occupied: {fileID: 0}
   clicked:
     m_PersistentCalls:

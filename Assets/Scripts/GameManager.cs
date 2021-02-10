@@ -6,9 +6,9 @@ public class GameManager : MonoBehaviour
 {
     //Game Manager that is always running in the background and handles transferring information between scenes
     // Start is called before the first frame update
-    public List<Character> enemyList;
-    public List<Character> friendList;
-    public Tile tilePrefab;
+    public List<CharacterMovement> enemyList;
+    public List<CharacterMovement> friendList;
+    public TileBehaviour tilePrefab;
 
     void Start()
     {
@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
         }
         Map1 map = new Map1(tileSet, new List<Vector2Int>{new Vector2Int(3,3),new Vector2Int(5,3),new Vector2Int(3,5)},
                     new List<Vector2Int>{new Vector2Int(15,13),new Vector2Int(13,13),new Vector2Int(13,15)});
-        List<Character> Enemies = new List<Character>();
+        List<CharacterMovement> Enemies = new List<CharacterMovement>();
        
         foreach(var enemy in enemyList)
         {
@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
             if (Enemies.Count >= map.enemySpawnPoints.Count)
                 break;
         }
-        List<Character> Friends = new List<Character>();
+        List<CharacterMovement> Friends = new List<CharacterMovement>();
         foreach(var friend in friendList)
         {
             Friends.Add(Instantiate(friend));

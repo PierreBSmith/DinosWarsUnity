@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7039871833214762985}
   - component: {fileID: 7039871833214762990}
-  - component: {fileID: 7039871833214762991}
   - component: {fileID: 6116190507786912371}
+  - component: {fileID: 8109859589676789285}
   m_Layer: 0
   m_Name: Asku
   m_TagString: Untagged
@@ -83,29 +83,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7039871833214762991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7039871833214762988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8715affd5aa05ff4dacdf10e37083cb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 0
-  moveRange: 0
-  type: 0
-  attackRange: 0
-  attackDamage: 0
-  HP: 0
-  currHP: 0
-  selected: 0
-  position: {x: 0, y: 0}
-  hasAction: 0
-  occupiedTile: {fileID: 0}
 --- !u!61 &6116190507786912371
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -132,3 +109,23 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &8109859589676789285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7039871833214762988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbcdb7452ba36ed40827d7433313275b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 11400000, guid: f6dcde480f6e5dd48a7f6dd8694d704e, type: 2}
+  position: {x: 0, y: 0}
+  clicked:
+    m_PersistentCalls:
+      m_Calls: []
+  doneMoving:
+    m_PersistentCalls:
+      m_Calls: []

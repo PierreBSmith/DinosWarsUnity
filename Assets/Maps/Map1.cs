@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Map1
 {
+    //So we erasing this yeah.
     //Data Structure to store the tileset for a map and the spawn points for units so that things can be loaded in.
     public Tile.Type[,] map;
     public List<Vector2Int> friendlySpawnPoints;

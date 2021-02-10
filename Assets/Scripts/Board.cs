@@ -4,12 +4,14 @@ using UnityEngine;
 using System.Linq;
 using System;
 using UnityEngine.Events;
+
 [Serializable]
 public class MoveCharacterEvent : UnityEvent<PathToTile> { }
+
 public class Board : MonoBehaviour
 {
     // Start is called before the first frame update
-    public Tile[,] terrain;
+    public TileBehaviour[,] terrain;
     private List<PathToTile> activeRange;
     public UnityEvent deselectCharacter;
     public MoveCharacterEvent moveCharacter;
@@ -24,15 +26,15 @@ public class Board : MonoBehaviour
         
     }
     //Initialization function that draws the map given a 2D array of Tile.Type's
-    public void init(Map1 map, Tile tilePrefab)
+    public void init(Map1 map, TileBehaviour tilePrefab)
     {
-        terrain = new Tile[map.map.GetLength(0), map.map.GetLength(1)];
+        terrain = new TileBehaviour[map.map.GetLength(0), map.map.GetLength(1)];
         for (int i = 0; i < map.map.GetLength(0); i++)
         {
             for (int j = 0; j < map.map.GetLength(1); j++)
             {
-                Tile newTile = Instantiate(tilePrefab, this.transform, true);
-                newTile.setTile(map.map[i, j]);
+                TileBehaviour newTile = Instantiate(tilePrefab, this.transform, true);
+                map.map[i,j] = newTile.tile.type;
                 newTile.transform.position = new Vector3(i, j, 0);
                 newTile.positon = new Vector2Int(i, j);
                 terrain[i, j] = newTile;
@@ -41,7 +43,7 @@ public class Board : MonoBehaviour
         }
     }
     //Tile click event handler. If there is a friendly unit selected at the time of the click and the click is in the range of the unit, move the unit to the location of the click. Otherwise deselect unit.
-    private void tileClicked(Tile tile)
+    private void tileClicked(TileBehaviour tile)
     {
         if (activeRange.Any((x)=>x.tile == tile.positon))
         {
@@ -52,20 +54,20 @@ public class Board : MonoBehaviour
             deselectCharacter.Invoke();
         }
     }
-    //Function to find potential tiles that character can move to so that paths can be made out of these tiles
-    public List<Vector2Int> GeneratePotentialRange(Character character)
+    //Function to find potential tiles that CharacterMovement can move to so that paths can be made out of these tiles
+    public List<Vector2Int> GeneratePotentialRange(CharacterMovement CharacterMovement)
     {
         List<Vector2Int> potentialTiles = new List<Vector2Int>();
         
-        for( int i = -character.moveRange; i <= character.moveRange; i++)
+        for( int i = -CharacterMovement.character.moveRange; i <= CharacterMovement.character.moveRange; i++)
         {
-            for( int j = -(character.moveRange - Mathf.Abs(i)); j <= character.moveRange - Mathf.Abs(i); j++)
+            for( int j = -(CharacterMovement.character.moveRange - Mathf.Abs(i)); j <= CharacterMovement.character.moveRange - Mathf.Abs(i); j++)
             {
-                Vector2Int currTilePos = character.position + new Vector2Int(i, j);
+                Vector2Int currTilePos = CharacterMovement.position + new Vector2Int(i, j);
                 if(currTilePos.x >= 0 && currTilePos.x < terrain.GetLength(0) && currTilePos.y >= 0 && currTilePos.y < terrain.GetLength(1))
                 {
                     //This might need to get changed
-                    if(character.position != currTilePos && (!character.grounded || getTerrainTile(currTilePos).walkable) && canPassThrough(getTerrainTile(currTilePos), character.type))
+                    if(CharacterMovement.position != currTilePos && (!CharacterMovement.character.grounded || getTerrainTile(currTilePos).tile.walkable) && canPassThrough(getTerrainTile(currTilePos), CharacterMovement.character.type))
                         potentialTiles.Add(currTilePos);
                 }
             }
@@ -74,12 +76,12 @@ public class Board : MonoBehaviour
         return potentialTiles;
     }
     //Returns a list of all walkable tiles if unit is grounded or just all the tiles otherwise
-    private List<Vector2Int> allLegalTiles(Character character)
+    private List<Vector2Int> allLegalTiles(CharacterMovement CharacterMovement)
     {
         List<Vector2Int> tileSet = new List<Vector2Int>();
         foreach (var tile in terrain)
         {
-            if (character.position != tile.positon && (!character.grounded || getTerrainTile(tile.positon).walkable))
+            if (CharacterMovement.position != tile.positon && (!CharacterMovement.character.grounded || getTerrainTile(tile.positon).tile.walkable))
             {
                 tileSet.Add(tile.positon);
             }
@@ -88,7 +90,7 @@ public class Board : MonoBehaviour
     }
     
     //helper function for if the unit can pass through the tile that is handed to it
-    private bool canPassThrough(Tile tile, Character.Type characterType)
+    private bool canPassThrough(TileBehaviour tile, Character.Type CharacterMovementType)
     {
         if(tile.occupied == null)
         {
@@ -96,29 +98,29 @@ public class Board : MonoBehaviour
         }
         else
         {
-            return !(tile.occupied.type == Character.Type.ENEMY ^ characterType == Character.Type.ENEMY);
+            return !(tile.occupied.character.type == Character.Type.ENEMY ^ CharacterMovementType == Character.Type.ENEMY);
         }
     }
     //Wrapper function for generatePaths() that generates possible friendly unit paths
-    public List<PathToTile> generateFriendlyPaths(Character character)
+    public List<PathToTile> generateFriendlyPaths(CharacterMovement CharacterMovement)
     {
-        List<Vector2Int> potentialRanges = GeneratePotentialRange(character);
-        List<PathToTile> sptSet = generatePaths(potentialRanges, character.position);
+        List<Vector2Int> potentialRanges = GeneratePotentialRange(CharacterMovement);
+        List<PathToTile> sptSet = generatePaths(potentialRanges, CharacterMovement.position);
 
-        return sptSet.Where((x) => x.weightedDistance <= character.moveRange && getTerrainTile(x.tile).occupied == null).ToList();
+        return sptSet.Where((x) => x.weightedDistance <= CharacterMovement.character.moveRange && getTerrainTile(x.tile).occupied == null).ToList();
     }
     //Wrapper function for generate paths that gets a the quickest path to a friendly unit
-    public PathToTile generateEnemyPath(Character character)
+    public PathToTile generateEnemyPath(CharacterMovement CharacterMovement)
     {
-        List<Vector2Int> searchSpace = allLegalTiles(character);
-        List<PathToTile> path = generatePaths(searchSpace, character.position, Character.Type.FRIENDLY);
+        List<Vector2Int> searchSpace = allLegalTiles(CharacterMovement);
+        List<PathToTile> path = generatePaths(searchSpace, CharacterMovement.position, Character.Type.FRIENDLY);
         PathToTile finalPath = new PathToTile(new Vector2Int(0,0));
         finalPath.weightedDistance = 0;
         int nextDist = 0;
         foreach(var tile in path[0].path)
         {
            
-            if(nextDist + finalPath.weightedDistance > character.moveRange)
+            if(nextDist + finalPath.weightedDistance > CharacterMovement.character.moveRange)
             {
                 break;    
             }
@@ -127,7 +129,7 @@ public class Board : MonoBehaviour
                 finalPath.path.Add(tile);
                 finalPath.weightedDistance += nextDist;
             }
-            nextDist = 1 - getTerrainTile(tile).movementBonus;
+            nextDist = 1 - getTerrainTile(tile).tile.movementBonus;
         }
         finalPath.tile = finalPath.path.Last();
         finalPath.path.Remove(finalPath.path.Last());
@@ -135,7 +137,7 @@ public class Board : MonoBehaviour
     }
 
     //Called by generateFriendlyPaths() and generateEnemyPath(). 
-    //If called by generateFriendlyPaths() returns a list of shortest paths to every single possible tile within the characters move range.
+    //If called by generateFriendlyPaths() returns a list of shortest paths to every single possible tile within the CharacterMovements move range.
     //If called by generateEnemyPath() returns shortest path to a friendlyUnit()
     //This is an implementation of Dijkstra algorithm
     private List<PathToTile> generatePaths(List<Vector2Int> searchSpace, Vector2Int startingSpace, Character.Type? targetType = null)
@@ -150,7 +152,7 @@ public class Board : MonoBehaviour
         PathToTile shortestDist = notYetIncluded.Min();
         while (notYetIncluded.Count != 0 && shortestDist.weightedDistance < int.MaxValue)
         {
-            if (targetType != null && getTerrainTile(shortestDist.tile).occupied?.type == targetType)
+            if (targetType != null && getTerrainTile(shortestDist.tile).occupied?.character.type == targetType)
             {
                 return new List<PathToTile>{shortestDist};
             }
@@ -169,27 +171,27 @@ public class Board : MonoBehaviour
         {
             if((tile.tile - obj.tile).magnitude == 1)
             {
-                obj.updatePath(tile, 1 - getTerrainTile(tile.tile).movementBonus);
+                obj.updatePath(tile, 1 - getTerrainTile(tile.tile).tile.movementBonus);
             }
         }
         return list;
     }
     //helper function to return a tile at specific coords using a vector2
-    public Tile getTerrainTile(Vector2Int coords)
+    public TileBehaviour getTerrainTile(Vector2Int coords)
     {
         return terrain[coords.x, coords.y];
     }
     //Function to draw moveRange for a selected unit
-    public void showMoveRange(Character character)
+    public void showMoveRange(CharacterMovement CharacterMovement)
     {
-        activeRange = generateFriendlyPaths(character);
+        activeRange = generateFriendlyPaths(CharacterMovement);
         foreach(var path in activeRange)
         {
-            getTerrainTile(path.tile).setMask(false, character.type);
+            getTerrainTile(path.tile).setMask(false, CharacterMovement.character.type);
         }
 
     }
-    //Function that clears drawn move range when a character is deselected
+    //Function that clears drawn move range when a CharacterMovement is deselected
     public void clearMoveRange()
     {
         foreach (var path in activeRange)

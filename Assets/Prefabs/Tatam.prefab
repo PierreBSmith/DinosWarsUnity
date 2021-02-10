@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7502293019651381161}
   - component: {fileID: 7502293019651381160}
-  - component: {fileID: 7502293019651381167}
   - component: {fileID: 7162682155533905994}
+  - component: {fileID: 5081127352791551084}
   m_Layer: 0
   m_Name: Tatam
   m_TagString: Untagged
@@ -83,29 +83,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7502293019651381167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7502293019651381166}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78fdcc799a9420640a166b7901c996a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 0
-  moveRange: 0
-  type: 0
-  attackRange: 0
-  attackDamage: 0
-  HP: 0
-  currHP: 0
-  selected: 0
-  position: {x: 0, y: 0}
-  hasAction: 0
-  occupiedTile: {fileID: 0}
 --- !u!61 &7162682155533905994
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -132,3 +109,23 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &5081127352791551084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7502293019651381166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbcdb7452ba36ed40827d7433313275b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 11400000, guid: c4ed8e6c3df9cc44f99c0f39459b3a6f, type: 2}
+  position: {x: 0, y: 0}
+  clicked:
+    m_PersistentCalls:
+      m_Calls: []
+  doneMoving:
+    m_PersistentCalls:
+      m_Calls: []

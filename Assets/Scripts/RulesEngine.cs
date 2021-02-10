@@ -6,14 +6,14 @@ public class RulesEngine : MonoBehaviour
 {
     //This will handle gameplay and rules while to player is in a level
     // Start is called before the first frame update
-    private Character selected;
-    private List<Character> enemyList;
-    private List<Character> friendlyList;
-    private List<Character> NPCList;
+    private CharacterMovement selected;
+    private List<CharacterMovement> enemyList;
+    private List<CharacterMovement> friendlyList;
+    private List<CharacterMovement> NPCList;
     private Board board;
     private Character.Type activeTeam;
     private bool moving;
-    private List<Character> activeList;
+    private List<CharacterMovement> activeList;
 
 
     void Start()
@@ -28,7 +28,7 @@ public class RulesEngine : MonoBehaviour
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
-    public void init(List<Character> enemies, List<Character> friendlies, List<Character> NPCs, Map1 map, Tile tilePrefab){
+    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, Map1 map, TileBehaviour tilePrefab){
         friendlyList = friendlies;
         enemyList = enemies;
         NPCList = NPCs;
@@ -36,7 +36,7 @@ public class RulesEngine : MonoBehaviour
         board.init(map, tilePrefab);
         board.deselectCharacter.AddListener(deselectCharacter);
         board.moveCharacter.AddListener(moveFriendly);
-        activeList = new List<Character>();
+        activeList = new List<CharacterMovement>();
         for ( int i = 0; i < friendlies.Count && i < map.friendlySpawnPoints.Count;i++)
         {
             spawnCharacter(friendlies[i], map.friendlySpawnPoints[i]);
@@ -50,12 +50,14 @@ public class RulesEngine : MonoBehaviour
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
-    private void spawnCharacter(Character character, Vector2Int position)
+    private void spawnCharacter(CharacterMovement character, Vector2Int position)
     {
+        //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D
         character.clicked.AddListener(unitClicked);
         character.doneMoving.AddListener(doneMoving);
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
+        //TODO: Change this to RaycastHit2D
         board.getTerrainTile(position).occupied = character;
     }
 
@@ -101,7 +103,7 @@ public class RulesEngine : MonoBehaviour
     }
 
     //Helper function that is called from toggleTurn() that loads whichever teams units are going to be active next
-    private void loadActiveList(List<Character> load)
+    private void loadActiveList(List<CharacterMovement> load)
     {
         foreach (var unit in load)
         {
@@ -112,13 +114,13 @@ public class RulesEngine : MonoBehaviour
     //Wrapper function for moveCharacter that handles friendly unit movement from player input is called by board event
     private void moveFriendly(PathToTile path)
     {
-        if (selected.type == Character.Type.FRIENDLY) {
+        if (selected.character.type == Character.Type.FRIENDLY) {
             moveCharacter(path, selected);
         }
         deselectCharacter();
     }
     //Is called by moveFriendly() and enemyTurn() 
-    private void moveCharacter(PathToTile path, Character character)
+    private void moveCharacter(PathToTile path, CharacterMovement character)
     {
         moving = true;
         deoccupyTile(board.getTerrainTile(character.position));
@@ -129,13 +131,13 @@ public class RulesEngine : MonoBehaviour
     }
 
     //Helper function that sets what unit is occupying a tile called by moveCharacter()
-    private void occupyTile(Tile tile, Character character)
+    private void occupyTile(TileBehaviour tile, CharacterMovement character)
     {
         tile.occupied = character;
     }
 
     //helper function to deoccupy a tile called by moveCharacter()
-    private void deoccupyTile(Tile tile)
+    private void deoccupyTile(TileBehaviour tile)
     {
         tile.occupied = null;
     }
@@ -156,7 +158,7 @@ public class RulesEngine : MonoBehaviour
         
     }
     //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
-    private void unitClicked(Character character)
+    private void unitClicked(CharacterMovement character)
     {
         if (activeTeam == Character.Type.FRIENDLY && !moving)
         {
@@ -177,7 +179,7 @@ public class RulesEngine : MonoBehaviour
     }
 
     //Helper function called from unitClicked()
-    private void selectCharacter(Character character)
+    private void selectCharacter(CharacterMovement character)
     {
         selected = character;
         board.showMoveRange(character);

@@ -5,27 +5,14 @@ using UnityEngine.Events;
 using System;
 
 [Serializable]
-public class CharacterEvent : UnityEvent<Character> { }
+public class CharacterEvent : UnityEvent<CharacterMovement> { }
 
-public class Character : MonoBehaviour
+public class CharacterMovement : MonoBehaviour
 {
-    public enum Type{
-        FRIENDLY,
-        ENEMY,
-        NPC
-    }
-    
-    public int speed = 3;
-    public int moveRange;
-    public Type type;
-    public int attackRange;
-    public int attackDamage;
-    public int HP;
-    public int currHP;
-    public bool grounded; //Whether the unit is effected by terrain movement penalties
+    public Character character;
     public Vector2Int position; //This might not need to be here
-    public CharacterEvent clicked; //Event for when character is clicked. Is handled by RulesEngine
-    public UnityEvent doneMoving; //Event for when character has stopped moving after a movement command. Is handled by RulesEngine
+    public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
+    public UnityEvent doneMoving; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
 
     // Start is called before the first frame update
     void Start()
@@ -53,10 +40,10 @@ public class Character : MonoBehaviour
         while (true)
         { 
             Vector2 dist = target - (Vector2)transform.position;
-            print(speed);
+            print(character.speed);
             if (dist.magnitude > 0.05)
             {
-                transform.position += (Vector3)(dist.normalized * Time.deltaTime * speed);
+                transform.position += (Vector3)(dist.normalized * Time.deltaTime * character.speed);
             }
             else if(actualPath.Count != 0)
             {

@@ -16,7 +16,8 @@ public class CharacterMovement : MonoBehaviour
     private List<TileBehaviour> selectableTiles = new List<TileBehaviour>(); //the list of tiles that can be moved to
     private GameObject[] tiles; //stores all tiles of the map
     private Stack<TileBehaviour> path = new Stack<TileBehaviour>(); //the actual path the character wishes to travel along
-    private TileBehaviour currentTile; //the tile the unit is currently inhabiting
+    [HideInInspector]
+    public TileBehaviour currentTile; //the tile the unit is currently inhabiting
     private TileBehaviour targetTile;
     private Vector3 velocity = new Vector2(); //the speed the unit is moving
     private Vector3 heading = new Vector2(); //the direction the unit is moving
@@ -67,7 +68,7 @@ public class CharacterMovement : MonoBehaviour
         }
     }
     //Event handler function
-    void OnMouseUp()
+    void OnMouseDown()
     {
         clicked.Invoke(this);
     }
@@ -142,7 +143,7 @@ public class CharacterMovement : MonoBehaviour
     //Pathfinding time
     //Takes in the target tile to move to as a parameter
     //This method is for the player units. An actual A* movement will be implemented later.
-    private void FindPath(TileBehaviour tile)
+    public void FindPath(TileBehaviour tile)
     {
         path.Clear(); //so we don't have any leftover stuff from the previous move
         tile.targetTile = true;

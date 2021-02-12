@@ -28,37 +28,42 @@ public class RulesEngine : MonoBehaviour
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
-    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, Map1 map, TileBehaviour tilePrefab){
+    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs)//, Map1 map, TileBehaviour tilePrefab)
+    {
         friendlyList = friendlies;
         enemyList = enemies;
         NPCList = NPCs;
+        /*
         board = FindObjectOfType<Board>();
         board.init(map, tilePrefab);
         board.deselectCharacter.AddListener(deselectCharacter);
         board.moveCharacter.AddListener(moveFriendly);
+        */
         activeList = new List<CharacterMovement>();
-        for ( int i = 0; i < friendlies.Count && i < map.friendlySpawnPoints.Count;i++)
+        for ( int i = 0; i < friendlies.Count ;i++) // && i < map.friendlySpawnPoints.Count
         {
-            spawnCharacter(friendlies[i], map.friendlySpawnPoints[i]);
+            spawnCharacter(friendlies[i]);//, map.friendlySpawnPoints[i]);
             activeList.Add(friendlies[i]);
         }
-        for( int i = 0; i < enemies.Count && i < map.enemySpawnPoints.Count; i++)
+        for( int i = 0; i < enemies.Count; i++)// && i < map.enemySpawnPoints.Count
         {
-            spawnCharacter(enemies[i], map.enemySpawnPoints[i]);
+            spawnCharacter(enemies[i]);//, map.enemySpawnPoints[i]);
         }
        
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
-    private void spawnCharacter(CharacterMovement character, Vector2Int position)
+    private void spawnCharacter(CharacterMovement character)//, Vector2Int position)
     {
         //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D
         character.clicked.AddListener(unitClicked);
         character.doneMoving.AddListener(doneMoving);
+        /*
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
+        */
         //TODO: Change this to RaycastHit2D
-        board.getTerrainTile(position).occupied = character;
+        //board.getTerrainTile(position).occupied = character;
     }
 
     //Handles which turn it is. Is called by DoneMoving. Turn cycle is Friendly>Enemy>NPC>Friendly atm. This should probably be Friendly>NPC>Enemy>Friendly.
@@ -112,10 +117,27 @@ public class RulesEngine : MonoBehaviour
     }
 
     //Wrapper function for moveCharacter that handles friendly unit movement from player input is called by board event
-    private void moveFriendly(PathToTile path)
+    private void moveFriendly()//PathToTile path)
     {
-        if (selected.character.type == Character.Type.FRIENDLY) {
-            moveCharacter(path, selected);
+        if (selected.character.type == Character.Type.FRIENDLY) 
+        {
+            //moveCharacter(path, selected);
+            if(Input.GetMouseButtonUp(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if(Physics.Raycast(ray, out hit))
+                {
+                    if(hit.collider.tag == "Tile")
+                    {
+                        TileBehaviour tile = hit.collider.GetComponent<TileBehaviour>();
+                        if(tile.selectable)
+                        {
+                            selected.FindPath(tile);
+                        }
+                    }
+                }
+            }
         }
         deselectCharacter();
     }
@@ -123,10 +145,11 @@ public class RulesEngine : MonoBehaviour
     private void moveCharacter(PathToTile path, CharacterMovement character)
     {
         moving = true;
-        deoccupyTile(board.getTerrainTile(character.position));
-        character.move(path);
+        deoccupyTile(character.currentTile);
+        //character.move(path);
         //Move function is called here.
-        occupyTile(board.getTerrainTile(path.tile), character);
+        character.Move();
+        occupyTile(character.currentTile, character);
         activeList.Remove(character);
         
     }
@@ -161,6 +184,7 @@ public class RulesEngine : MonoBehaviour
     //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
     private void unitClicked(CharacterMovement character)
     {
+        Debug.Log(character + " has been clicked");
         if (activeTeam == Character.Type.FRIENDLY && !moving)
         {
             if (selected == null) //if not unit is selected select unit clicked
@@ -177,19 +201,20 @@ public class RulesEngine : MonoBehaviour
                 selectCharacter(character);
             }
         }
+        Debug.Log(selected.name + " has been set as selected");
     }
 
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
         selected = character;
-        board.showMoveRange(character);
+        //board.showMoveRange(character);
     }
 
     //helper function called from unitClicked(), moveFriendly(), and board.tileClicked()
     private void deselectCharacter()
     {
         selected = null;
-        board.clearMoveRange();
+        //board.clearMoveRange();
     }
 }

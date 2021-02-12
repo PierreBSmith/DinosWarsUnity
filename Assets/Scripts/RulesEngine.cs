@@ -125,6 +125,7 @@ public class RulesEngine : MonoBehaviour
         moving = true;
         deoccupyTile(board.getTerrainTile(character.position));
         character.move(path);
+        //Move function is called here.
         occupyTile(board.getTerrainTile(path.tile), character);
         activeList.Remove(character);
         

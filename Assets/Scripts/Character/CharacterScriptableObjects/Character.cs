@@ -19,5 +19,7 @@ public class Character : ScriptableObject
     public int HP;
     public int currHP; 
     public bool grounded;
+
+    public int maxStamina;
     //TODO: Put all unit stats, Inventory, etc also in here
 }

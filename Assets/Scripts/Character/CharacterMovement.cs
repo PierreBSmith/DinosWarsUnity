@@ -34,6 +34,7 @@ public class CharacterMovement : MonoBehaviour
     }
 
     //This starts movement along the given path
+    /*
     public void move(PathToTile path)
     {
         StartCoroutine(followPath(path));
@@ -67,19 +68,21 @@ public class CharacterMovement : MonoBehaviour
             yield return null;
         }
     }
+    */
     //Event handler function
     void OnMouseDown()
     {
         clicked.Invoke(this);
     }
 
-    private TileBehaviour GetTargetTile()
+    private TileBehaviour GetTargetTile(GameObject target)
     {
         RaycastHit hit; //It's not in 2D cuz we're working with the Z-Axis here.
         TileBehaviour tile = null;
 
-        if(Physics.Raycast(targetTile.transform.position, Vector3.forward, out hit, 1))
+        if(Physics.Raycast(target.transform.position, Vector3.forward, out hit, 1f))
         {
+            Debug.Log("I hit something!");
             tile = hit.collider.GetComponent<TileBehaviour>();
         }
 
@@ -88,7 +91,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void GetCurrentTile()
     {
-        currentTile = GetTargetTile();
+        currentTile = GetTargetTile(gameObject);
         //currentTile.unit = gameObject;
     }
 
@@ -103,6 +106,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void FindSelectableTiles()
     {
+        Debug.Log("Finding neighboring tiles...");
         ComputeNeighboringTiles();
         GetCurrentTile();
 
@@ -311,6 +315,30 @@ public class CharacterMovement : MonoBehaviour
                 }
             }
         }
+    }
+
+    //This is for displaying movement range
+    public void DisplayMovementRange(bool toActivate)
+    {
+        if(toActivate) //If activated, we highlight all the tiles
+        {
+            FindSelectableTiles();//Finds all them delicious selectable tiles.
+            //We just call this to ensure that we get the selectable tiles.
+            foreach(TileBehaviour tile in selectableTiles)
+            {
+                Debug.Log(tile.name);
+                tile.setMask(false, Character.Type.FRIENDLY);
+            }
+        }
+        else
+        {
+            //We don't need to call FindSelectableTiles() cuz we've already found them once.
+            foreach(TileBehaviour tile in selectableTiles)
+            {
+                tile.clearMask();
+            }
+        }
+        
     }
 }
 

@@ -10,7 +10,7 @@ public class RulesEngine : MonoBehaviour
     private List<CharacterMovement> enemyList;
     private List<CharacterMovement> friendlyList;
     private List<CharacterMovement> NPCList;
-    private Board board;
+    //private Board board;
     private Character.Type activeTeam;
     private bool moving;
     private List<CharacterMovement> activeList;
@@ -97,7 +97,7 @@ public class RulesEngine : MonoBehaviour
     {
         if (activeList.Count != 0)
         {
-            moveCharacter(board.generateEnemyPath(activeList[0]), activeList[0]);
+            //moveCharacter(board.generateEnemyPath(activeList[0]), activeList[0]);
         }
         else
         {
@@ -142,7 +142,7 @@ public class RulesEngine : MonoBehaviour
         deselectCharacter();
     }
     //Is called by moveFriendly() and enemyTurn() 
-    private void moveCharacter(PathToTile path, CharacterMovement character)
+    private void moveCharacter(CharacterMovement character)//PathToTile path, 
     {
         moving = true;
         deoccupyTile(character.currentTile);
@@ -150,6 +150,7 @@ public class RulesEngine : MonoBehaviour
         //Move function is called here.
         character.Move();
         occupyTile(character.currentTile, character);
+        //TODO: The character should be able to make an action after moving.
         activeList.Remove(character);
         
     }
@@ -201,19 +202,20 @@ public class RulesEngine : MonoBehaviour
                 selectCharacter(character);
             }
         }
-        Debug.Log(selected.name + " has been set as selected");
     }
 
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
         selected = character;
+        selected.DisplayMovementRange(true);
         //board.showMoveRange(character);
     }
 
     //helper function called from unitClicked(), moveFriendly(), and board.tileClicked()
     private void deselectCharacter()
     {
+        selected.DisplayMovementRange(false);
         selected = null;
         //board.clearMoveRange();
     }

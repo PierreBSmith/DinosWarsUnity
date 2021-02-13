@@ -10,8 +10,9 @@ public class TileEvent : UnityEvent<TileBehaviour> { }
 public class TileBehaviour : MonoBehaviour
 {
     public Tile tile;
-
-    private GameObject movementMask;
+    [HideInInspector]
+    public GameObject movementMask;
+    private SpriteRenderer _sprite;
 
     public CharacterMovement occupied; //will be set dynamically depending on whether unit is there or not. Might not be necessary here 
     public TileEvent clicked; //Even that is thrown when the tile is clicked on
@@ -43,10 +44,20 @@ public class TileBehaviour : MonoBehaviour
 
     [HideInInspector]
     public GameObject unit;
-    
+
+    void Start()
+    {
+        _sprite = GetComponent<SpriteRenderer>();
+    }
+
+
     //This is called when a unit is clicked to show its range of movement
     public void setMask(bool isAttack, Character.Type type){
         movementMask.SetActive(true);
+        _sprite.color = Color.green;
+
+        //movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(0, 1, 0, .5f);
+        /*
         if (isAttack || type == Character.Type.ENEMY)
         {
             movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(1, 0, 0, .5f);
@@ -55,10 +66,12 @@ public class TileBehaviour : MonoBehaviour
         {
             movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(0, 1, 0, .5f);
         }
+        */
     }
     //This is called to undo display of a movement range
     public void clearMask()
     {
+        _sprite.color = Color.white;
         movementMask.SetActive(false);
     }
     //Event handler
@@ -70,7 +83,8 @@ public class TileBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        movementMask = transform.Find("MovementMask").gameObject;
+        //Get's movementMask
+        movementMask = transform.GetChild(0).gameObject;
     }
 
     //Min's Tile Movement Stuff Down Here
@@ -93,8 +107,8 @@ public class TileBehaviour : MonoBehaviour
     private void CheckTile(Vector3 direction)
     {
         Vector2 tileChecker = new Vector2(0.25f, 0.25f); //this is just a Vector2 range
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(transform.position + direction, tileChecker,0f); //draws a box that overlaps with all corners of the neighboring tiles
-        foreach(Collider2D collider in colliders)
+        Collider[] colliders = Physics.OverlapBox(transform.position + direction, tileChecker); //draws a box that overlaps with all corners of the neighboring tiles
+        foreach(Collider collider in colliders)
         {
             TileBehaviour tile = collider.GetComponent<TileBehaviour>();
             if(tile != null && tile.tile.walkable)

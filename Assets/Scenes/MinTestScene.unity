@@ -1110,12 +1110,6 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5267663090774474232, guid: 3679fc12a3a665946a84c57e6150fd1b,
         type: 3}
-      propertyPath: m_Icon
-      value: 
-      objectReference: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000,
-        type: 0}
-    - target: {fileID: 5267663090774474232, guid: 3679fc12a3a665946a84c57e6150fd1b,
-        type: 3}
       propertyPath: m_Name
       value: Tile
       objectReference: {fileID: 0}
@@ -2221,7 +2215,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1662798036}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

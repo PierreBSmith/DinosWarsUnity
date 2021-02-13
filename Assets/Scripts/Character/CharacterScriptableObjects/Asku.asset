@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Asku
   m_EditorClassIdentifier: 
   speed: 3
-  moveRange: 4
-  type: 1
+  moveRange: 3
+  type: 0
   attackRange: 0
   attackDamage: 0
   HP: 0
   currHP: 0
   grounded: 0
+  maxStamina: 0

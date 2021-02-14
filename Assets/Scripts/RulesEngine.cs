@@ -28,7 +28,7 @@ public class RulesEngine : MonoBehaviour
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
-    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs)//, Map1 map, TileBehaviour tilePrefab)
+    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -48,6 +48,10 @@ public class RulesEngine : MonoBehaviour
         for( int i = 0; i < enemies.Count; i++)// && i < map.enemySpawnPoints.Count
         {
             spawnCharacter(enemies[i]);//, map.enemySpawnPoints[i]);
+        }
+        foreach(GameObject tile in map)
+        {
+            tile.GetComponent<TileBehaviour>().clicked.AddListener(moveFriendly);
         }
        
     }
@@ -117,29 +121,19 @@ public class RulesEngine : MonoBehaviour
     }
 
     //Wrapper function for moveCharacter that handles friendly unit movement from player input is called by board event
-    private void moveFriendly()//PathToTile path)
+    private void moveFriendly(TileBehaviour target)//PathToTile path)
     {
-        if (selected.character.type == Character.Type.FRIENDLY) 
+        if(selected)
         {
-            //moveCharacter(path, selected);
-            if(Input.GetMouseButtonUp(0))
+            if (selected.character.type == Character.Type.FRIENDLY && target.selectable) 
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-                if(Physics.Raycast(ray, out hit))
-                {
-                    if(hit.collider.tag == "Tile")
-                    {
-                        TileBehaviour tile = hit.collider.GetComponent<TileBehaviour>();
-                        if(tile.selectable)
-                        {
-                            selected.FindPath(tile);
-                        }
-                    }
-                }
+                //moveCharacter(path, selected);
+                Debug.Log("Moving " + selected.name + " to " + target.name);
+                selected.FindPath(target);
+                moveCharacter(selected);
             }
+            deselectCharacter();
         }
-        deselectCharacter();
     }
     //Is called by moveFriendly() and enemyTurn() 
     private void moveCharacter(CharacterMovement character)//PathToTile path, 
@@ -149,7 +143,7 @@ public class RulesEngine : MonoBehaviour
         //character.move(path);
         //Move function is called here.
         character.Move();
-        occupyTile(character.currentTile, character);
+        //occupyTile(character.currentTile, character);
         //TODO: The character should be able to make an action after moving.
         activeList.Remove(character);
         

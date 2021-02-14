@@ -19,8 +19,9 @@ public class CharacterMovement : MonoBehaviour
     [HideInInspector]
     public TileBehaviour currentTile; //the tile the unit is currently inhabiting
     private TileBehaviour targetTile;
-    private Vector3 velocity = new Vector2(); //the speed the unit is moving
-    private Vector3 heading = new Vector2(); //the direction the unit is moving
+    private Vector3 velocity = new Vector3(); //the speed the unit is moving
+    //private Vector3 heading = new Vector3(); //the direction the unit is moving
+    private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
 
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
@@ -155,7 +156,7 @@ public class CharacterMovement : MonoBehaviour
         TileBehaviour nextTile = tile;
         while(nextTile != null)
         {
-            if(nextTile.selectable)
+            if(nextTile.selectable && nextTile != currentTile)
             {
                 path.Push(nextTile);
             }
@@ -164,11 +165,13 @@ public class CharacterMovement : MonoBehaviour
     }
 
     //Gets direction the unit needs to move
+    /*
     private void CalculateHeading(Vector3 target)
     {
         heading = target - transform.position;
         heading.Normalize();
     }
+    */
 
     //Sets the velocity to move the unit in that direction
     private void SetVelocity()
@@ -191,32 +194,36 @@ public class CharacterMovement : MonoBehaviour
 
     public void Move()
     {
-        if(path.Count > 0)
+        Debug.Log(path.Count);
+        while(path.Count > 0)
         {
             TileBehaviour moveTarget = path.Peek();
+            Debug.Log(moveTarget.name);
             Vector3 targetPosition = moveTarget.transform.position;
-
+            Debug.Log(targetPosition);
+            targetPosition.z -= HEIGHT_OF_UNIT_ABOVE_TILE;
+        
             //Calculates Unit's position
             if(Vector2.Distance(transform.position, targetPosition) >= 0.05f)
             {
-                CalculateHeading(targetPosition);
+                //CalculateHeading(targetPosition);
                 SetVelocity();
-                transform.up = heading;
                 transform.position += velocity * Time.deltaTime;
                 //We don't need to attach Rigidbody2D to the unit because they're not acting on Physics, they're just moving their transform places.
+                //We should somehow make the movement gradual instead. IEnumerator?
             }
             else
             {
                 //The unit has reached the center of the tile
                 transform.position = targetPosition;
+                Debug.Log("Target has been reached");
                 path.Pop();
             }
         }
-        else
-        {
-            RemoveSelectableTiles();
-            //TODO: Turn Management done here cuz this is where the unit is done moving.
-        }
+        Debug.Log("Finished path to target!");
+        RemoveSelectableTiles();
+        doneMoving.Invoke();
+        //TODO: Turn Management done here cuz this is where the unit is done moving.
     }
 
     //Now the fun stuff. Pathfinding for AI :D

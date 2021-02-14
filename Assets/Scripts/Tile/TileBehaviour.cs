@@ -15,7 +15,7 @@ public class TileBehaviour : MonoBehaviour
     private SpriteRenderer _sprite;
 
     public CharacterMovement occupied; //will be set dynamically depending on whether unit is there or not. Might not be necessary here 
-    public TileEvent clicked; //Even that is thrown when the tile is clicked on
+    public TileEvent clicked; //Event that is thrown when the tile is clicked on
     public Vector2Int positon; //Logical coords of tile
 
     //Most of these variables are actually never used here and are set elsewhere.
@@ -75,7 +75,7 @@ public class TileBehaviour : MonoBehaviour
         movementMask.SetActive(false);
     }
     //Event handler
-    void OnMouseUp()
+    void OnMouseDown()
     {
         clicked.Invoke(this);
     }

@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     public List<CharacterMovement> enemyList;
     public List<CharacterMovement> friendList;
-    public TileBehaviour tilePrefab;
+    //public TileBehaviour tilePrefab;
+    private GameObject[] tiles;
 
     void Start()
     {
@@ -42,9 +43,10 @@ public class GameManager : MonoBehaviour
                 break;
                 */
         }
-        var RulesEngine = FindObjectOfType<RulesEngine>();
+        tiles = GameObject.FindGameObjectsWithTag("Tile");
 
-        RulesEngine.init(Enemies, Friends, null);//, map, tilePrefab); //Initializion function that handles the rest of the game.
+        var RulesEngine = FindObjectOfType<RulesEngine>();
+        RulesEngine.init(Enemies, Friends, null, tiles);//, map, tilePrefab); //Initializion function that handles the rest of the game.
 
     }
 

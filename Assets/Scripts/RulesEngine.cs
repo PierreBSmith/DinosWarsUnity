@@ -13,6 +13,7 @@ public class RulesEngine : MonoBehaviour
     private Board board;
     private Character.Type activeTeam;
     private bool moving;
+    private bool attacking;
     private List<CharacterMovement> activeList;
 
 
@@ -54,9 +55,13 @@ public class RulesEngine : MonoBehaviour
     {
         //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D
         character.clicked.AddListener(unitClicked);
+        character.moveClicked.AddListener(unitMoveClicked);
+        character.passClicked.AddListener(unitPassClicked);
         character.doneMoving.AddListener(doneMoving);
+        character.attackClicked.AddListener(unitAttackClicked);
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
+        character.currHP = character.character.HP;
         //TODO: Change this to RaycastHit2D
         board.getTerrainTile(position).occupied = character;
     }
@@ -122,11 +127,19 @@ public class RulesEngine : MonoBehaviour
     //Is called by moveFriendly() and enemyTurn() 
     private void moveCharacter(PathToTile path, CharacterMovement character)
     {
-        moving = true;
-        deoccupyTile(board.getTerrainTile(character.position));
-        character.move(path);
-        occupyTile(board.getTerrainTile(path.tile), character);
         activeList.Remove(character);
+        if (path.weightedDistance > 0)
+        {
+            moving = true;
+            deoccupyTile(board.getTerrainTile(character.position));
+            character.move(path);
+            occupyTile(board.getTerrainTile(path.tile), character);
+            
+        }
+        else
+        {
+            doneMoving();
+        }
         
     }
 
@@ -165,10 +178,24 @@ public class RulesEngine : MonoBehaviour
             if (selected == null) //if not unit is selected select unit clicked
             {
                 selectCharacter(character);
-            } 
+            }
             else if (selected == character) //if unit clicked is currently selected deselect it
             {
                 deselectCharacter();
+            }
+            else if (attacking && selected.character.type == Character.Type.FRIENDLY && character.character.type == Character.Type.ENEMY && 
+                Mathf.Abs(character.position.x - selected.position.x + character.position.y - selected.position.y) <= selected.character.attackRange)
+            {
+                character.currHP -= selected.character.attackDamage;
+                if (character.currHP <= 0)
+                {
+                    character.gameObject.SetActive(false);
+                }
+                attacking = false;
+                activeList.Remove(selected);
+                deselectCharacter();
+                doneMoving();
+
             }
             else //if unit clicked is not selected and there is already a unit selected. Deselect old unit and select new unit
             {
@@ -178,17 +205,51 @@ public class RulesEngine : MonoBehaviour
         }
     }
 
+    private void unitMoveClicked(CharacterMovement character)
+    {
+        board.showMoveRange(character);
+        character.canvas.gameObject.SetActive(false);
+    }
+
+    private void unitPassClicked(CharacterMovement character)
+    {
+        activeList.Remove(character);
+        deselectCharacter();
+        if(activeList.Count == 0)
+        {
+            doneMoving();
+        }
+    }
+    private void unitAttackClicked(CharacterMovement character)
+    {
+        board.showAttackRange(character.position, character.character.attackRange);
+        character.canvas.gameObject.SetActive(false);
+        attacking = true;
+    }
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
         selected = character;
-        board.showMoveRange(character);
+        if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character))
+        {
+            character.canvas.gameObject.SetActive(true);
+        }
+        else if(character.character.type != Character.Type.FRIENDLY)
+        {
+            board.showMoveRange(character);
+        }
     }
 
     //helper function called from unitClicked(), moveFriendly(), and board.tileClicked()
     private void deselectCharacter()
     {
+        
+        if (selected != null && selected.character.type == Character.Type.FRIENDLY)
+        {
+            selected.canvas.gameObject.SetActive(false);
+        }
         selected = null;
         board.clearMoveRange();
+        board.clearAttackRange();
     }
 }

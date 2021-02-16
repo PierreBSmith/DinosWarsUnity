@@ -2,17 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 
 [Serializable]
 public class CharacterEvent : UnityEvent<CharacterMovement> { }
 
-public class CharacterMovement : MonoBehaviour
+public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 {
     public Character character;
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public UnityEvent doneMoving; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
+    public Button attackButton;
+    public Button moveButton;
+    public Canvas canvas;
+    public CharacterEvent moveClicked;
+    public CharacterEvent attackClicked;
+    public CharacterEvent passClicked;
+    public int currHP;
 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +49,6 @@ public class CharacterMovement : MonoBehaviour
         while (true)
         { 
             Vector2 dist = target - (Vector2)transform.position;
-            print(character.speed);
             if (dist.magnitude > 0.05)
             {
                 transform.position += (Vector3)(dist.normalized * Time.deltaTime * character.speed);
@@ -59,10 +67,29 @@ public class CharacterMovement : MonoBehaviour
         }
     }
     //Event handler function
-    void OnMouseUp()
+    //void OnMouseUp()
+    //{
+    //    clicked.Invoke(this);
+    //}
+
+    public void OnPointerClick(PointerEventData eventData)
     {
         clicked.Invoke(this);
     }
 
+    public void moveClickedEvent()
+    {
+        moveClicked.Invoke(this);
+    }
+
+    public void attackClickedEvent()
+    {
+        attackClicked.Invoke(this);
+    }
+    
+    public void passClickedEvent()
+    {
+        passClicked.Invoke(this);
+    }
 }
 

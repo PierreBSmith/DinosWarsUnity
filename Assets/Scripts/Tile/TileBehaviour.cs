@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using System;
 
 [Serializable]
 public class TileEvent : UnityEvent<TileBehaviour> { }
-public class TileBehaviour : MonoBehaviour
+public class TileBehaviour : MonoBehaviour, IPointerClickHandler
 {
     public Tile tile;
 
@@ -35,10 +36,10 @@ public class TileBehaviour : MonoBehaviour
         movementMask.SetActive(false);
     }
     //Event handler
-    void OnMouseUp()
-    {
-        clicked.Invoke(this);
-    }
+    //void OnMouseUp()
+    //{
+    //    clicked?.Invoke(this);
+    //}
 
     // Start is called before the first frame update
     void Awake()
@@ -50,5 +51,10 @@ public class TileBehaviour : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        clicked.Invoke(this);
     }
 }

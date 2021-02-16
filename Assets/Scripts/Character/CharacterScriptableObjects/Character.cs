@@ -10,14 +10,13 @@ public class Character : ScriptableObject
         ENEMY,
         NPC
     }
-    
+
     public int speed = 3;
     public int moveRange;
     public Type type;
     public int attackRange;
     public int attackDamage;
     public int HP;
-    public int currHP; 
     public bool grounded;
     //TODO: Put all unit stats, Inventory, etc also in here
 }

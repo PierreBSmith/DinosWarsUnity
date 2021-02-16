@@ -15,8 +15,8 @@ MonoBehaviour:
   speed: 3
   moveRange: 4
   type: 1
-  attackRange: 0
-  attackDamage: 0
-  HP: 0
-  currHP: 0
-  grounded: 0
+  attackRange: 1
+  attackDamage: 1
+  HP: 10
+  currHP: 10
+  grounded: 1

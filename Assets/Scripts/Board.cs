@@ -13,6 +13,7 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     public TileBehaviour[,] terrain;
     private List<PathToTile> activeRange;
+    private List<TileBehaviour> activeAttackRange;
     public UnityEvent deselectCharacter;
     public MoveCharacterEvent moveCharacter;
     void Start()
@@ -29,6 +30,8 @@ public class Board : MonoBehaviour
     public void init(Map1 map, TileBehaviour tilePrefab)
     {
         terrain = new TileBehaviour[map.map.GetLength(0), map.map.GetLength(1)];
+        activeRange = new List<PathToTile>();
+        activeAttackRange = new List<TileBehaviour>();
         for (int i = 0; i < map.map.GetLength(0); i++)
         {
             for (int j = 0; j < map.map.GetLength(1); j++)
@@ -136,6 +139,7 @@ public class Board : MonoBehaviour
         return finalPath;
     }
 
+
     //Called by generateFriendlyPaths() and generateEnemyPath(). 
     //If called by generateFriendlyPaths() returns a list of shortest paths to every single possible tile within the CharacterMovements move range.
     //If called by generateEnemyPath() returns shortest path to a friendlyUnit()
@@ -190,6 +194,29 @@ public class Board : MonoBehaviour
             getTerrainTile(path.tile).setMask(false, CharacterMovement.character.type);
         }
 
+    }
+    public void showAttackRange(Vector2Int startingSpace, int range)
+    {
+        for (int i = - range; i <= range; i++)
+        {
+            for (int j = - (range - Mathf.Abs(i)); j <= range - Mathf.Abs(i); j++)
+            {
+
+                if (!(i == 0 && j == 0))
+                {
+                    terrain[i + startingSpace.x, j + startingSpace.y].setMask(true, Character.Type.ENEMY);
+                    activeAttackRange.Add(terrain[i + startingSpace.x, j + startingSpace.y]);
+                }
+            }
+        }
+    }
+    public void clearAttackRange()
+    {
+        foreach (var tile in activeAttackRange)
+        {
+           tile.clearMask();
+        }
+        activeAttackRange.Clear();
     }
     //Function that clears drawn move range when a CharacterMovement is deselected
     public void clearMoveRange()

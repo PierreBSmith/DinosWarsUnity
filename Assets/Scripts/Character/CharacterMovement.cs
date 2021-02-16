@@ -12,6 +12,8 @@ public class CharacterMovement : MonoBehaviour
     public Character character;
     [Header("Stamina Implementation")]
     private int currentStamina;
+    private const int LINEAR_STAMINA_DEPLETION = 10;
+    private int extraMovementRange;
     [Header("Movement")]
     private List<TileBehaviour> selectableTiles = new List<TileBehaviour>(); //the list of tiles that can be moved to
     private GameObject[] tiles; //stores all tiles of the map
@@ -20,7 +22,7 @@ public class CharacterMovement : MonoBehaviour
     public TileBehaviour currentTile; //the tile the unit is currently inhabiting
     private TileBehaviour targetTile;
     private Vector3 velocity = new Vector3(); //the speed the unit is moving
-    //private Vector3 heading = new Vector3(); //the direction the unit is moving
+    private Vector3 heading = new Vector3(); //the direction the unit is moving
     private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
 
     public Vector2Int position; //This might not need to be here
@@ -30,8 +32,10 @@ public class CharacterMovement : MonoBehaviour
     void Start()
     {
         currentStamina = character.maxStamina;
+        GetExtraRange();
         //unfortunately would have to call this in Update if we decided to make a map with disappearing tiles LMAO
         tiles = GameObject.FindGameObjectsWithTag("Tile");
+        GetCurrentTile();
     }
 
     //This starts movement along the given path
@@ -76,6 +80,30 @@ public class CharacterMovement : MonoBehaviour
         clicked.Invoke(this);
     }
 
+    //CHARACTER RESET FUNCTION. PLEASE CALL BEFORE THE START OF THE PLAYER PHASE!!!!!!!!!!!!!
+    public void ResetCharacter()
+    {
+        currentStamina = character.maxStamina;
+    }
+
+    private void GetExtraRange()
+    {
+        int normalStaminaUsage = character.moveRange * LINEAR_STAMINA_DEPLETION;
+        int maxStaminaUsage = normalStaminaUsage;
+        extraMovementRange = 0;
+        while(maxStaminaUsage < character.maxStamina)
+        {
+            extraMovementRange++;
+            maxStaminaUsage += (extraMovementRange + 1) * LINEAR_STAMINA_DEPLETION;
+            if(maxStaminaUsage > character.maxStamina)
+            {
+                extraMovementRange--;
+                break;
+            }
+        }
+        Debug.Log(extraMovementRange);
+    }
+
     private TileBehaviour GetTargetTile(GameObject target)
     {
         RaycastHit hit; //It's not in 2D cuz we're working with the Z-Axis here.
@@ -83,7 +111,6 @@ public class CharacterMovement : MonoBehaviour
 
         if(Physics.Raycast(target.transform.position, Vector3.forward, out hit, 1f))
         {
-            Debug.Log("I hit something!");
             tile = hit.collider.GetComponent<TileBehaviour>();
         }
 
@@ -107,7 +134,6 @@ public class CharacterMovement : MonoBehaviour
 
     private void FindSelectableTiles()
     {
-        Debug.Log("Finding neighboring tiles...");
         ComputeNeighboringTiles();
         GetCurrentTile();
 
@@ -121,15 +147,24 @@ public class CharacterMovement : MonoBehaviour
             TileBehaviour tile = process.Dequeue();
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
-            if(tile.distance <= character.moveRange && !tile.hasUnit)
+            if(tile.distance <= (character.moveRange + extraMovementRange) && !tile.hasUnit)
             {
+                //These checks are for stamina usage stuff
+                if(tile.distance <= character.moveRange)
+                {
+                    tile.withinRange = true;
+                }
+                else
+                {
+                    tile.withinRange = false;
+                }
                 //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
                 selectableTiles.Add(tile);
                 tile.selectable = true;
             }
             
             //This looks for more tiles that can be moved to
-            if(tile.distance < character.moveRange)
+            if(tile.distance < (character.moveRange + extraMovementRange))
             {
                 foreach(TileBehaviour t in tile.neighbours)
                 {
@@ -165,13 +200,11 @@ public class CharacterMovement : MonoBehaviour
     }
 
     //Gets direction the unit needs to move
-    /*
     private void CalculateHeading(Vector3 target)
     {
         heading = target - transform.position;
         heading.Normalize();
     }
-    */
 
     //Sets the velocity to move the unit in that direction
     private void SetVelocity()
@@ -194,36 +227,42 @@ public class CharacterMovement : MonoBehaviour
 
     public void Move()
     {
-        Debug.Log(path.Count);
         while(path.Count > 0)
         {
             TileBehaviour moveTarget = path.Peek();
-            Debug.Log(moveTarget.name);
             Vector3 targetPosition = moveTarget.transform.position;
-            Debug.Log(targetPosition);
             targetPosition.z -= HEIGHT_OF_UNIT_ABOVE_TILE;
         
             //Calculates Unit's position
             if(Vector2.Distance(transform.position, targetPosition) >= 0.05f)
             {
-                //CalculateHeading(targetPosition);
+                CalculateHeading(targetPosition);
                 SetVelocity();
                 transform.position += velocity * Time.deltaTime;
                 //We don't need to attach Rigidbody2D to the unit because they're not acting on Physics, they're just moving their transform places.
-                //We should somehow make the movement gradual instead. IEnumerator?
+                //We should somehow make the movement gradual instead. Coroutine?
             }
             else
             {
                 //The unit has reached the center of the tile
                 transform.position = targetPosition;
-                Debug.Log("Target has been reached");
+                //Stamina stuff here. For now it's going to be linear since we have no way of getting extra movement range yet.
+                if(moveTarget.distance > character.moveRange)
+                {
+                    int extraDistance = (moveTarget.distance - character.moveRange) + 1;
+                    currentStamina -= extraDistance * LINEAR_STAMINA_DEPLETION;
+                }
+                else
+                {
+                    currentStamina -= LINEAR_STAMINA_DEPLETION;
+                }
                 path.Pop();
             }
         }
-        Debug.Log("Finished path to target!");
+        DisplayMovementRange(false);
         RemoveSelectableTiles();
-        doneMoving.Invoke();
-        //TODO: Turn Management done here cuz this is where the unit is done moving.
+        GetCurrentTile();
+        //doneMoving.Invoke();
     }
 
     //Now the fun stuff. Pathfinding for AI :D
@@ -271,10 +310,11 @@ public class CharacterMovement : MonoBehaviour
 
     //The real A*
     //The previous methods were all just helper functions
-    protected void EnemyFindPath(TileBehaviour target)
+    public void EnemyFindPath(TileBehaviour target)
     {
         ComputeNeighboringTiles();
         GetCurrentTile();
+        FindSelectableTiles();
 
         List<TileBehaviour> openList = new List<TileBehaviour>(); //tiles to visit
         List<TileBehaviour> closedList = new List<TileBehaviour>(); //tiles already visited and processed
@@ -324,6 +364,27 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
+    //Finds the nearest target to move to.
+    public GameObject FindNearestTarget()
+    {
+        GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
+        //Finding the weakest, most damaged, does special effective damage, etc all goes here
+        GameObject nearest = null;
+        float distance = Mathf.Infinity;
+
+        foreach(GameObject unit in targets)
+        {
+            float d = Vector3.Distance(transform.position, unit.transform.position);
+            if(d < distance)
+            {
+                distance = d;
+                nearest = unit;
+            }
+        }
+
+        return nearest;
+    }
+
     //This is for displaying movement range
     public void DisplayMovementRange(bool toActivate)
     {
@@ -333,7 +394,6 @@ public class CharacterMovement : MonoBehaviour
             //We just call this to ensure that we get the selectable tiles.
             foreach(TileBehaviour tile in selectableTiles)
             {
-                Debug.Log(tile.name);
                 tile.setMask(false, Character.Type.FRIENDLY);
             }
         }

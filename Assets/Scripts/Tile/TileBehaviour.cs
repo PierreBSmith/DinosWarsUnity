@@ -42,6 +42,10 @@ public class TileBehaviour : MonoBehaviour
     [HideInInspector]
     public float costFromProcessedTileToTargetTile = 0;
 
+    //The following variables are to tell if the tile is within range of normal stamina usage.
+    [HideInInspector]
+    public bool withinRange = false;
+
     [HideInInspector]
     public GameObject unit;
 
@@ -54,8 +58,14 @@ public class TileBehaviour : MonoBehaviour
     //This is called when a unit is clicked to show its range of movement
     public void setMask(bool isAttack, Character.Type type){
         movementMask.SetActive(true);
-        _sprite.color = Color.green;
-
+        if(withinRange)
+        {
+            _sprite.color = Color.green;
+        }
+        else
+        {
+            _sprite.color = Color.yellow;
+        }
         //movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(0, 1, 0, .5f);
         /*
         if (isAttack || type == Character.Type.ENEMY)
@@ -100,6 +110,8 @@ public class TileBehaviour : MonoBehaviour
         distance = 0;
 
         totalCost = costFromParentToCurrentTile = costFromProcessedTileToTargetTile = 0;
+
+        withinRange = false;
     }
 
     //Checks if there are tiles in the given direction.

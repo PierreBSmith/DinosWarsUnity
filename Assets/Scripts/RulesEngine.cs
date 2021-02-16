@@ -61,7 +61,7 @@ public class RulesEngine : MonoBehaviour
     {
         //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D
         character.clicked.AddListener(unitClicked);
-        character.doneMoving.AddListener(doneMoving);
+        //character.doneMoving.AddListener(doneMoving);
         /*
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
@@ -101,7 +101,8 @@ public class RulesEngine : MonoBehaviour
     {
         if (activeList.Count != 0)
         {
-            //moveCharacter(board.generateEnemyPath(activeList[0]), activeList[0]);
+            activeList[0].EnemyFindPath(activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().currentTile);
+            moveCharacter(activeList[0]); //I assume this always gets the first character since 
         }
         else
         {
@@ -128,7 +129,6 @@ public class RulesEngine : MonoBehaviour
             if (selected.character.type == Character.Type.FRIENDLY && target.selectable) 
             {
                 //moveCharacter(path, selected);
-                Debug.Log("Moving " + selected.name + " to " + target.name);
                 selected.FindPath(target);
                 moveCharacter(selected);
             }
@@ -143,10 +143,11 @@ public class RulesEngine : MonoBehaviour
         //character.move(path);
         //Move function is called here.
         character.Move();
-        //occupyTile(character.currentTile, character);
+        occupyTile(character.currentTile, character);
         //TODO: The character should be able to make an action after moving.
         activeList.Remove(character);
-        
+        doneMoving();
+        //Debug.Log("Number of active units remaining: " + activeList.Count);
     }
 
     //Helper function that sets what unit is occupying a tile called by moveCharacter()
@@ -164,7 +165,6 @@ public class RulesEngine : MonoBehaviour
     //Event handler that is called by character when it stops moving.
     private void doneMoving()
     {
-
         moving = false;
         if (activeList.Count == 0)
         {
@@ -179,7 +179,7 @@ public class RulesEngine : MonoBehaviour
     //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
     private void unitClicked(CharacterMovement character)
     {
-        Debug.Log(character + " has been clicked");
+        //Debug.Log(character + " has been clicked");
         if (activeTeam == Character.Type.FRIENDLY && !moving)
         {
             if (selected == null) //if not unit is selected select unit clicked

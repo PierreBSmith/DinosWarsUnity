@@ -20,3 +20,4 @@ MonoBehaviour:
   HP: 0
   currHP: 0
   grounded: 0
+  maxStamina: 0

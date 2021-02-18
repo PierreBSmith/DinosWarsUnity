@@ -1,16 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
 
 [Serializable]
 public class TileEvent : UnityEvent<TileBehaviour> { }
-public class TileBehaviour : MonoBehaviour, IPointerClickHandler
+public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
 {
     public Tile tile;
+
     [HideInInspector]
     public GameObject movementMask;
     private SpriteRenderer _sprite;
@@ -85,8 +85,8 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler
         _sprite.color = Color.white;
         movementMask.SetActive(false);
     }
-    //Event handler
-    //void OnMouseDown()
+    ////Event handler
+    //void OnMouseUp()
     //{
     //    clicked.Invoke(this);
     //}
@@ -94,6 +94,15 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         clicked.Invoke(this);
+    }
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Debug.Log("DOWN");
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log("UP");
     }
 
     // Start is called before the first frame update
@@ -122,27 +131,33 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler
 
     //Checks if there are tiles in the given direction.
     //direction given as a Vector3 instead of a Vector2 for addition to position purposes since transform.position is a Vector3
-    private void CheckTile(Vector3 direction)
+    //no longer Vector3 because colliders on terrain are now 2d instead of 3d
+    private void CheckTile(Vector2 direction)
     {
         Vector2 tileChecker = new Vector2(0.25f, 0.25f); //this is just a Vector2 range
-        Collider[] colliders = Physics.OverlapBox(transform.position + direction, tileChecker); //draws a box that overlaps with all corners of the neighboring tiles
-        foreach(Collider collider in colliders)
+        Collider2D collider = Physics2D.OverlapBox((Vector2)transform.position + direction, tileChecker, 0); //draws a box that overlaps with all corners of the neighboring tiles
+        //foreach(Collider collider in colliders)
+        //{
+        if (collider)
         {
             TileBehaviour tile = collider.GetComponent<TileBehaviour>();
-            if(tile != null && tile.tile.walkable)
+            if (tile != null && tile.tile.walkable)
             {
                 neighbours.Add(tile);
             }
         }
+        //}
     }
 
     public void FindNeighbors()
     {
         ResetTile();
 
-        CheckTile(Vector3.up); //checks if tile above it
-        CheckTile(-Vector3.up); //checks if tile below it
-        CheckTile(Vector3.right); //checks if tile to the right
-        CheckTile(-Vector3.right); //checks if tile to the left
+        CheckTile(Vector2.up); //checks if tile above it
+        CheckTile(-Vector2.up); //checks if tile below it
+        CheckTile(Vector2.right); //checks if tile to the right
+        CheckTile(-Vector2.right); //checks if tile to the left
     }
+
+
 }

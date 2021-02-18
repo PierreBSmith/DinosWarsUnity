@@ -85,7 +85,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         clicked.Invoke(this);
-        //Debug.Log("ho");
+        //Debug.Log("Character");
     }
 
     //CHARACTER RESET FUNCTION. PLEASE CALL BEFORE THE START OF THE PLAYER PHASE!!!!!!!!!!!!!
@@ -114,10 +114,10 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     private TileBehaviour GetTargetTile(GameObject target)
     {
-        RaycastHit hit; //It's not in 2D cuz we're working with the Z-Axis here.
+        RaycastHit2D hit; //It's not in 2D cuz we're working with the Z-Axis here. Has since been changed to 2D because needed to be for 2D colliders on tiles.
         TileBehaviour tile = null;
-
-        if(Physics.Raycast(target.transform.position, Vector3.forward, out hit, 1f))
+        hit = Physics2D.Raycast(target.transform.position, Vector2.down, .1f, LayerMask.GetMask("Tile"));
+        if (hit)
         {
             tile = hit.collider.GetComponent<TileBehaviour>();
         }

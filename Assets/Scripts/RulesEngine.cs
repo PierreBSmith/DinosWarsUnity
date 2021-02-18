@@ -62,6 +62,8 @@ public class RulesEngine : MonoBehaviour
         //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D
         character.clicked.AddListener(unitClicked);
         character.passTurn.AddListener(passTurn);
+        character.doneMoving.AddListener(doneMoving);
+
         /*
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
@@ -134,6 +136,7 @@ public class RulesEngine : MonoBehaviour
             }
             deselectCharacter();
 
+
         }
     }
     //Is called by moveFriendly() and enemyTurn() 
@@ -143,16 +146,17 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         //character.move(path);
         //Move function is called here.
-        character.Move();
-        occupyTile(character.currentTile, character);
-        //TODO: The character should be able to make an action after moving.
         activeList.Remove(character);
-        doneMoving();
+        character.Move();
+        
+        //TODO: The character should be able to make an action after moving.
+        
+        
         //Debug.Log("Number of active units remaining: " + activeList.Count);
     }
 
     //Helper function that sets what unit is occupying a tile called by moveCharacter()
-    private void occupyTile(TileBehaviour tile, CharacterMovement character)
+    public void occupyTile(TileBehaviour tile, CharacterMovement character)
     {
         tile.occupied = character;
     }

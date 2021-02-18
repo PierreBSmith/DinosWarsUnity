@@ -31,6 +31,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
+    public UnityEvent doneMoving;
     public Canvas canvas;
 
     void Start()
@@ -43,42 +44,9 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         GetCurrentTile();
     }
 
-    //This starts movement along the given path
-    /*
-    public void move(PathToTile path)
-    {
-        StartCoroutine(followPath(path));
-    }
     //This takes in a path and moves the unit along that path
-    private IEnumerator followPath(PathToTile path)
-    {
-        Queue<Vector2Int> actualPath = new Queue<Vector2Int>(path.path);
-        actualPath.Enqueue(path.tile);
-        position = path.tile;
-        Vector2 target = actualPath.Dequeue(); //We need to figure out how to gradually increase stamina intake depending on distance.
-        while (true)
-        { 
-            Vector2 dist = target - (Vector2)transform.position;
-            print(character.speed);
-            if (dist.magnitude > 0.05)
-            {
-                //I assume this is where the unit records that it has moved one tile?
-                transform.position += (Vector3)(dist.normalized * Time.deltaTime * character.speed);
-            }
-            else if(actualPath.Count != 0)
-            {
-                transform.position += (Vector3)dist;
-                target = actualPath.Dequeue();
-            }
-            else
-            {
-                doneMoving.Invoke();
-                break;
-            }
-            yield return null;
-        }
-    }
-    */
+
+
     //Event handler functions
     //void OnMouseDown()
     //{
@@ -209,7 +177,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         tile.targetTile = true;
 
         TileBehaviour nextTile = tile;
-        while(nextTile != null)
+
+        while (nextTile != null)
         {
             if(nextTile.selectable && nextTile != currentTile)
             {
@@ -247,14 +216,22 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void Move()
     {
-        while(path.Count > 0)
+        Debug.Log(path.Count);
+        StartCoroutine(followPath());
+        DisplayMovementRange(false);
+        RemoveSelectableTiles();
+        GetCurrentTile();
+    }
+    private IEnumerator followPath()
+    {
+        while (true)
         {
             TileBehaviour moveTarget = path.Peek();
             Vector3 targetPosition = moveTarget.transform.position;
             targetPosition.z -= HEIGHT_OF_UNIT_ABOVE_TILE;
-        
+
             //Calculates Unit's position
-            if(Vector2.Distance(transform.position, targetPosition) >= 0.05f)
+            if (Vector2.Distance(transform.position, targetPosition) >= 0.05f)
             {
                 CalculateHeading(targetPosition);
                 SetVelocity();
@@ -267,7 +244,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 //The unit has reached the center of the tile
                 transform.position = targetPosition;
                 //Stamina stuff here. For now it's going to be linear since we have no way of getting extra movement range yet.
-                if(moveTarget.distance > character.moveRange)
+                if (moveTarget.distance > character.moveRange)
                 {
                     int extraDistance = (moveTarget.distance - character.moveRange) + 1;
                     currentStamina -= extraDistance * LINEAR_STAMINA_DEPLETION;
@@ -276,15 +253,57 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 {
                     currentStamina -= LINEAR_STAMINA_DEPLETION;
                 }
-                path.Pop();
+                if (path.Count > 0)
+                {
+                    path.Pop();
+                }
+                else
+                {
+                    GetCurrentTile();
+                    currentTile.occupied = this;
+                    doneMoving.Invoke();
+                    break;
+                }
             }
+            yield return null;
         }
-        DisplayMovementRange(false);
-        RemoveSelectableTiles();
-        GetCurrentTile();
-        //doneMoving.Invoke();
+        
     }
+    //private IEnumerator followPath(PathToTile path)
+    //{
+    //    Queue<Vector2Int> actualPath = new Queue<Vector2Int>(path.path);
+    //    actualPath.Enqueue(path.tile);
+    //    position = path.tile;
+    //    Vector2 target = actualPath.Dequeue(); //We need to figure out how to gradually increase stamina intake depending on distance.
+    //    while (true)
+    //    {
+    //        Vector2 dist = target - (Vector2)transform.position;
+    //        print(character.speed);
+    //        if (dist.magnitude > 0.05)
+    //        {
+    //            //I assume this is where the unit records that it has moved one tile?
+    //            transform.position += (Vector3)(dist.normalized * Time.deltaTime * character.speed);
+    //        }
+    //        else if (actualPath.Count != 0)
+    //        {
+    //            transform.position += (Vector3)dist;
+    //            target = actualPath.Dequeue();
+    //        }
+    //        else
+    //        {
+    //            doneMoving.Invoke();
+    //            break;
+    //        }
+    //        yield return null;
+    //    }
+    //}
 
+    //This starts movement along the given path
+    /*
+    public void move(PathToTile path)
+    {
+        StartCoroutine(followPath(path));
+    }*/
     //Now the fun stuff. Pathfinding for AI :D
     //A* time
     protected TileBehaviour FindLowestTotalCost(List<TileBehaviour> list)
@@ -332,6 +351,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //The previous methods were all just helper functions
     public void EnemyFindPath(TileBehaviour target)
     {
+        
         ComputeNeighboringTiles();
         GetCurrentTile();
         FindSelectableTiles();
@@ -345,10 +365,13 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
         while(openList.Count > 0)
         {
+            
             TileBehaviour tile = FindLowestTotalCost(openList); //finds next tile with lowest cost
+            Debug.Log(tile);
             closedList.Add(tile); //we looking at it now, so it shouldn't be looked at ever again
             if(tile == target)
             {
+                
                 //We've found our destination and now time to get there
                 targetTile = FindEndTile(tile);
                 FindPath(targetTile);
@@ -425,7 +448,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 tile.clearMask();
             }
         }
-        
+
     }
 }
 

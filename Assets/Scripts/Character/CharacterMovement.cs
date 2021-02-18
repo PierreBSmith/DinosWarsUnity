@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using System;
 using UnityEngine.EventSystems;
-
+using System;
 [Serializable]
 public class CharacterEvent : UnityEvent<CharacterMovement> { }
 

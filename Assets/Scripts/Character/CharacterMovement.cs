@@ -131,7 +131,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private void FindAttackableTiles()
+    public void FindAttackableTiles()
     {
         ComputeNeighboringTiles();
         GetCurrentTile();
@@ -153,8 +153,9 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
                 selectableTiles.Add(tile);
                 tile.selectable = true;
-                if(tile.occupied && tile.occupied.character.type == Character.Type.ENEMY)
+                if(tile.occupied && tile.occupied.character.type != character.type)
                 {
+                    //Gets all units in attack range that aren't on their team
                     attackableList.Add(tile.occupied);
                 }
             }
@@ -419,10 +420,9 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //The real A*
     //The previous methods were all just helper functions
     public void EnemyFindPath(TileBehaviour target)
-    {
-        
-        ComputeNeighboringTiles();
-        GetCurrentTile();
+    { 
+        //ComputeNeighboringTiles();
+        //GetCurrentTile();
         FindSelectableTiles();
 
         List<TileBehaviour> openList = new List<TileBehaviour>(); //tiles to visit

@@ -105,10 +105,20 @@ public class RulesEngine : MonoBehaviour
     {
         if (activeList.Count != 0)
         {
-            //Debug.Log(activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().name);
-            activeList[0].EnemyFindPath(activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().currentTile);
-            //Debug.Log(activeList[0].name);
-            moveCharacter(activeList[0]); //I assume this always gets the first character since 
+            selectCharacter(activeList[0]);
+            TileBehaviour target = activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().currentTile;
+            activeList[0].FindAttackableTiles();
+            if(activeList[0].attackableList.Count > 0 && activeList[0].attackableList.Contains(target.occupied))
+            {
+                Debug.Log(target.occupied);
+                attackCharacter(target.occupied);
+            }
+            else
+            {
+                activeList[0].EnemyFindPath(target);
+                //Debug.Log(activeList[0].name);
+                moveCharacter(activeList[0]); //I assume this always gets the first character since 
+            }
         }
         else
         {
@@ -260,7 +270,7 @@ public class RulesEngine : MonoBehaviour
         {
             character.canvas.gameObject.SetActive(true);
         }
-        else if (character.character.type == Character.Type.ENEMY) //else if enemy show move range
+        else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
             selected.DisplayRange(true, false);
         }

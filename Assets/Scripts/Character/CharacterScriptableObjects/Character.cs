@@ -16,10 +16,8 @@ public class Character : ScriptableObject
     public Type type;
     public int attackRange;
     public int attackDamage;
-    public int HP;
-    public int currHP; 
+    public int maxHP;
     public bool grounded;
-
     public int maxStamina;
     //TODO: Put all unit stats, Inventory, etc also in here
 }

@@ -61,7 +61,7 @@ public class RulesEngine : MonoBehaviour
     {
         //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D
         character.clicked.AddListener(unitClicked);
-        //character.doneMoving.AddListener(doneMoving);
+        character.passTurn.AddListener(passTurn);
         /*
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
@@ -132,9 +132,9 @@ public class RulesEngine : MonoBehaviour
                 selected.FindPath(target);
                 moveCharacter(selected);
             }
-            
+            deselectCharacter();
+
         }
-        deselectCharacter();
     }
     //Is called by moveFriendly() and enemyTurn() 
     private void moveCharacter(CharacterMovement character)//PathToTile path, 
@@ -166,6 +166,7 @@ public class RulesEngine : MonoBehaviour
     //Event handler that is called by character when it stops moving.
     private void doneMoving()
     {
+        
         moving = false;
         if (activeList.Count == 0)
         {
@@ -199,17 +200,34 @@ public class RulesEngine : MonoBehaviour
         }
     }
 
+    private void passTurn(CharacterMovement character)
+    {
+        activeList.Remove(character);
+        deselectCharacter();
+        if (activeList.Count == 0)
+        {
+            doneMoving();
+        }
+    }
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
         selected = character;
-        selected.DisplayMovementRange(true);
+        if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
+        {
+            character.canvas.gameObject.SetActive(true);
+        }
+        else if (character.character.type == Character.Type.ENEMY) //else if enemy show move range
+        {
+            selected.DisplayMovementRange(true);
+        }
         //board.showMoveRange(character);
     }
 
-    //helper function called from unitClicked(), moveFriendly(), and board.tileClicked()
+    //helper function called from unitClicked(), and doneMoving()
     private void deselectCharacter()
     {
+        selected.canvas.gameObject.SetActive(false);
         selected.DisplayMovementRange(false);
         selected = null;
         //board.clearMoveRange();

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   moveRange: 5
-  type: 0
+  type: 1
   attackRange: 0
   attackDamage: 0
   HP: 0

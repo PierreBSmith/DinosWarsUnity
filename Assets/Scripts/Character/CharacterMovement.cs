@@ -30,11 +30,13 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
-    public UnityEvent doneMoving; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
+    public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
+    public Canvas canvas;
 
     void Start()
     {
         currentStamina = character.maxStamina;
+        currHP = character.maxHP;
         GetExtraRange();
         //unfortunately would have to call this in Update if we decided to make a map with disappearing tiles LMAO
         tiles = GameObject.FindGameObjectsWithTag("Tile");
@@ -87,7 +89,17 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         clicked.Invoke(this);
         //Debug.Log("Character");
     }
-
+    //Button Panel functions
+    public void moveButtonClicked() //called when action panel move button is clicked
+    {
+        DisplayMovementRange(true);
+        canvas.gameObject.SetActive(false);
+    }
+    
+    public void passActive() //called when action panel pass button is clicked, removes unit from active list without taking any more actions
+    {
+        passTurn.Invoke(this);
+    }
     //CHARACTER RESET FUNCTION. PLEASE CALL BEFORE THE START OF THE PLAYER PHASE!!!!!!!!!!!!!
     public void ResetCharacter()
     {
@@ -402,7 +414,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             //We just call this to ensure that we get the selectable tiles.
             foreach(TileBehaviour tile in selectableTiles)
             {
-                tile.setMask(false, Character.Type.FRIENDLY);
+                tile.setMask(false, character.type);
             }
         }
         else

@@ -59,7 +59,11 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHa
     //This is called when a unit is clicked to show its range of movement
     public void setMask(bool isAttack, Character.Type type){
         movementMask.SetActive(true);
-        if(withinRange)
+        if(type == Character.Type.ENEMY)
+        {
+            _sprite.color = Color.red;
+        }
+        else if(withinRange)
         {
             _sprite.color = Color.green;
         }

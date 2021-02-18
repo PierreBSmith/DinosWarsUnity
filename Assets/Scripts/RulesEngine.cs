@@ -132,8 +132,9 @@ public class RulesEngine : MonoBehaviour
                 selected.FindPath(target);
                 moveCharacter(selected);
             }
-            deselectCharacter();
+            
         }
+        deselectCharacter();
     }
     //Is called by moveFriendly() and enemyTurn() 
     private void moveCharacter(CharacterMovement character)//PathToTile path, 

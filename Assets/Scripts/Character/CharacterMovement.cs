@@ -86,6 +86,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         clicked.Invoke(this);
+        //Debug.Log("ho");
     }
 
     //CHARACTER RESET FUNCTION. PLEASE CALL BEFORE THE START OF THE PLAYER PHASE!!!!!!!!!!!!!

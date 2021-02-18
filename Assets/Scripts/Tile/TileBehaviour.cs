@@ -7,7 +7,7 @@ using System;
 
 [Serializable]
 public class TileEvent : UnityEvent<TileBehaviour> { }
-public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
+public class TileBehaviour : MonoBehaviour, IPointerClickHandler
 {
     public Tile tile;
 
@@ -59,7 +59,7 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHa
     //This is called when a unit is clicked to show its range of movement
     public void setMask(bool isAttack, Character.Type type){
         movementMask.SetActive(true);
-        if(type == Character.Type.ENEMY)
+        if(type == Character.Type.ENEMY || isAttack)
         {
             _sprite.color = Color.red;
         }
@@ -71,17 +71,7 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHa
         {
             _sprite.color = Color.yellow;
         }
-        //movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(0, 1, 0, .5f);
-        /*
-        if (isAttack || type == Character.Type.ENEMY)
-        {
-            movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(1, 0, 0, .5f);
-        }
-        else
-        {
-            movementMask.GetComponent<SpriteShapeRenderer>().color = new Color(0, 1, 0, .5f);
-        }
-        */
+
     }
     //This is called to undo display of a movement range
     public void clearMask()
@@ -89,6 +79,7 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHa
         _sprite.color = Color.white;
         movementMask.SetActive(false);
     }
+
     ////Event handler
     //void OnMouseUp()
     //{
@@ -99,15 +90,7 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHa
     {
         clicked.Invoke(this);
     }
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        Debug.Log("DOWN");
-    }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        Debug.Log("UP");
-    }
 
     // Start is called before the first frame update
     void Awake()
@@ -139,17 +122,23 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler, IPointerDownHa
     private void CheckTile(Vector2 direction)
     {
         Vector2 tileChecker = new Vector2(0.25f, 0.25f); //this is just a Vector2 range
-        Collider2D collider = Physics2D.OverlapBox((Vector2)transform.position + direction, tileChecker, 0); //draws a box that overlaps with all corners of the neighboring tiles
+        Collider2D[] colliders = Physics2D.OverlapBoxAll((Vector2)transform.position + direction, tileChecker, 0); //draws a box that overlaps with all corners of the neighboring tiles
+        
         //foreach(Collider collider in colliders)
         //{
-        if (collider)
+        foreach(Collider2D collider in colliders)
         {
-            TileBehaviour tile = collider.GetComponent<TileBehaviour>();
-            if (tile != null && tile.tile.walkable)
+            if (collider)
             {
-                neighbours.Add(tile);
+                //Debug.Log(collider.name + " COLLIDE WITH THIS");
+                TileBehaviour tile = collider.GetComponent<TileBehaviour>();
+                if (tile != null && tile.tile.walkable)
+                {
+                    neighbours.Add(tile);
+                }
             }
         }
+        
         //}
     }
 

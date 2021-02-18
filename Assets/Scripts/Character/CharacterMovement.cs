@@ -26,13 +26,15 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     private Vector3 velocity = new Vector3(); //the speed the unit is moving
     private Vector3 heading = new Vector3(); //the direction the unit is moving
     private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
-    private int currHP;
+    public int currHP;
 
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
     public UnityEvent doneMoving;
+    public CharacterEvent unitAttacking;
     public Canvas canvas;
+    public List<CharacterMovement> attackableList = new List<CharacterMovement>();
 
     void Start()
     {
@@ -60,13 +62,22 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //Button Panel functions
     public void moveButtonClicked() //called when action panel move button is clicked
     {
-        DisplayMovementRange(true);
+        DisplayRange(true, false);
         canvas.gameObject.SetActive(false);
     }
     
     public void passActive() //called when action panel pass button is clicked, removes unit from active list without taking any more actions
     {
         passTurn.Invoke(this);
+    }
+
+    public void attackButtonClicked()
+    {
+
+        DisplayRange(true, true);
+        //Debug.Log(selectableTiles.Count);
+        canvas.gameObject.SetActive(false);
+        unitAttacking.Invoke(this);
     }
     //CHARACTER RESET FUNCTION. PLEASE CALL BEFORE THE START OF THE PLAYER PHASE!!!!!!!!!!!!!
     public void ResetCharacter()
@@ -89,7 +100,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 break;
             }
         }
-        Debug.Log(extraMovementRange);
+        //Debug.Log(extraMovementRange);
     }
 
     private TileBehaviour GetTargetTile(GameObject target)
@@ -120,6 +131,50 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    private void FindAttackableTiles()
+    {
+        ComputeNeighboringTiles();
+        GetCurrentTile();
+
+        //This BFS finds tiles. It has nothing to do with Pathfinding
+        Queue<TileBehaviour> process = new Queue<TileBehaviour>();
+        process.Enqueue(currentTile);
+        currentTile.visited = true;
+
+        while (process.Count > 0)
+        {
+            TileBehaviour tile = process.Dequeue();
+            //checks if the distance of that tile is within the movement range.
+            //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
+            if (tile.distance <= (character.attackRange) && tile != currentTile)//&& !tile.hasUnit
+            {
+                //These checks are for stamina usage stuff
+
+                //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
+                selectableTiles.Add(tile);
+                tile.selectable = true;
+                if(tile.occupied && tile.occupied.character.type == Character.Type.ENEMY)
+                {
+                    attackableList.Add(tile.occupied);
+                }
+            }
+
+            //This looks for more tiles that can be moved to
+            if (tile.distance < (character.attackRange))
+            {
+                foreach (TileBehaviour t in tile.neighbours)
+                {
+                    if (!t.visited)
+                    {
+                        t.parent = tile;
+                        t.visited = true;
+                        t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
+                        process.Enqueue(t);
+                    }
+                }
+            }
+        }
+    }
     private void FindSelectableTiles()
     {
         ComputeNeighboringTiles();
@@ -177,9 +232,9 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         tile.targetTile = true;
 
         TileBehaviour nextTile = tile;
-
+       // Debug.Log(path.Count + " path count " + character.type);
         while (nextTile != null)
-        {
+        { 
             if(nextTile.selectable && nextTile != currentTile)
             {
                 path.Push(nextTile);
@@ -216,17 +271,32 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void Move()
     {
-        Debug.Log(path.Count);
+        //Debug.Log(path.Count);
         StartCoroutine(followPath());
-        DisplayMovementRange(false);
+        DisplayRange(false, false);
         RemoveSelectableTiles();
         GetCurrentTile();
     }
+
     private IEnumerator followPath()
     {
+
+        TileBehaviour moveTarget;
+
         while (true)
         {
-            TileBehaviour moveTarget = path.Peek();
+            if (path.Count != 0)
+            {
+                moveTarget = path.Peek();
+
+            }
+            else {
+                GetCurrentTile();
+                currentTile.occupied = this;
+                doneMoving.Invoke();
+                break;
+
+            }
             Vector3 targetPosition = moveTarget.transform.position;
             targetPosition.z -= HEIGHT_OF_UNIT_ABOVE_TILE;
 
@@ -256,19 +326,16 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 if (path.Count > 0)
                 {
                     path.Pop();
+                    
                 }
-                else
-                {
-                    GetCurrentTile();
-                    currentTile.occupied = this;
-                    doneMoving.Invoke();
-                    break;
-                }
+
+                    
             }
             yield return null;
         }
         
     }
+
     //private IEnumerator followPath(PathToTile path)
     //{
     //    Queue<Vector2Int> actualPath = new Queue<Vector2Int>(path.path);
@@ -304,6 +371,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         StartCoroutine(followPath(path));
     }*/
+
     //Now the fun stuff. Pathfinding for AI :D
     //A* time
     protected TileBehaviour FindLowestTotalCost(List<TileBehaviour> list)
@@ -311,6 +379,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         TileBehaviour lowest = list[0];
         foreach(TileBehaviour tile in list)
         {
+            //Debug.Log(tile.name + " in FOR EACH");
             if(tile.totalCost < lowest.totalCost)
             {
                 lowest = tile;
@@ -362,16 +431,16 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         openList.Add(currentTile);
         currentTile.costFromProcessedTileToTargetTile = Vector2.Distance(currentTile.transform.position, target.transform.position);
         currentTile.totalCost = currentTile.costFromProcessedTileToTargetTile;
-
+        //Debug.Log(target.name + " NAME OF THE TARGET");
         while(openList.Count > 0)
         {
             
             TileBehaviour tile = FindLowestTotalCost(openList); //finds next tile with lowest cost
-            Debug.Log(tile);
+            //Debug.Log(tile.name);
             closedList.Add(tile); //we looking at it now, so it shouldn't be looked at ever again
             if(tile == target)
             {
-                
+                //Debug.Log("LET ME IN");
                 //We've found our destination and now time to get there
                 targetTile = FindEndTile(tile);
                 FindPath(targetTile);
@@ -429,15 +498,24 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     }
 
     //This is for displaying movement range
-    public void DisplayMovementRange(bool toActivate)
+    public void DisplayRange(bool toActivate, bool isAttackRange)
     {
         if(toActivate) //If activated, we highlight all the tiles
         {
-            FindSelectableTiles();//Finds all them delicious selectable tiles.
+            if (isAttackRange)
+            {
+                FindAttackableTiles();
+                //Debug.Log("PIERRE IS PEPE");
+            }
+            else
+            {
+                FindSelectableTiles();//Finds all them delicious selectable tiles.
+
+            }
             //We just call this to ensure that we get the selectable tiles.
             foreach(TileBehaviour tile in selectableTiles)
             {
-                tile.setMask(false, character.type);
+                tile.setMask(isAttackRange, character.type);
             }
         }
         else

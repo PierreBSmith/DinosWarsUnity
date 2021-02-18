@@ -12,7 +12,8 @@ public class RulesEngine : MonoBehaviour
     private List<CharacterMovement> NPCList;
     //private Board board;
     private Character.Type activeTeam;
-    private bool moving;
+    private bool moving = false;
+    private bool attacking = false;
     private List<CharacterMovement> activeList;
 
 
@@ -63,7 +64,7 @@ public class RulesEngine : MonoBehaviour
         character.clicked.AddListener(unitClicked);
         character.passTurn.AddListener(passTurn);
         character.doneMoving.AddListener(doneMoving);
-
+        character.unitAttacking.AddListener(unitAttacking);
         /*
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
@@ -96,6 +97,7 @@ public class RulesEngine : MonoBehaviour
             activeTeam = Character.Type.FRIENDLY;
             loadActiveList(friendlyList);
         }
+        //Debug.Log(activeTeam);
     }
     //Handles enemy ai turn movement. Wrapper function for moveCharacter
     //This will function might cause infinite recursion if enemylist is empty atm. This shouldnt be a problem in the future because the game should end if there are no enemys remaining so I am not fixing this.
@@ -103,12 +105,13 @@ public class RulesEngine : MonoBehaviour
     {
         if (activeList.Count != 0)
         {
+            //Debug.Log(activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().name);
             activeList[0].EnemyFindPath(activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().currentTile);
+            //Debug.Log(activeList[0].name);
             moveCharacter(activeList[0]); //I assume this always gets the first character since 
         }
         else
         {
-
             toggleTurn(); //This should never be called but is a fail safe
         }
 
@@ -128,7 +131,7 @@ public class RulesEngine : MonoBehaviour
     {
         if(selected)
         {
-            if (selected.character.type == Character.Type.FRIENDLY && target.selectable) 
+            if (!attacking && selected.character.type == Character.Type.FRIENDLY && target.selectable) 
             {
                 //moveCharacter(path, selected);
                 selected.FindPath(target);
@@ -146,9 +149,9 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         //character.move(path);
         //Move function is called here.
-        activeList.Remove(character);
+        activeList.Remove(character); //This is in this order to make sure that the character is removed from active list before doneMoving() is called
         character.Move();
-        
+        //Debug.Log("Activelist count is " + activeList.Count);
         //TODO: The character should be able to make an action after moving.
         
         
@@ -191,10 +194,15 @@ public class RulesEngine : MonoBehaviour
             if (selected == null) //if not unit is selected select unit clicked
             {
                 selectCharacter(character);
-            } 
+            }
             else if (selected == character) //if unit clicked is currently selected deselect it
             {
                 deselectCharacter();
+            }
+            else if (attacking && selected.attackableList.Contains(character))
+            {
+                Debug.Log(character.name + " is being attacked");
+                attackCharacter(character);
             }
             else //if unit clicked is not selected and there is already a unit selected. Deselect old unit and select new unit
             {
@@ -213,6 +221,37 @@ public class RulesEngine : MonoBehaviour
             doneMoving();
         }
     }
+
+    private void unitAttacking(CharacterMovement character)
+    {
+        attacking = true;
+
+    }
+
+    private void attackCharacter(CharacterMovement character)
+    {
+        character.currHP -= selected.character.attackDamage;
+        Debug.Log(character.name + " has " + character.currHP + " HP left");
+        if(character.currHP <= 0)
+        {
+            if(character.character.type == Character.Type.FRIENDLY)
+            {
+                friendlyList.Remove(character);
+            }
+            else if (character.character.type == Character.Type.ENEMY)
+            {
+                enemyList.Remove(character);
+            }
+            else
+            {
+                NPCList.Remove(character);
+            }
+            character.gameObject.SetActive(false);
+        }
+        activeList.Remove(selected);
+        deselectCharacter();
+        doneMoving();
+    }
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
@@ -223,7 +262,7 @@ public class RulesEngine : MonoBehaviour
         }
         else if (character.character.type == Character.Type.ENEMY) //else if enemy show move range
         {
-            selected.DisplayMovementRange(true);
+            selected.DisplayRange(true, false);
         }
         //board.showMoveRange(character);
     }
@@ -232,7 +271,8 @@ public class RulesEngine : MonoBehaviour
     private void deselectCharacter()
     {
         selected.canvas.gameObject.SetActive(false);
-        selected.DisplayMovementRange(false);
+        selected.DisplayRange(false, false);
+        attacking = false;
         selected = null;
         //board.clearMoveRange();
     }

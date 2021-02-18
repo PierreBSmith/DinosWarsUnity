@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using System;
 
 [Serializable]
 public class TileEvent : UnityEvent<TileBehaviour> { }
-public class TileBehaviour : MonoBehaviour
+public class TileBehaviour : MonoBehaviour, IPointerClickHandler
 {
     public Tile tile;
     [HideInInspector]
@@ -85,7 +86,12 @@ public class TileBehaviour : MonoBehaviour
         movementMask.SetActive(false);
     }
     //Event handler
-    void OnMouseDown()
+    //void OnMouseDown()
+    //{
+    //    clicked.Invoke(this);
+    //}
+
+    public void OnPointerClick(PointerEventData eventData)
     {
         clicked.Invoke(this);
     }

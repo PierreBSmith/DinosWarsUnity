@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 
 [Serializable]
 public class CharacterEvent : UnityEvent<CharacterMovement> { }
 
-public class CharacterMovement : MonoBehaviour
+public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 {
     public Character character;
+
     [Header("Stamina Implementation")]
     private int currentStamina;
     private const int LINEAR_STAMINA_DEPLETION = 10;
@@ -24,6 +27,7 @@ public class CharacterMovement : MonoBehaviour
     private Vector3 velocity = new Vector3(); //the speed the unit is moving
     private Vector3 heading = new Vector3(); //the direction the unit is moving
     private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
+    private int currHP;
 
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
@@ -74,8 +78,12 @@ public class CharacterMovement : MonoBehaviour
         }
     }
     */
-    //Event handler function
-    void OnMouseDown()
+    //Event handler functions
+    //void OnMouseDown()
+    //{
+    //    clicked.Invoke(this);
+    //}
+    public void OnPointerClick(PointerEventData eventData)
     {
         clicked.Invoke(this);
     }

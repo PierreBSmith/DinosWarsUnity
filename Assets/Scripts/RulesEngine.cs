@@ -79,7 +79,17 @@ public class RulesEngine : MonoBehaviour
         if(activeTeam == Character.Type.FRIENDLY)
         {
             activeTeam = Character.Type.ENEMY;
+            foreach(CharacterMovement friend in friendlyList)
+            {
+                //This resets the temporary animation stuff
+                friend.ResetTemp();
+            }
             loadActiveList(enemyList);
+            foreach(CharacterMovement enemy in enemyList)
+            {
+                //This resets all values of the current team's turn!
+                enemy.ResetTurn();
+            }
         }else if(activeTeam == Character.Type.ENEMY)
         {
             if(NPCList != null && NPCList.Count != 0)
@@ -90,7 +100,16 @@ public class RulesEngine : MonoBehaviour
             else
             {
                 activeTeam = Character.Type.FRIENDLY;
+                foreach(CharacterMovement enemy in enemyList)
+                {
+                    enemy.ResetTemp();
+                }
                 loadActiveList(friendlyList);
+                foreach(CharacterMovement friend in friendlyList)
+                {
+                    //This resets the temporary animation stuff
+                    friend.ResetTurn();
+                }
             }
         }
         else {
@@ -147,9 +166,7 @@ public class RulesEngine : MonoBehaviour
                 selected.FindPath(target);
                 moveCharacter(selected);
             }
-            deselectCharacter();
-
-
+            //deselectCharacter();
         }
     }
     //Is called by moveFriendly() and enemyTurn() 
@@ -183,8 +200,10 @@ public class RulesEngine : MonoBehaviour
     //Event handler that is called by character when it stops moving.
     private void doneMoving()
     {
-        
         moving = false;
+        selected._sprite.color = Color.gray;
+        selected._animator.enabled = false;
+        deselectCharacter();
         if (activeList.Count == 0)
         {
             toggleTurn();
@@ -225,11 +244,14 @@ public class RulesEngine : MonoBehaviour
     private void passTurn(CharacterMovement character)
     {
         activeList.Remove(character);
-        deselectCharacter();
+        //deselectCharacter();
+        doneMoving();
+        /*
         if (activeList.Count == 0)
         {
             doneMoving();
         }
+        */
     }
 
     private void unitAttacking(CharacterMovement character)
@@ -244,23 +266,28 @@ public class RulesEngine : MonoBehaviour
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)
         {
-            if(character.character.type == Character.Type.FRIENDLY)
-            {
-                friendlyList.Remove(character);
-            }
-            else if (character.character.type == Character.Type.ENEMY)
-            {
-                enemyList.Remove(character);
-            }
-            else
-            {
-                NPCList.Remove(character);
-            }
-            character.gameObject.SetActive(false);
+            KillUnit(character);
         }
         activeList.Remove(selected);
-        deselectCharacter();
         doneMoving();
+    }
+
+    private void KillUnit(CharacterMovement character)
+    {
+        if(character.character.type == Character.Type.FRIENDLY)
+        {
+            friendlyList.Remove(character);
+        }
+        else if (character.character.type == Character.Type.ENEMY)
+        {
+            enemyList.Remove(character);
+        }
+        else
+        {
+            NPCList.Remove(character);
+        }
+        deoccupyTile(character.currentTile);
+        character.gameObject.SetActive(false);
     }
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)

@@ -65,7 +65,7 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler
         }
         else if(withinRange)
         {
-            _sprite.color = Color.green;
+            _sprite.color = Color.cyan;
         }
         else
         {

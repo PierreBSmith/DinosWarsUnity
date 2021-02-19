@@ -27,6 +27,10 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     private Vector3 heading = new Vector3(); //the direction the unit is moving
     private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
     public int currHP;
+    [HideInInspector]
+    public SpriteRenderer _sprite;
+    [HideInInspector]
+    public Animator _animator;
 
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
@@ -44,6 +48,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         //unfortunately would have to call this in Update if we decided to make a map with disappearing tiles LMAO
         tiles = GameObject.FindGameObjectsWithTag("Tile");
         GetCurrentTile();
+        _sprite = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
     }
 
     //This takes in a path and moves the unit along that path
@@ -80,9 +86,19 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         unitAttacking.Invoke(this);
     }
     //CHARACTER RESET FUNCTION. PLEASE CALL BEFORE THE START OF THE PLAYER PHASE!!!!!!!!!!!!!
-    public void ResetCharacter()
+    public void ResetTurn()
     {
         currentStamina = character.maxStamina;
+        _sprite.color = Color.white;
+        _animator.enabled = true;
+        _animator.Play("Idle", 0, 0f);
+    }
+
+    public void ResetTemp()
+    {
+        _sprite.color = Color.white;
+        _animator.enabled = true;
+        _animator.Play("Idle", 0, 0f);
     }
 
     private void GetExtraRange()
@@ -191,10 +207,10 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             TileBehaviour tile = process.Dequeue();
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
-            if(tile.distance <= (character.moveRange + extraMovementRange) && !tile.hasUnit)
+            if(tile.distance <= (character.moveRange + extraMovementRange) && (!tile.occupied || tile == currentTile))
             {
                 //These checks are for stamina usage stuff
-                if(tile.distance <= character.moveRange)
+                if(tile.distance <= character.moveRange && (!tile.occupied || tile == currentTile))
                 {
                     tile.withinRange = true;
                 }

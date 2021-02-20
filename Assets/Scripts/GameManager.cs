@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     //public TileBehaviour tilePrefab;
     private GameObject[] tiles;
 
+    [Header("Memory Scriptable Values")]
+    public List<Item> allItems = new List<Item>();
+
     void Start()
     {
         /*

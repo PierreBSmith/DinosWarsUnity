@@ -32,6 +32,10 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     [HideInInspector]
     public Animator _animator;
 
+    [Header("Inventory")]
+    [HideInInspector]
+    public CharacterInventory inventory;
+
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
@@ -50,6 +54,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         GetCurrentTile();
         _sprite = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
+        inventory = GetComponent<CharacterInventory>();
     }
 
     //This takes in a path and moves the unit along that path
@@ -79,7 +84,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void attackButtonClicked()
     {
-
         DisplayRange(true, true);
         //Debug.Log(selectableTiles.Count);
         canvas.gameObject.SetActive(false);
@@ -270,7 +274,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //Sets the velocity to move the unit in that direction
     private void SetVelocity()
     {
-        velocity = heading * character.speed;
+        velocity = heading * character.moveSpeed;
     }
 
     protected void RemoveSelectableTiles()

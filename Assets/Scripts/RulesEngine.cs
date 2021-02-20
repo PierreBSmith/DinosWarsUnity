@@ -262,12 +262,13 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
-        character.currHP -= selected.character.attackDamage;
+        character.currHP -= selected.inventory.equippedWeapon.might;
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)
         {
             KillUnit(character);
         }
+        selected.inventory.equippedWeapon.uses--; //This should go down everytime the unit attacks
         activeList.Remove(selected);
         doneMoving();
     }

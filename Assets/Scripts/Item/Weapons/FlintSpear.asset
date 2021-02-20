@@ -9,14 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
-  m_Name: Tatam
-  m_EditorClassIdentifier: 
-  moveSpeed: 3
-  moveRange: 5
-  type: 1
-  attackRange: 1
-  attackDamage: 1
-  maxHP: 20
-  grounded: 0
-  maxStamina: 0
+  m_Script: {fileID: 0}
+  m_Name: FlintSpear
+  m_EditorClassIdentifier: Assembly-CSharp::Item
+  type: 0
+  maxUsage: 10
+  weaponType: 1
+  range: 0
+  might: 10
+  hit: 60
+  avoid: 30
+  weight: 5
+  crit: 0

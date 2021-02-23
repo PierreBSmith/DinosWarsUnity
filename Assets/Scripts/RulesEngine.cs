@@ -207,6 +207,9 @@ public class RulesEngine : MonoBehaviour
     {
         moving = false;
         selected._sprite.color = Color.gray;
+        selected._sprite.flipX = selected.baseFlipState;
+        //This stays in "Selected" state for some god awful reason because EVERYTHING HAPPENS IN A SINGLE FRAME. Thus there is no time for the animation to change back. -____-
+        //This should be fixed upon a true end turn, but elsewise, it's going to be sadge for now.
         selected._animator.enabled = false;
         deselectCharacter();
         if (activeList.Count == 0)
@@ -217,7 +220,6 @@ public class RulesEngine : MonoBehaviour
         {
             enemyTurn();
         }
-        
     }
     //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
     private void unitClicked(CharacterMovement character)
@@ -309,6 +311,7 @@ public class RulesEngine : MonoBehaviour
         selected = character;
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
+            selected._animator.SetBool("selected", true);
             character.canvas.gameObject.SetActive(true);
         }
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
@@ -323,6 +326,7 @@ public class RulesEngine : MonoBehaviour
     {
         selected.canvas.gameObject.SetActive(false);
         selected.DisplayRange(false, false);
+        selected._animator.SetBool("selected", false);
         attacking = false;
         selected = null;
         //board.clearMoveRange();

@@ -78,7 +78,7 @@ SpriteRenderer:
   m_Sprite: {fileID: -7630343930561710917, guid: c8f5ec9ae28975a44ae8610332f495f1,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -126,10 +126,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   character: {fileID: 11400000, guid: c4ed8e6c3df9cc44f99c0f39459b3a6f, type: 2}
-  currentTile: {fileID: 0}
-  currHP: 0
   _sprite: {fileID: 0}
   _animator: {fileID: 0}
+  currentTile: {fileID: 0}
+  currHP: 0
   inventory: {fileID: 0}
   position: {x: 0, y: 0}
   clicked:
@@ -142,6 +142,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   unitAttacking:
+    m_PersistentCalls:
+      m_Calls: []
+  openInventory:
     m_PersistentCalls:
       m_Calls: []
   canvas: {fileID: 9153381931229254102}

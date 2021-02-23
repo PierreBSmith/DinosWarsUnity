@@ -31,6 +31,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     private Vector3 heading = new Vector3(); //the direction the unit is moving
     private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
     public int currHP;
+    [HideInInspector]
+    public bool baseFlipState;
 
     [Header("Inventory")]
     [HideInInspector]
@@ -56,6 +58,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         _sprite = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         inventory = GetComponent<CharacterInventory>();
+        baseFlipState = _sprite.flipX;
     }
 
     //This takes in a path and moves the unit along that path
@@ -308,13 +311,12 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     private IEnumerator followPath()
     {
-
         TileBehaviour moveTarget;
-
         while (true)
         {
             if (path.Count != 0)
             {
+                _animator.SetBool("moving", true);
                 moveTarget = path.Peek();
 
             }
@@ -332,6 +334,28 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             if (Vector2.Distance(transform.position, targetPosition) >= 0.05f)
             {
                 CalculateHeading(targetPosition);
+                if(heading.x < 0)
+                {
+                    if(character.type != Character.Type.ENEMY)
+                    {
+                        _sprite.flipX = !baseFlipState;
+                    }
+                    else
+                    {
+                        _sprite.flipX = baseFlipState;
+                    }
+                }
+                else
+                {
+                    if(character.type != Character.Type.ENEMY)
+                    {
+                        _sprite.flipX = baseFlipState;
+                    }
+                    else
+                    {
+                        _sprite.flipX = !baseFlipState;
+                    }
+                }
                 SetVelocity();
                 transform.position += velocity * Time.deltaTime;
                 //We don't need to attach Rigidbody2D to the unit because they're not acting on Physics, they're just moving their transform places.
@@ -354,10 +378,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 if (path.Count > 0)
                 {
                     path.Pop();
-                    
-                }
-
-                    
+                    _animator.SetBool("moving", false);
+                }                    
             }
             yield return null;
         }

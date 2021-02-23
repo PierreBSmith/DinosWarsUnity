@@ -13,13 +13,16 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public Character character;
 
     [Header("Stamina Implementation")]
-    private int currentStamina;
+    public int currentStamina;
     private const int LINEAR_STAMINA_DEPLETION = 10;
+    public readonly int attackStaminaCost = 30;
     private int extraMovementRange;
     [Header("Movement")]
     private List<TileBehaviour> selectableTiles = new List<TileBehaviour>(); //the list of tiles that can be moved to
     private GameObject[] tiles; //stores all tiles of the map
     private Stack<TileBehaviour> path = new Stack<TileBehaviour>(); //the actual path the character wishes to travel along
+    public bool hasMoved = false; //variables to know if the unit can still do this action this turn
+    public bool hasAttacked = false;
     [HideInInspector]
     public TileBehaviour currentTile; //the tile the unit is currently inhabiting
     private TileBehaviour targetTile;
@@ -68,9 +71,13 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //Button Panel functions
     public void moveButtonClicked() //called when action panel move button is clicked
     {
-        DisplayRange(true, false);
-        canvas.gameObject.SetActive(false);
+        if (!hasMoved)
+        {
+            DisplayRange(true, false);
+            canvas.gameObject.SetActive(false);
+        }
     }
+
     
     public void passActive() //called when action panel pass button is clicked, removes unit from active list without taking any more actions
     {
@@ -79,16 +86,20 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void attackButtonClicked()
     {
-
-        DisplayRange(true, true);
-        //Debug.Log(selectableTiles.Count);
-        canvas.gameObject.SetActive(false);
-        unitAttacking.Invoke(this);
+        if (!hasAttacked && currentStamina >= attackStaminaCost)
+        {
+            DisplayRange(true, true);
+            //Debug.Log(selectableTiles.Count);
+            canvas.gameObject.SetActive(false);
+            unitAttacking.Invoke(this);
+        }
     }
     //CHARACTER RESET FUNCTION. PLEASE CALL BEFORE THE START OF THE PLAYER PHASE!!!!!!!!!!!!!
     public void ResetTurn()
     {
         currentStamina = character.maxStamina;
+        hasMoved = false;
+        hasAttacked = false;
         _sprite.color = Color.white;
         _animator.enabled = true;
         _animator.Play("Idle", 0, 0f);
@@ -106,11 +117,11 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         int normalStaminaUsage = character.moveRange * LINEAR_STAMINA_DEPLETION;
         int maxStaminaUsage = normalStaminaUsage;
         extraMovementRange = 0;
-        while(maxStaminaUsage < character.maxStamina)
+        while(maxStaminaUsage < currentStamina)
         {
             extraMovementRange++;
             maxStaminaUsage += (extraMovementRange + 1) * LINEAR_STAMINA_DEPLETION;
-            if(maxStaminaUsage > character.maxStamina)
+            if(maxStaminaUsage > currentStamina)
             {
                 extraMovementRange--;
                 break;
@@ -207,6 +218,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             TileBehaviour tile = process.Dequeue();
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
+            
             if(tile.distance <= (character.moveRange + extraMovementRange) && (!tile.occupied || tile == currentTile))
             {
                 //These checks are for stamina usage stuff
@@ -233,6 +245,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                         t.parent = tile;
                         t.visited = true;
                         t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
+                        //Debug.Log("Distance " + t.distance);
                         process.Enqueue(t);
                     }
                 }
@@ -273,7 +286,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         velocity = heading * character.speed;
     }
 
-    protected void RemoveSelectableTiles()
+    public void RemoveSelectableTiles()
     {
         if(currentTile != null)
         {
@@ -291,7 +304,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         //Debug.Log(path.Count);
         StartCoroutine(followPath());
         DisplayRange(false, false);
-        RemoveSelectableTiles();
         GetCurrentTile();
     }
 
@@ -308,6 +320,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
             }
             else {
+                RemoveSelectableTiles();
                 GetCurrentTile();
                 currentTile.occupied = this;
                 doneMoving.Invoke();
@@ -330,6 +343,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             {
                 //The unit has reached the center of the tile
                 transform.position = targetPosition;
+                //Debug.Log(moveTarget.distance + " distance is");
                 //Stamina stuff here. For now it's going to be linear since we have no way of getting extra movement range yet.
                 if (moveTarget.distance > character.moveRange)
                 {
@@ -343,14 +357,12 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 if (path.Count > 0)
                 {
                     path.Pop();
-                    
+
                 }
 
-                    
             }
             yield return null;
         }
-        
     }
 
     //private IEnumerator followPath(PathToTile path)
@@ -445,6 +457,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         List<TileBehaviour> closedList = new List<TileBehaviour>(); //tiles already visited and processed
 
         openList.Add(currentTile);
+        Debug.Log(target);
+        Debug.Log(currentTile);
         currentTile.costFromProcessedTileToTargetTile = Vector2.Distance(currentTile.transform.position, target.transform.position);
         currentTile.totalCost = currentTile.costFromProcessedTileToTargetTile;
         //Debug.Log(target.name + " NAME OF THE TARGET");
@@ -543,6 +557,27 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             }
         }
 
+    }
+
+    public void turnOnPanel()
+    {
+        canvas.gameObject.SetActive(true);
+        if (hasAttacked)
+        {
+            canvas.transform.Find("Panel").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = false;
+            //canvas.transform.GetComponentsInChildren<Button>().Interactable = false;
+        }
+        if (hasMoved)
+        {
+            canvas.transform.Find("Panel").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = false;
+        }
+    }
+
+    public void turnOffPanel()
+    {
+        canvas.transform.Find("Panel").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = true;
+        canvas.transform.Find("Panel").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = true;
+        canvas.gameObject.SetActive(false);
     }
 }
 

@@ -129,7 +129,7 @@ public class RulesEngine : MonoBehaviour
             activeList[0].FindAttackableTiles();
             if(activeList[0].attackableList.Count > 0 && activeList[0].attackableList.Contains(target.occupied))
             {
-                Debug.Log(target.occupied);
+                //Debug.Log(target.occupied);
                 attackCharacter(target.occupied);
             }
             else
@@ -160,7 +160,7 @@ public class RulesEngine : MonoBehaviour
     {
         if(selected)
         {
-            if (!attacking && selected.character.type == Character.Type.FRIENDLY && target.selectable) 
+            if (!selected.hasMoved && !attacking && selected.character.type == Character.Type.FRIENDLY && target.selectable) 
             {
                 //moveCharacter(path, selected);
                 selected.FindPath(target);
@@ -176,7 +176,11 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         //character.move(path);
         //Move function is called here.
-        activeList.Remove(character); //This is in this order to make sure that the character is removed from active list before doneMoving() is called
+        if (character.currentStamina == 0)
+        {
+            activeList.Remove(character); //This is in this order to make sure that the character is removed from active list before doneMoving() is called
+        }
+        character.hasMoved = true;
         character.Move();
         //Debug.Log("Activelist count is " + activeList.Count);
         //TODO: The character should be able to make an action after moving.
@@ -217,6 +221,7 @@ public class RulesEngine : MonoBehaviour
     //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
     private void unitClicked(CharacterMovement character)
     {
+        Debug.Log("STAMINA " + character.currentStamina);
         //Debug.Log(character + " has been clicked");
         if (activeTeam == Character.Type.FRIENDLY && !moving)
         {
@@ -262,13 +267,15 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
+        selected.currentStamina -= selected.attackStaminaCost;
         character.currHP -= selected.character.attackDamage;
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)
         {
             KillUnit(character);
         }
-        activeList.Remove(selected);
+        selected.hasAttacked = true;
+        //activeList.Remove(selected);
         doneMoving();
     }
 
@@ -292,10 +299,11 @@ public class RulesEngine : MonoBehaviour
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
+        
         selected = character;
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
-            character.canvas.gameObject.SetActive(true);
+            character.turnOnPanel();
         }
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
@@ -307,7 +315,7 @@ public class RulesEngine : MonoBehaviour
     //helper function called from unitClicked(), and doneMoving()
     private void deselectCharacter()
     {
-        selected.canvas.gameObject.SetActive(false);
+        selected.turnOffPanel();
         selected.DisplayRange(false, false);
         attacking = false;
         selected = null;

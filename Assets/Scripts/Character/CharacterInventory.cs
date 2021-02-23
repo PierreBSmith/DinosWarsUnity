@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterInventory : MonoBehaviour
 {
-    private GameManager gameManager;
+    private GameManager gameManager; //We need this to access the entire Game memory!
 
     private const int MAX_INVENTORY_SPACE = 5;
 

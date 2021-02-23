@@ -3420,14 +3420,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
         type: 3}
-      propertyPath: enemyList.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
+      propertyPath: InventoryUIPrefab
+      value: 
+      objectReference: {fileID: 9161443336704710998, guid: 073267c3ca492e74ba61ae77108508fe,
         type: 3}
-      propertyPath: friendList.Array.size
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
         type: 3}
       propertyPath: enemyList.Array.data[0]
@@ -6527,27 +6523,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 871340685}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1300589661 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2970694578484091272, guid: 17ff2fa64d7acf040a166786fca02cb6,
-    type: 3}
-  m_PrefabInstance: {fileID: 2059084904}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1300589662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1300589661}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33349e164ea7e854e8d678753eb52525, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventory: []
-  equippedWeapon: {fileID: 11400000, guid: 21ce90ad2ee476b48a49a3de9eb152d2, type: 2}
-  equippedAccessory: {fileID: 0}
 --- !u!4 &1314445772 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5267663090774474235, guid: 3679fc12a3a665946a84c57e6150fd1b,
@@ -8459,7 +8434,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 2059084904}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1300589661}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbcdb7452ba36ed40827d7433313275b, type: 3}
@@ -10197,6 +10172,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1300589662, guid: 17ff2fa64d7acf040a166786fca02cb6, type: 3}
+      propertyPath: equippedWeapon
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2970694578484091272, guid: 17ff2fa64d7acf040a166786fca02cb6,
         type: 3}
       propertyPath: m_Name

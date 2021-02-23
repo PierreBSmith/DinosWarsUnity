@@ -16,6 +16,8 @@ public class RulesEngine : MonoBehaviour
     private bool attacking = false;
     private List<CharacterMovement> activeList;
 
+    private GameObject inventoryUI;
+
 
     void Start()
     {
@@ -29,7 +31,7 @@ public class RulesEngine : MonoBehaviour
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
-    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map)//, Map1 map, TileBehaviour tilePrefab)
+    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -54,6 +56,8 @@ public class RulesEngine : MonoBehaviour
         {
             tile.GetComponent<TileBehaviour>().clicked.AddListener(moveFriendly);
         }
+
+        this.inventoryUI = inventoryUI;
        
     }
 
@@ -65,6 +69,7 @@ public class RulesEngine : MonoBehaviour
         character.passTurn.AddListener(passTurn);
         character.doneMoving.AddListener(doneMoving);
         character.unitAttacking.AddListener(unitAttacking);
+        character.openInventory.AddListener(OpenInventoryMenu);
         /*
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
@@ -268,7 +273,8 @@ public class RulesEngine : MonoBehaviour
         {
             KillUnit(character);
         }
-        selected.inventory.equippedWeapon.uses--; //This should go down everytime the unit attacks
+        selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
+        Debug.Log(selected.inventory.equippedWeapon.uses); 
         activeList.Remove(selected);
         doneMoving();
     }
@@ -290,6 +296,13 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         character.gameObject.SetActive(false);
     }
+
+    private void OpenInventoryMenu(CharacterMovement character)
+    {
+        inventoryUI.SetActive(true);
+        inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().UpdateUIMenu(selected, selected.inventory);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {

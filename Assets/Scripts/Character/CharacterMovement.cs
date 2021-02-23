@@ -11,6 +11,10 @@ public class CharacterEvent : UnityEvent<CharacterMovement> { }
 public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 {
     public Character character;
+    [HideInInspector]
+    public SpriteRenderer _sprite;
+    [HideInInspector]
+    public Animator _animator;
 
     [Header("Stamina Implementation")]
     private int currentStamina;
@@ -27,10 +31,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     private Vector3 heading = new Vector3(); //the direction the unit is moving
     private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
     public int currHP;
-    [HideInInspector]
-    public SpriteRenderer _sprite;
-    [HideInInspector]
-    public Animator _animator;
 
     [Header("Inventory")]
     [HideInInspector]
@@ -41,6 +41,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
     public UnityEvent doneMoving;
     public CharacterEvent unitAttacking;
+    public CharacterEvent openInventory;
     public Canvas canvas;
     public List<CharacterMovement> attackableList = new List<CharacterMovement>();
 
@@ -80,6 +81,12 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void passActive() //called when action panel pass button is clicked, removes unit from active list without taking any more actions
     {
         passTurn.Invoke(this);
+    }
+
+    public void openItemMenu()
+    {
+        openInventory.Invoke(this);
+        canvas.gameObject.SetActive(false);
     }
 
     public void attackButtonClicked()

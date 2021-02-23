@@ -33,6 +33,7 @@ public class Item : ScriptableObject
     }
 
     public TYPE type;
+    public string itemName;
     public int uses; //number of times you can use this, or durability of weapon
 
     //The following values are if the item is a weapon

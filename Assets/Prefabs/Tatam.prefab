@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7162682155533905994}
   - component: {fileID: 5081127352791551084}
   - component: {fileID: 900048284}
+  - component: {fileID: 1636047156705099995}
   m_Layer: 0
   m_Name: Tatam
   m_TagString: Untagged
@@ -127,6 +128,9 @@ MonoBehaviour:
   character: {fileID: 11400000, guid: c4ed8e6c3df9cc44f99c0f39459b3a6f, type: 2}
   currentTile: {fileID: 0}
   currHP: 0
+  _sprite: {fileID: 0}
+  _animator: {fileID: 0}
+  inventory: {fileID: 0}
   position: {x: 0, y: 0}
   clicked:
     m_PersistentCalls:
@@ -161,6 +165,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1636047156705099995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7502293019651381166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33349e164ea7e854e8d678753eb52525, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: []
+  equippedWeapon: {fileID: 0}
+  equippedAccessory: {fileID: 0}
 --- !u!1001 &5264795539509326272
 PrefabInstance:
   m_ObjectHideFlags: 0

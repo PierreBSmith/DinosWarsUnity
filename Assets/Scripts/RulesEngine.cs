@@ -302,7 +302,7 @@ public class RulesEngine : MonoBehaviour
     private void OpenInventoryMenu(CharacterMovement character)
     {
         inventoryUI.SetActive(true);
-        inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().UpdateUIMenu(selected, selected.inventory);
+        inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().OpenInventoryUIMenu(selected, selected.inventory);
     }
 
     //Helper function called from unitClicked()
@@ -327,6 +327,7 @@ public class RulesEngine : MonoBehaviour
         selected.canvas.gameObject.SetActive(false);
         selected.DisplayRange(false, false);
         selected._animator.SetBool("selected", false);
+        selected._animator.Play("Idle", 0, 0f);
         attacking = false;
         selected = null;
         //board.clearMoveRange();

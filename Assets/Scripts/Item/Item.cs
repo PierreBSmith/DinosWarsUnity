@@ -45,4 +45,8 @@ public class Item : ScriptableObject
     public int avoid;
     public int weight;
     public int crit;
+
+    [Header("Consumable Variables")]
+    public CONSUMABLE consumableType;
+    public int amountToHeal; //For medicines and Stat Boosters
 }

@@ -127,16 +127,22 @@ public class RulesEngine : MonoBehaviour
             selectCharacter(activeList[0]);
             TileBehaviour target = activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().currentTile;
             activeList[0].FindAttackableTiles();
-            if(activeList[0].attackableList.Count > 0 && activeList[0].attackableList.Contains(target.occupied))
+            Debug.Log("lolol " + activeList[0].hasAttacked + " " + activeList[0].hasMoved);
+            if(!activeList[0].hasAttacked && activeList[0].attackableList.Count > 0 && activeList[0].attackableList.Contains(target.occupied))
             {
                 //Debug.Log(target.occupied);
                 attackCharacter(target.occupied);
             }
-            else
+            else if(!activeList[0].hasMoved)
             {
                 activeList[0].EnemyFindPath(target);
                 //Debug.Log(activeList[0].name);
                 moveCharacter(activeList[0]); //I assume this always gets the first character since 
+            }
+            else
+            {
+                characterDone(activeList[0]);
+                doneMoving();
             }
         }
         else
@@ -178,7 +184,7 @@ public class RulesEngine : MonoBehaviour
         //Move function is called here.
         if (character.currentStamina == 0)
         {
-            activeList.Remove(character); //This is in this order to make sure that the character is removed from active list before doneMoving() is called
+           characterDone(character); //This is in this order to make sure that the character is removed from active list before doneMoving() is called
         }
         character.hasMoved = true;
         character.Move();
@@ -201,12 +207,16 @@ public class RulesEngine : MonoBehaviour
         tile.occupied = null;
     }
 
+    private void characterDone(CharacterMovement character)
+    {
+        activeList.Remove(character);
+        selected._sprite.color = Color.gray;
+        selected._animator.enabled = false;
+    }
     //Event handler that is called by character when it stops moving.
     private void doneMoving()
     {
         moving = false;
-        selected._sprite.color = Color.gray;
-        selected._animator.enabled = false;
         deselectCharacter();
         if (activeList.Count == 0)
         {
@@ -248,7 +258,7 @@ public class RulesEngine : MonoBehaviour
 
     private void passTurn(CharacterMovement character)
     {
-        activeList.Remove(character);
+        characterDone(character);
         //deselectCharacter();
         doneMoving();
         /*

@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: StoneSpear
   m_EditorClassIdentifier: 
   type: 0
-  itemName: 
-  uses: 0
-  weaponType: 0
-  range: 0
-  might: 0
-  hit: 0
-  avoid: 0
-  weight: 0
+  itemName: Stone Spear
+  uses: 20
+  weaponType: 1
+  range: 1
+  might: 15
+  hit: 75
+  avoid: 20
+  weight: 10
   crit: 0
   consumableType: 0
   amountToHeal: 0

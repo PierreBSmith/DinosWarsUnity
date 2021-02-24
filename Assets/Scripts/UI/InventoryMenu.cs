@@ -168,19 +168,22 @@ public class InventoryMenu : MonoBehaviour
                     {
                         //If the unit wasn't equipping a weapon
                         GetButtonText(selectedButton).text = GetButtonText(firstSelectedButton).text;
+                        GetButtonText(firstSelectedButton).text = "";
                     }
                     else
                     {
                         //unit is already equipping a weapon
                         Item tempWeapon = selectedCharacter.inventory.equippedWeapon;
-                        selectedCharacter.inventory.equippedWeapon = selectedItem; //swap out weapon
+                        //selectedCharacter.inventory.equippedWeapon = selectedItem; //swap out weapon
                         GetButtonText(selectedButton).text = GetButtonText(firstSelectedButton).text;
                         GetButtonText(firstSelectedButton).text = tempWeapon.itemName;
                         Debug.Log(GetButtonText(firstSelectedButton).text);
                         //Time for MONKA list manipulation
                         selectedCharacter.inventory.inventory.Insert(selectedCharacter.inventory.inventory.IndexOf(selectedItem), tempWeapon);
-                        selectedCharacter.inventory.inventory.Remove(selectedItem);
+                        //selectedCharacter.inventory.inventory.Remove(selectedItem);
                     }
+                    selectedCharacter.inventory.equippedWeapon = selectedItem;
+                    selectedCharacter.inventory.inventory.Remove(selectedItem);
                 }
             }
 

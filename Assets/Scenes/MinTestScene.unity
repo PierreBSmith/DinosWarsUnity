@@ -9467,6 +9467,35 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1300589662, guid: 17ff2fa64d7acf040a166786fca02cb6, type: 3}
+      propertyPath: inventory.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300589662, guid: 17ff2fa64d7acf040a166786fca02cb6, type: 3}
+      propertyPath: inventory.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7731dce2871bfd94cbb4cbc02bcb4e07,
+        type: 2}
+    - target: {fileID: 1300589662, guid: 17ff2fa64d7acf040a166786fca02cb6, type: 3}
+      propertyPath: inventory.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7731dce2871bfd94cbb4cbc02bcb4e07,
+        type: 2}
+    - target: {fileID: 1300589662, guid: 17ff2fa64d7acf040a166786fca02cb6, type: 3}
+      propertyPath: inventory.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7731dce2871bfd94cbb4cbc02bcb4e07,
+        type: 2}
+    - target: {fileID: 1300589662, guid: 17ff2fa64d7acf040a166786fca02cb6, type: 3}
+      propertyPath: inventory.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7731dce2871bfd94cbb4cbc02bcb4e07,
+        type: 2}
+    - target: {fileID: 1300589662, guid: 17ff2fa64d7acf040a166786fca02cb6, type: 3}
+      propertyPath: inventory.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7731dce2871bfd94cbb4cbc02bcb4e07,
+        type: 2}
     - target: {fileID: 2970694578484091272, guid: 17ff2fa64d7acf040a166786fca02cb6,
         type: 3}
       propertyPath: m_Name

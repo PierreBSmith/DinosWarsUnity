@@ -16,6 +16,8 @@ public class InventoryMenu : MonoBehaviour
     private Item selectedItem;
     private Button firstSelectedButton;
     private Button secondSelectedButton;
+    private int firstIndex = 0;
+    private int secondIndex = 0;
 
     void Awake()
     {
@@ -35,6 +37,8 @@ public class InventoryMenu : MonoBehaviour
             if(Input.GetMouseButtonDown(1))//Right click! Closes UI menu
             {
                 transform.parent.gameObject.SetActive(false);
+                selectedMode = false;
+                selectedItem = null;
                 selectedCharacter.canvas.gameObject.SetActive(true);
             }
 
@@ -65,15 +69,15 @@ public class InventoryMenu : MonoBehaviour
         int index = 0;
         foreach(Item item in inventory.inventory)
         {
-            itemSlots[index].transform.GetChild(0).gameObject.GetComponent<Text>().text = item.itemName;
-            index++;
-        }
-        if(index < MAX_INVENTORY_SPACE)//This makes the rest of the inventory spaces blank.
-        {
-            for(int i = index; i < MAX_INVENTORY_SPACE; i++)
+            if(item)
             {
-                itemSlots[i].transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
+                itemSlots[index].transform.GetChild(0).gameObject.GetComponent<Text>().text = item.itemName;
             }
+            else
+            {
+                itemSlots[index].transform.GetChild(0).gameObject.GetComponent<Text>().text = "";
+            }
+            index++;
         }
     }
 
@@ -126,6 +130,7 @@ public class InventoryMenu : MonoBehaviour
                 if(selectedCharacter.inventory.equippedWeapon) //Checks if the unit has a weapon
                 {
                     selectedItem = selectedCharacter.inventory.equippedWeapon;
+                    Debug.Log(selectedItem.itemName);
                 }
             }
             else if(selectedButton == equippedAccessory)
@@ -137,10 +142,17 @@ public class InventoryMenu : MonoBehaviour
             }
             else
             {
+                for(int i = 0; i < itemSlots.Length; i++)
+                {
+                    if(firstSelectedButton == itemSlots[i])
+                    {
+                        firstIndex = i;
+                    }
+                }
                 string selectedItemName = selectedButton.transform.GetChild(0).gameObject.GetComponent<Text>().text;
                 if(selectedItemName != "") //If there is an item in that slot, find item from inventory
                 {
-                    selectedItem = selectedCharacter.inventory.inventory.Find(x => x.itemName == selectedItemName);
+                    selectedItem = selectedCharacter.inventory.inventory[firstIndex];
                     Debug.Log("Found item: " + selectedItem.itemName);
                     if(selectedItem.type == Item.TYPE.CONSUMABLE)
                     {
@@ -151,6 +163,8 @@ public class InventoryMenu : MonoBehaviour
                             selectedItem.uses--;
                             Debug.Log(selectedItem.uses); //TODO: Edit the number of uses.
                             selectedMode = false; //You use the medicine and that's it really.
+                            selectedItem = null;
+                            //TODO: check if uses go to 0, cuz then the item should disappear from inventory and actually just from the game file LOL.
                         }
                     }
                 }
@@ -158,10 +172,32 @@ public class InventoryMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("Entering Swap Mode :D");
             if(selectedItem)
             {
                 if(selectedButton == equippedWeapon && selectedItem.type == Item.TYPE.WEAPON)
+                {
+                    //we assuming that the unit clicked on a weapon. It has to be a weapon otherwise you can't equip it!
+                    if(GetButtonText(selectedButton).text == "" && !selectedCharacter.inventory.equippedWeapon)
+                    {
+                        //If the unit wasn't equipping a weapon
+                        GetButtonText(selectedButton).text = GetButtonText(firstSelectedButton).text;
+                        GetButtonText(firstSelectedButton).text = "";
+                        selectedCharacter.inventory.equippedWeapon = selectedItem;
+                    }
+                    else
+                    {
+                        //unit is already equipping a weapon
+                        Item tempItem = selectedCharacter.inventory.equippedWeapon;
+                        //selectedCharacter.inventory.equippedWeapon = selectedItem; //swap out weapon
+                        GetButtonText(selectedButton).text = GetButtonText(firstSelectedButton).text;
+                        GetButtonText(firstSelectedButton).text = tempItem.itemName;
+                        Debug.Log(GetButtonText(firstSelectedButton).text);
+                        selectedCharacter.inventory.inventory.Insert(selectedCharacter.inventory.inventory.IndexOf(selectedItem), tempItem);
+                    }
+                    selectedCharacter.inventory.equippedWeapon = selectedItem;
+                    selectedCharacter.inventory.inventory.Remove(selectedItem);
+                }
+                else if(selectedButton == equippedAccessory && selectedItem.type == Item.TYPE.ACCESORY)
                 {
                     //we assuming that the unit clicked on a weapon. It has to be a weapon otherwise you can't equip it!
                     if(GetButtonText(selectedButton).text == "")
@@ -173,20 +209,69 @@ public class InventoryMenu : MonoBehaviour
                     else
                     {
                         //unit is already equipping a weapon
-                        Item tempWeapon = selectedCharacter.inventory.equippedWeapon;
+                        Item tempItem = selectedCharacter.inventory.equippedAccessory;
                         //selectedCharacter.inventory.equippedWeapon = selectedItem; //swap out weapon
                         GetButtonText(selectedButton).text = GetButtonText(firstSelectedButton).text;
-                        GetButtonText(firstSelectedButton).text = tempWeapon.itemName;
+                        GetButtonText(firstSelectedButton).text = tempItem.itemName;
                         Debug.Log(GetButtonText(firstSelectedButton).text);
-                        //Time for MONKA list manipulation
-                        selectedCharacter.inventory.inventory.Insert(selectedCharacter.inventory.inventory.IndexOf(selectedItem), tempWeapon);
-                        //selectedCharacter.inventory.inventory.Remove(selectedItem);
+                        selectedCharacter.inventory.inventory.Insert(selectedCharacter.inventory.inventory.IndexOf(selectedItem), tempItem);
                     }
-                    selectedCharacter.inventory.equippedWeapon = selectedItem;
+                    selectedCharacter.inventory.equippedAccessory = selectedItem;
                     selectedCharacter.inventory.inventory.Remove(selectedItem);
                 }
+                //Slot to slot transferring
+                else
+                {
+                    for(int i = 0; i < itemSlots.Length; i++)
+                    {
+                        if(selectedButton == itemSlots[i])
+                        {
+                            secondIndex = i;
+                        }
+                    }
+                    if(GetButtonText(selectedButton).text == "")
+                    {
+                        //If nothing in slot
+                        GetButtonText(selectedButton).text = GetButtonText(firstSelectedButton).text;
+                        GetButtonText(firstSelectedButton).text = "";
+                        selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
+                        selectedCharacter.inventory.inventory.Insert(secondIndex, selectedItem);
+                    }
+                    else
+                    {
+                        Item tempItem = selectedCharacter.inventory.inventory[secondIndex];
+                        GetButtonText(selectedButton).text = GetButtonText(firstSelectedButton).text;
+                        GetButtonText(firstSelectedButton).text = tempItem.itemName;
+                        selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
+                        selectedCharacter.inventory.inventory.Insert(firstIndex, tempItem); //This replaces the first selected slot with the second
+                        selectedCharacter.inventory.inventory.RemoveAt(secondIndex); 
+                        selectedCharacter.inventory.inventory.Insert(secondIndex, selectedItem); //This replaces the second selected slot with the fist
+                    }
+                }
             }
-
+            else
+            {
+                //If empty slot was initially selected
+                if(selectedButton == equippedWeapon)
+                {
+                    //Move weapon into inventory
+                    GetButtonText(firstSelectedButton).text = GetButtonText(selectedButton).text;
+                    GetButtonText(selectedButton).text = "";
+                    selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
+                    selectedCharacter.inventory.inventory.Insert(firstIndex, selectedCharacter.inventory.equippedWeapon);
+                    selectedCharacter.inventory.equippedWeapon = null; //unequips weapon
+                }
+                else if (selectedButton == equippedAccessory)
+                {
+                    GetButtonText(firstSelectedButton).text = GetButtonText(selectedButton).text;
+                    GetButtonText(selectedButton).text = "";
+                    selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
+                    selectedCharacter.inventory.inventory.Insert(firstIndex, selectedCharacter.inventory.equippedAccessory);
+                    selectedCharacter.inventory.equippedAccessory = null;
+                }
+            }
+            selectedMode = false;
+            selectedItem = null;
         }
     }
 

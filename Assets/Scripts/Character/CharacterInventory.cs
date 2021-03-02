@@ -8,7 +8,7 @@ public class CharacterInventory : MonoBehaviour
 
     private const int MAX_INVENTORY_SPACE = 5;
 
-    public List<Item> inventory = new List<Item>();
+    public List<Item> inventory = new List<Item>(MAX_INVENTORY_SPACE);
     //[HideInInspector]
     public Item equippedWeapon;
     [HideInInspector]

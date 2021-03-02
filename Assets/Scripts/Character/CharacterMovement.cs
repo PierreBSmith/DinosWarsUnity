@@ -15,7 +15,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     [Header("Stamina Implementation")]
     public int currentStamina;
     private const int LINEAR_STAMINA_DEPLETION = 10;
-    public readonly int attackStaminaCost = 30;
     private int extraMovementRange;
     [Header("Movement")]
     private List<TileBehaviour> selectableTiles = new List<TileBehaviour>(); //the list of tiles that can be moved to
@@ -51,6 +50,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         //unfortunately would have to call this in Update if we decided to make a map with disappearing tiles LMAO
         tiles = GameObject.FindGameObjectsWithTag("Tile");
         GetCurrentTile();
+        currentTile.occupied = this;
         _sprite = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
     }
@@ -86,7 +86,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void attackButtonClicked()
     {
-        if (!hasAttacked && currentStamina >= attackStaminaCost)
+        if (!hasAttacked && currentStamina >= character.attackStaminaCost)
         {
             DisplayRange(true, true);
             //Debug.Log(selectableTiles.Count);
@@ -143,7 +143,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         return tile;
     }
 
-    private void GetCurrentTile()
+    public void GetCurrentTile()
     {
         currentTile = GetTargetTile(gameObject);
         //currentTile.unit = gameObject;
@@ -160,6 +160,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void FindAttackableTiles()
     {
+        attackableList.Clear();
         ComputeNeighboringTiles();
         GetCurrentTile();
 
@@ -180,7 +181,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
                 selectableTiles.Add(tile);
                 tile.selectable = true;
-                if(tile.occupied && tile.occupied.character.type != character.type)
+                if (tile.occupied && tile.occupied.character.type != character.type)
                 {
                     //Gets all units in attack range that aren't on their team
                     attackableList.Add(tile.occupied);
@@ -203,6 +204,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             }
         }
     }
+
     private void FindSelectableTiles()
     {
         ComputeNeighboringTiles();
@@ -219,7 +221,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
             
-            if(tile.distance <= (character.moveRange + extraMovementRange) && (!tile.occupied || tile == currentTile))
+            if(tile.distance <= (character.moveRange + extraMovementRange) && (!tile.occupied || tile == currentTile))//|| tile.occupied && tile.occupied.character.type == this.character.type
             {
                 //These checks are for stamina usage stuff
                 if(tile.distance <= character.moveRange && (!tile.occupied || tile == currentTile))
@@ -240,13 +242,17 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             {
                 foreach(TileBehaviour t in tile.neighbours)
                 {
-                    if(!t.visited)
+                    if(!t.visited && (!t.occupied || t.occupied && t.occupied.character.type == this.character.type))// 
                     {
                         t.parent = tile;
                         t.visited = true;
                         t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
                         //Debug.Log("Distance " + t.distance);
                         process.Enqueue(t);
+                    }
+                    else
+                    {
+                        t.visited = true;
                     }
                 }
             }
@@ -265,7 +271,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
        // Debug.Log(path.Count + " path count " + character.type);
         while (nextTile != null)
         { 
-            if(nextTile.selectable && nextTile != currentTile)
+            if(nextTile != currentTile && !(nextTile.occupied && path.Count == 0))//nextTile.selectable && 
             {
                 path.Push(nextTile);
             }
@@ -323,6 +329,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 RemoveSelectableTiles();
                 GetCurrentTile();
                 currentTile.occupied = this;
+                //Debug.Log("Current Stamina is " + currentStamina);
                 doneMoving.Invoke();
                 break;
 
@@ -345,6 +352,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 transform.position = targetPosition;
                 //Debug.Log(moveTarget.distance + " distance is");
                 //Stamina stuff here. For now it's going to be linear since we have no way of getting extra movement range yet.
+                //Debug.Log("Distance of this tile from location is " + moveTarget.distance);
                 if (moveTarget.distance > character.moveRange)
                 {
                     int extraDistance = (moveTarget.distance - character.moveRange) + 1;
@@ -457,8 +465,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         List<TileBehaviour> closedList = new List<TileBehaviour>(); //tiles already visited and processed
 
         openList.Add(currentTile);
-        Debug.Log(target);
-        Debug.Log(currentTile);
+        //Debug.Log(target);
+        //Debug.Log(currentTile);
         currentTile.costFromProcessedTileToTargetTile = Vector2.Distance(currentTile.transform.position, target.transform.position);
         currentTile.totalCost = currentTile.costFromProcessedTileToTargetTile;
         //Debug.Log(target.name + " NAME OF THE TARGET");
@@ -555,6 +563,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             {
                 tile.clearMask();
             }
+            selectableTiles.Clear();
         }
 
     }
@@ -562,7 +571,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void turnOnPanel()
     {
         canvas.gameObject.SetActive(true);
-        if (hasAttacked)
+        if (hasAttacked || currentStamina < character.attackStaminaCost)
         {
             canvas.transform.Find("Panel").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = false;
             //canvas.transform.GetComponentsInChildren<Button>().Interactable = false;

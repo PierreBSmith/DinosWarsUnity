@@ -19,4 +19,5 @@ MonoBehaviour:
   attackDamage: 1
   maxHP: 2
   grounded: 0
-  maxStamina: 80
+  maxStamina: 50
+  attackStaminaCost: 0

@@ -16,7 +16,6 @@ public class RulesEngine : MonoBehaviour
     private bool attacking = false;
     private List<CharacterMovement> activeList;
 
-
     void Start()
     {
         
@@ -76,6 +75,13 @@ public class RulesEngine : MonoBehaviour
     //Handles which turn it is. Is called by DoneMoving. Turn cycle is Friendly>Enemy>NPC>Friendly atm. This should probably be Friendly>NPC>Enemy>Friendly.
     private void toggleTurn()
     {
+        if(friendlyList.Count == 0)
+        {
+
+        }else if(enemyList.Count == 0)
+        {
+
+        }
         if(activeTeam == Character.Type.FRIENDLY)
         {
             activeTeam = Character.Type.ENEMY;
@@ -182,10 +188,6 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         //character.move(path);
         //Move function is called here.
-        if (character.currentStamina == 0)
-        {
-           characterDone(character); //This is in this order to make sure that the character is removed from active list before doneMoving() is called
-        }
         character.hasMoved = true;
         character.Move();
         //Debug.Log("Activelist count is " + activeList.Count);
@@ -217,6 +219,10 @@ public class RulesEngine : MonoBehaviour
     private void doneMoving()
     {
         moving = false;
+        if(selected && selected.currentStamina <= 0)
+        {
+            characterDone(selected);
+        }
         deselectCharacter();
         if (activeList.Count == 0)
         {
@@ -277,7 +283,7 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
-        selected.currentStamina -= selected.attackStaminaCost;
+        selected.currentStamina -= selected.character.attackStaminaCost;
         character.currHP -= selected.character.attackDamage;
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)

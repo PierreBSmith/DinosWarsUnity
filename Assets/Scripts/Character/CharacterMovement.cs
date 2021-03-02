@@ -17,7 +17,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public Animator _animator;
 
     [Header("Stamina Implementation")]
-    private int currentStamina;
+    [HideInInspector]
+    public int currentStamina;
     private const int LINEAR_STAMINA_DEPLETION = 10;
     private int extraMovementRange;
     [Header("Movement")]

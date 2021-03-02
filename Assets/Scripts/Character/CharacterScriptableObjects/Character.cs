@@ -11,6 +11,8 @@ public class Character : ScriptableObject
         NPC
     }
     
+    public Sprite image;
+    public string characterName;
     public int moveSpeed = 3; //This is SPEED THE CHARACTER MOVES IN GAME!!! Not the stat -_-;
     public int moveRange;
     public Type type;

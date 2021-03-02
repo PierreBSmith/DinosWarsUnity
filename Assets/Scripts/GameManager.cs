@@ -13,7 +13,10 @@ public class GameManager : MonoBehaviour
     [Header("UI Menus")]
     [SerializeField]
     private GameObject InventoryUIPrefab;
-    public GameObject inventoryUI;
+    private GameObject inventoryUI;
+    [SerializeField]
+    private GameObject CharacterDataUIPrefab;
+    private GameObject characterDataUI;
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
@@ -55,8 +58,11 @@ public class GameManager : MonoBehaviour
         inventoryUI = GameObject.Instantiate(InventoryUIPrefab);
         inventoryUI.SetActive(false);
 
+        characterDataUI = GameObject.Instantiate(CharacterDataUIPrefab);
+        characterDataUI.SetActive(false);
+
         var RulesEngine = FindObjectOfType<RulesEngine>();
-        RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
+        RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
 
     }
 

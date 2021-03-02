@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
   m_Name: Asku
   m_EditorClassIdentifier: 
-  speed: 3
+  image: {fileID: 4449054687570518734, guid: 442cfc654f36a2d4d8e6e08faed6a879, type: 3}
+  characterName: Asku
+  moveSpeed: 3
   moveRange: 3
   type: 0
   attackRange: 1

@@ -3426,6 +3426,18 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
         type: 3}
+      propertyPath: CharacterDataUIPrefab
+      value: 
+      objectReference: {fileID: 6025683909822000330, guid: abdbb07c09bdef348ae57a111d9010a7,
+        type: 3}
+    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
+        type: 3}
+      propertyPath: combatForecastUIPrefab
+      value: 
+      objectReference: {fileID: 1464314319373454227, guid: 5f258780fc4b6a44b95e4464b160246f,
+        type: 3}
+    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
+        type: 3}
       propertyPath: enemyList.Array.data[0]
       value: 
       objectReference: {fileID: 1464197540}
@@ -7185,6 +7197,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5004682262866697941, guid: e796542c3834d4a41970d0754462616b,
+        type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 584291020}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e796542c3834d4a41970d0754462616b, type: 3}
 --- !u!4 &1412081805 stripped

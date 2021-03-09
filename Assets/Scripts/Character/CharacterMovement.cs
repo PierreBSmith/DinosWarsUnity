@@ -11,8 +11,13 @@ public class CharacterEvent : UnityEvent<CharacterMovement> { }
 public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 {
     public Character character;
+    [HideInInspector]
+    public SpriteRenderer _sprite;
+    [HideInInspector]
+    public Animator _animator;
 
     [Header("Stamina Implementation")]
+    [HideInInspector]
     public int currentStamina;
     private const int LINEAR_STAMINA_DEPLETION = 10;
     private int extraMovementRange;
@@ -30,15 +35,18 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     private const float HEIGHT_OF_UNIT_ABOVE_TILE = 0.5f;
     public int currHP;
     [HideInInspector]
-    public SpriteRenderer _sprite;
+    public bool baseFlipState;
+
+    [Header("Inventory")]
     [HideInInspector]
-    public Animator _animator;
+    public CharacterInventory inventory;
 
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
     public UnityEvent doneMoving;
     public CharacterEvent unitAttacking;
+    public CharacterEvent openInventory;
     public Canvas canvas;
     public List<CharacterMovement> attackableList = new List<CharacterMovement>();
 
@@ -53,6 +61,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         currentTile.occupied = this;
         _sprite = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
+        inventory = GetComponent<CharacterInventory>();
+        baseFlipState = _sprite.flipX;
     }
 
     //This takes in a path and moves the unit along that path
@@ -84,6 +94,11 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         passTurn.Invoke(this);
     }
 
+    public void openItemMenu()
+    {
+        openInventory.Invoke(this);
+        canvas.gameObject.SetActive(false);
+    }
     public void attackButtonClicked()
     {
         if (!hasAttacked && currentStamina >= character.attackStaminaCost)
@@ -289,7 +304,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //Sets the velocity to move the unit in that direction
     private void SetVelocity()
     {
-        velocity = heading * character.speed;
+        velocity = heading * character.moveSpeed;
     }
 
     public void RemoveSelectableTiles()
@@ -315,13 +330,12 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     private IEnumerator followPath()
     {
-
         TileBehaviour moveTarget;
-
         while (true)
         {
             if (path.Count != 0)
             {
+                _animator.SetBool("moving", true);
                 moveTarget = path.Peek();
 
             }
@@ -341,6 +355,28 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             if (Vector2.Distance(transform.position, targetPosition) >= 0.05f)
             {
                 CalculateHeading(targetPosition);
+                if(heading.x < 0)
+                {
+                    if(character.type != Character.Type.ENEMY)
+                    {
+                        _sprite.flipX = !baseFlipState;
+                    }
+                    else
+                    {
+                        _sprite.flipX = baseFlipState;
+                    }
+                }
+                else
+                {
+                    if(character.type != Character.Type.ENEMY)
+                    {
+                        _sprite.flipX = baseFlipState;
+                    }
+                    else
+                    {
+                        _sprite.flipX = !baseFlipState;
+                    }
+                }
                 SetVelocity();
                 transform.position += velocity * Time.deltaTime;
                 //We don't need to attach Rigidbody2D to the unit because they're not acting on Physics, they're just moving their transform places.
@@ -365,9 +401,10 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 if (path.Count > 0)
                 {
                     path.Pop();
-
+                    _animator.SetBool("moving", false); 
                 }
 
+                    
             }
             yield return null;
         }

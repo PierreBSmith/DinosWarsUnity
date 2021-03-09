@@ -16,6 +16,9 @@ public class RulesEngine : MonoBehaviour
     private bool attacking = false;
     private List<CharacterMovement> activeList;
 
+    private GameObject inventoryUI;
+    private GameObject characterData;
+
     void Start()
     {
         
@@ -28,7 +31,8 @@ public class RulesEngine : MonoBehaviour
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
-    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map)//, Map1 map, TileBehaviour tilePrefab)
+    public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
+        GameObject characterData)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -53,7 +57,9 @@ public class RulesEngine : MonoBehaviour
         {
             tile.GetComponent<TileBehaviour>().clicked.AddListener(moveFriendly);
         }
-       
+
+        this.inventoryUI = inventoryUI;
+        this.characterData = characterData;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -64,6 +70,7 @@ public class RulesEngine : MonoBehaviour
         character.passTurn.AddListener(passTurn);
         character.doneMoving.AddListener(doneMoving);
         character.unitAttacking.AddListener(unitAttacking);
+        character.openInventory.AddListener(OpenInventoryMenu);
         /*
         character.transform.position = new Vector3(position.x, position.y, -1);
         character.position = position;
@@ -219,7 +226,9 @@ public class RulesEngine : MonoBehaviour
     private void doneMoving()
     {
         moving = false;
-        if(selected && selected.currentStamina <= 0)
+
+        selected._sprite.flipX = selected.baseFlipState;
+        if (selected && selected.currentStamina <= 0)
         {
             characterDone(selected);
         }
@@ -232,7 +241,6 @@ public class RulesEngine : MonoBehaviour
         {
             enemyTurn();
         }
-        
     }
     //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
     private void unitClicked(CharacterMovement character)
@@ -283,17 +291,18 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
+        character.currHP -= selected.inventory.equippedWeapon.might;
         selected.currentStamina -= selected.character.attackStaminaCost;
-        character.currHP -= selected.character.attackDamage;
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)
         {
             KillUnit(character);
         }
-        selected.hasAttacked = true;
-        //activeList.Remove(selected);
+        selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
+        Debug.Log(selected.inventory.equippedWeapon.uses);
         doneMoving();
     }
+
 
     private void KillUnit(CharacterMovement character)
     {
@@ -312,6 +321,24 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         character.gameObject.SetActive(false);
     }
+
+    private void OpenInventoryMenu(CharacterMovement character)
+    {
+        inventoryUI.SetActive(true);
+        inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().OpenInventoryUIMenu(selected, selected.inventory);
+    }
+
+    private void OpenCharacterData(CharacterMovement character)
+    {
+        characterData.SetActive(true);
+        characterData.transform.GetChild(0).gameObject.GetComponent<CharacterDataUI>().OpenCharacterUI(character);
+    }
+
+    private void CloseCharacterData()
+    {
+        characterData.SetActive(false);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
@@ -319,13 +346,16 @@ public class RulesEngine : MonoBehaviour
         selected = character;
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position)/64;
-            Debug.Log(screenPos);
-            character.turnOnPanel(screenPos);
-        }
+            character.canvas.gameObject.SetActive(true);
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
-            selected.DisplayRange(true, false);
+            OpenCharacterData(selected);
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position)/64;
+            selected._animator.SetBool("selected", true);
+
+
+            character.canvas.gameObject.SetActive(true);
+            character.turnOnPanel(screenPos);
         }
         //board.showMoveRange(character);
     }
@@ -333,10 +363,14 @@ public class RulesEngine : MonoBehaviour
     //helper function called from unitClicked(), and doneMoving()
     private void deselectCharacter()
     {
+        CloseCharacterData();
         selected.turnOffPanel();
         selected.DisplayRange(false, false);
+        selected._animator.SetBool("selected", false);
+        selected._animator.Play("Idle", 0, 0f);
         attacking = false;
         selected = null;
+        
         //board.clearMoveRange();
     }
 }

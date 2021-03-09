@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Asku : Character
+public class ActionMenu : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
-        this.moveRange = 3;
-        this.type = Type.ENEMY;
-        this.speed = 3;
+        
     }
 
     // Update is called once per frame

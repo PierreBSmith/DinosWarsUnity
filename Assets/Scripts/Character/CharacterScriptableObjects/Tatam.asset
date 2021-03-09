@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
   m_Name: Tatam
   m_EditorClassIdentifier: 
-  speed: 3
+  image: {fileID: -7630343930561710917, guid: c8f5ec9ae28975a44ae8610332f495f1, type: 3}
+  characterName: Tatam
+  moveSpeed: 3
   moveRange: 5
   type: 1
   attackRange: 1
   attackDamage: 1
-  maxHP: 2
+  maxHP: 20
   grounded: 0
   maxStamina: 50
   attackStaminaCost: 0

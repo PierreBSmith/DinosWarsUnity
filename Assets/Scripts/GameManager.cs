@@ -10,6 +10,16 @@ public class GameManager : MonoBehaviour
     public List<CharacterMovement> friendList;
     //public TileBehaviour tilePrefab;
     private GameObject[] tiles;
+    [Header("UI Menus")]
+    [SerializeField]
+    private GameObject InventoryUIPrefab;
+    private GameObject inventoryUI;
+    [SerializeField]
+    private GameObject CharacterDataUIPrefab;
+    private GameObject characterDataUI;
+
+    [Header("Memory Scriptable Values")]
+    public List<Item> allItems = new List<Item>();
 
     void Start()
     {
@@ -45,8 +55,14 @@ public class GameManager : MonoBehaviour
         }
         tiles = GameObject.FindGameObjectsWithTag("Tile");
 
+        inventoryUI = GameObject.Instantiate(InventoryUIPrefab);
+        inventoryUI.SetActive(false);
+
+        characterDataUI = GameObject.Instantiate(CharacterDataUIPrefab);
+        characterDataUI.SetActive(false);
+
         var RulesEngine = FindObjectOfType<RulesEngine>();
-        RulesEngine.init(Enemies, Friends, null, tiles);//, map, tilePrefab); //Initializion function that handles the rest of the game.
+        RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
 
     }
 

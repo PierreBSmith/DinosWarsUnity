@@ -568,9 +568,25 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     }
 
-    public void turnOnPanel()
+    public void turnOnPanel(Vector3 screenPos)
     {
         canvas.gameObject.SetActive(true);
+        if(screenPos.x < 3)
+        {
+            canvas.transform.position = new Vector3(this.transform.position.x + (float)1.5,canvas.transform.position.y,canvas.transform.position.z);
+        }
+        else
+        {
+            canvas.transform.position = new Vector3(this.transform.position.x - (float)(1.5), canvas.transform.position.y, canvas.transform.position.z);
+        }
+        if (screenPos.y < 3)
+        {
+            canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y + 1, canvas.transform.position.z);
+        }
+        else
+        {
+            canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y - (canvas.GetComponent<RectTransform>().sizeDelta.y - 2), canvas.transform.position.z);
+        }
         if (hasAttacked || currentStamina < character.attackStaminaCost)
         {
             canvas.transform.Find("Panel").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = false;

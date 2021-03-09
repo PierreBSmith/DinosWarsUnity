@@ -18,6 +18,11 @@ public class RulesEngine : MonoBehaviour
 
     private GameObject inventoryUI;
     private GameObject characterData;
+    private GameObject combatForecastUI;
+
+    private RaycastHit2D hover;
+    [SerializeField]
+    private Camera playerCamera;
 
     void Start()
     {
@@ -27,12 +32,25 @@ public class RulesEngine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(attacking)
+        {
+            hover = Physics2D.Raycast(new Vector2(playerCamera.ScreenToWorldPoint(Input.mousePosition).x, playerCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+            if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
+            {
+                combatForecastUI.SetActive(true);
+                combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>());
+            }
+            else
+            {
+                combatForecastUI.SetActive(false);
+            }
+        }
         
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
-        GameObject characterData)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject characterData, GameObject combatForecastUI)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -60,6 +78,7 @@ public class RulesEngine : MonoBehaviour
 
         this.inventoryUI = inventoryUI;
         this.characterData = characterData;
+        this.combatForecastUI = combatForecastUI;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -286,7 +305,7 @@ public class RulesEngine : MonoBehaviour
     private void unitAttacking(CharacterMovement character)
     {
         attacking = true;
-
+        characterData.SetActive(false);
     }
 
     private void attackCharacter(CharacterMovement character)
@@ -299,7 +318,9 @@ public class RulesEngine : MonoBehaviour
             KillUnit(character);
         }
         selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
-        Debug.Log(selected.inventory.equippedWeapon.uses);
+        Debug.Log(selected.inventory.equippedWeapon.uses); 
+        attacking = false;
+        activeList.Remove(selected);
         doneMoving();
     }
 

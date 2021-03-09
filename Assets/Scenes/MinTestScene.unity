@@ -3426,6 +3426,12 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
         type: 3}
+      propertyPath: CharacterDataUIPrefab
+      value: 
+      objectReference: {fileID: 6025683909822000330, guid: abdbb07c09bdef348ae57a111d9010a7,
+        type: 3}
+    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
+        type: 3}
       propertyPath: enemyList.Array.data[0]
       value: 
       objectReference: {fileID: 1464197540}

@@ -84,7 +84,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         if (!hasMoved)
         {
             DisplayRange(true, false);
-            canvas.gameObject.SetActive(false);
+            turnOffPanel();
         }
     }
 
@@ -97,7 +97,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void openItemMenu()
     {
         openInventory.Invoke(this);
-        canvas.gameObject.SetActive(false);
+        turnOffPanel();
     }
     public void attackButtonClicked()
     {
@@ -105,7 +105,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         {
             DisplayRange(true, true);
             //Debug.Log(selectableTiles.Count);
-            canvas.gameObject.SetActive(false);
+            turnOffPanel();
             unitAttacking.Invoke(this);
         }
     }
@@ -607,6 +607,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void turnOnPanel(Vector3 screenPos)
     {
+        //Debug.Log(screenPos);
         canvas.gameObject.SetActive(true);
         if(screenPos.x < 3)
         {
@@ -618,27 +619,27 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         }
         if (screenPos.y < 3)
         {
-            canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y + 1, canvas.transform.position.z);
+            canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y + (canvas.GetComponent<RectTransform>().sizeDelta.y) - 1, canvas.transform.position.z);
         }
         else
         {
-            canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y - (canvas.GetComponent<RectTransform>().sizeDelta.y - 2), canvas.transform.position.z);
+            canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y - 1, canvas.transform.position.z);
         }
         if (hasAttacked || currentStamina < character.attackStaminaCost)
         {
-            canvas.transform.Find("Panel").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = false;
+            canvas.transform.Find("ActionMenu").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = false;
             //canvas.transform.GetComponentsInChildren<Button>().Interactable = false;
         }
         if (hasMoved)
         {
-            canvas.transform.Find("Panel").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = false;
+            canvas.transform.Find("ActionMenu").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = false;
         }
     }
 
     public void turnOffPanel()
     {
-        canvas.transform.Find("Panel").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = true;
-        canvas.transform.Find("Panel").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = true;
+        canvas.transform.Find("ActionMenu").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = true;
+        canvas.transform.Find("ActionMenu").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = true;
         canvas.gameObject.SetActive(false);
     }
 }

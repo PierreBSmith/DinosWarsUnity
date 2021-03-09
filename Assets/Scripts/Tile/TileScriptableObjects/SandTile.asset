@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cd7c7ae66d4e1c48a7d10c88cf0eb1b, type: 3}
   m_Name: SandTile
   m_EditorClassIdentifier: 
-  type: 0
-  walkable: 0
+  type: 3
+  walkable: 1
   avoidBonus: 0
   defResBonus: 0
   movementBonus: 0

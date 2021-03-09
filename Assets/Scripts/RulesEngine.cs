@@ -346,16 +346,14 @@ public class RulesEngine : MonoBehaviour
         selected = character;
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
-            character.canvas.gameObject.SetActive(true);
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position) / 64;
+            selected.turnOnPanel(screenPos);
+        }
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
             OpenCharacterData(selected);
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position)/64;
             selected._animator.SetBool("selected", true);
-
-
-            character.canvas.gameObject.SetActive(true);
-            character.turnOnPanel(screenPos);
+            selected.DisplayRange(true, false);
         }
         //board.showMoveRange(character);
     }

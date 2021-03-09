@@ -128,8 +128,12 @@ MonoBehaviour:
   character: {fileID: 11400000, guid: c4ed8e6c3df9cc44f99c0f39459b3a6f, type: 2}
   _sprite: {fileID: 0}
   _animator: {fileID: 0}
+  currentStamina: 0
+  hasMoved: 0
+  hasAttacked: 0
   currentTile: {fileID: 0}
   currHP: 0
+  baseFlipState: 0
   inventory: {fileID: 0}
   position: {x: 0, y: 0}
   clicked:

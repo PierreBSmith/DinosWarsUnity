@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 804050417654779199}
   - component: {fileID: 5004682262866697941}
+  - component: {fileID: 2768814865644412608}
   m_Layer: 0
   m_Name: RulesEngine
   m_TagString: Untagged
@@ -41,5 +42,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05eb3c98faf4cb547afb10413cc87fda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCamera: {fileID: 0}
+--- !u!114 &2768814865644412608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 804050417654779168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7468dbd4c3a158749b39871aed1918f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

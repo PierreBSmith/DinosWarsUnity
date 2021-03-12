@@ -5,7 +5,6 @@ using UnityEngine;
 public class RulesEngine : MonoBehaviour
 {
     //This will handle gameplay and rules while to player is in a level
-    // Start is called before the first frame update
     private CharacterMovement selected;
     private List<CharacterMovement> enemyList;
     private List<CharacterMovement> friendlyList;
@@ -24,9 +23,11 @@ public class RulesEngine : MonoBehaviour
     [SerializeField]
     private Camera playerCamera;
 
+    private Combat _combatManager;
+
     void Start()
     {
-        
+        _combatManager = GetComponent<Combat>();
     }
 
     // Update is called once per frame
@@ -310,15 +311,21 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
+        bool killed = false;
         character.currHP -= selected.inventory.equippedWeapon.might;
         selected.currentStamina -= selected.character.attackStaminaCost;
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)
         {
             KillUnit(character);
+            killed = true;
         }
         selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
-        Debug.Log(selected.inventory.equippedWeapon.uses); 
+        Debug.Log(selected.inventory.equippedWeapon.uses);
+        if(selected.character.type == Character.Type.FRIENDLY)
+        {
+            _combatManager.GainEXP(selected, character, selected.inventory.equippedWeapon.might, killed);
+        }
         attacking = false;
         activeList.Remove(selected);
         doneMoving();

@@ -11,6 +11,8 @@ public class CharacterDataUI : MonoBehaviour
     public Text maxHP;
     public Text curStam;
     public Text maxStam;
+    public Text level;
+    public Text exp;
 
     public void OpenCharacterUI(CharacterMovement character)
     {
@@ -20,5 +22,7 @@ public class CharacterDataUI : MonoBehaviour
         maxHP.text = character.character.maxHP.ToString();
         curStam.text = character.currentStamina + " /";
         maxStam.text = character.character.maxStamina.ToString();
+        level.text = character.character.level.ToString();
+        exp.text = character.character.curEXP.ToString();
     }
 }

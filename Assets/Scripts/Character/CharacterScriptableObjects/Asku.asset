@@ -14,12 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 4449054687570518734, guid: 442cfc654f36a2d4d8e6e08faed6a879, type: 3}
   characterName: Asku
+  level: 2
+  curEXP: 19
   moveSpeed: 3
   moveRange: 3
   type: 0
   attackRange: 1
   attackDamage: 1
-  maxHP: 2
-  grounded: 0
+  grounded: 1
   maxStamina: 50
-  attackStaminaCost: 0
+  attackStaminaCost: 10
+  maxHP: 10
+  str: 5
+  skll: 3
+  spd: 4
+  lck: 6
+  def: 2
+  res: 1
+  hpGrowth: 35
+  strGrowth: 30
+  skllGrowth: 35
+  spdGrowth: 40
+  lckGrowth: 35
+  defGrowth: 25
+  resGrowth: 15

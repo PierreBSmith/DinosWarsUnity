@@ -5,7 +5,6 @@ using UnityEngine;
 public class RulesEngine : MonoBehaviour
 {
     //This will handle gameplay and rules while to player is in a level
-    // Start is called before the first frame update
     private CharacterMovement selected;
     private List<CharacterMovement> enemyList;
     private List<CharacterMovement> friendlyList;
@@ -18,21 +17,41 @@ public class RulesEngine : MonoBehaviour
 
     private GameObject inventoryUI;
     private GameObject characterData;
+    private GameObject combatForecastUI;
+
+    private RaycastHit2D hover;
+    [SerializeField]
+    private Camera playerCamera;
+
+    private Combat _combatManager;
 
     void Start()
     {
-        
+        _combatManager = GetComponent<Combat>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(attacking)
+        {
+            hover = Physics2D.Raycast(new Vector2(playerCamera.ScreenToWorldPoint(Input.mousePosition).x, playerCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+            if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
+            {
+                combatForecastUI.SetActive(true);
+                combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>());
+            }
+            else
+            {
+                combatForecastUI.SetActive(false);
+            }
+        }
         
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
-        GameObject characterData)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject characterData, GameObject combatForecastUI)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -60,6 +79,7 @@ public class RulesEngine : MonoBehaviour
 
         this.inventoryUI = inventoryUI;
         this.characterData = characterData;
+        this.combatForecastUI = combatForecastUI;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -286,20 +306,28 @@ public class RulesEngine : MonoBehaviour
     private void unitAttacking(CharacterMovement character)
     {
         attacking = true;
-
+        characterData.SetActive(false);
     }
 
     private void attackCharacter(CharacterMovement character)
     {
+        bool killed = false;
         character.currHP -= selected.inventory.equippedWeapon.might;
         selected.currentStamina -= selected.character.attackStaminaCost;
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)
         {
             KillUnit(character);
+            killed = true;
         }
         selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
         Debug.Log(selected.inventory.equippedWeapon.uses);
+        if(selected.character.type == Character.Type.FRIENDLY)
+        {
+            _combatManager.GainEXP(selected, character, selected.inventory.equippedWeapon.might, killed);
+        }
+        attacking = false;
+        activeList.Remove(selected);
         doneMoving();
     }
 
@@ -346,6 +374,8 @@ public class RulesEngine : MonoBehaviour
         selected = character;
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
+            OpenCharacterData(selected);
+            selected._animator.SetBool("selected", true);
             Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position) / 64;
             selected.turnOnPanel(screenPos);
         }

@@ -176,6 +176,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void FindAttackableTiles()
     {
         attackableList.Clear();
+        RemoveSelectableTiles();
         ComputeNeighboringTiles();
         GetCurrentTile();
 
@@ -222,6 +223,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     private void FindSelectableTiles()
     {
+        RemoveSelectableTiles();
         ComputeNeighboringTiles();
         GetCurrentTile();
 
@@ -343,7 +345,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 RemoveSelectableTiles();
                 GetCurrentTile();
                 currentTile.occupied = this;
-                //Debug.Log("Current Stamina is " + currentStamina);
+                Debug.Log("Current Stamina is " + currentStamina);
                 doneMoving.Invoke();
                 break;
 
@@ -600,7 +602,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             {
                 tile.clearMask();
             }
-            selectableTiles.Clear();
+
         }
 
     }

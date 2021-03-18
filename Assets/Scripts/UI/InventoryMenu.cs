@@ -39,8 +39,6 @@ public class InventoryMenu : MonoBehaviour
                 transform.parent.gameObject.SetActive(false);
                 selectedMode = false;
                 selectedItem = null;
-                Vector3 screenPos = Camera.main.WorldToScreenPoint(selectedCharacter.transform.position) / 64;
-                selectedCharacter.turnOnPanel(screenPos);
             }
 
         }

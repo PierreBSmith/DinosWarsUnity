@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 4
   walkable: 0
-  avoidBonus: 0
-  defResBonus: 0
-  movementBonus: 0
+  avoidBonus: 30
+  defResBonus: 5
+  movementBonus: -3

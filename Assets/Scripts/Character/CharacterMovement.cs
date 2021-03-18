@@ -40,7 +40,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     [Header("Inventory")]
     [HideInInspector]
     public CharacterInventory inventory;
-
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
@@ -154,13 +153,14 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         {
             tile = hit.collider.GetComponent<TileBehaviour>();
         }
-
+        
         return tile;
     }
 
     public void GetCurrentTile()
     {
         currentTile = GetTargetTile(gameObject);
+        Debug.Log("Curr tile is " + currentTile);
         //currentTile.unit = gameObject;
     }
 
@@ -261,7 +261,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                     {
                         t.parent = tile;
                         t.visited = true;
-                        t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
+                        t.distance = 1 + tile.distance - tile.tile.movementBonus; //if it's a child of the parent node, then it's on tile farther than the parent tile
                         //Debug.Log("Distance " + t.distance);
                         process.Enqueue(t);
                     }
@@ -309,10 +309,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     public void RemoveSelectableTiles()
     {
-        if(currentTile != null)
-        {
-            currentTile = null;
-        }
         foreach (TileBehaviour tile in selectableTiles)
         {
             tile.ResetTile();
@@ -325,7 +321,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         //Debug.Log(path.Count);
         StartCoroutine(followPath());
         DisplayRange(false, false);
-        GetCurrentTile();
     }
 
     private IEnumerator followPath()
@@ -343,7 +338,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 RemoveSelectableTiles();
                 GetCurrentTile();
                 currentTile.occupied = this;
-                Debug.Log("Current Stamina is " + currentStamina);
+                //Debug.Log("Current Stamina is " + currentStamina);
                 doneMoving.Invoke();
                 break;
 
@@ -568,7 +563,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 nearest = unit;
             }
         }
-
+        Debug.Log(nearest.GetComponent<CharacterMovement>());
         return nearest;
     }
 

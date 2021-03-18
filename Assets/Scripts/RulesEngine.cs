@@ -159,8 +159,9 @@ public class RulesEngine : MonoBehaviour
         {
             selectCharacter(activeList[0]);
             TileBehaviour target = activeList[0].FindNearestTarget().GetComponent<CharacterMovement>().currentTile;
+            //Debug.Log(target);
             activeList[0].FindAttackableTiles();
-            Debug.Log("lolol " + activeList[0].hasAttacked + " " + activeList[0].hasMoved);
+            //Debug.Log("lolol " + activeList[0].hasAttacked + " " + activeList[0].hasMoved);
             if(!activeList[0].hasAttacked && activeList[0].attackableList.Count > 0 && activeList[0].attackableList.Contains(target.occupied))
             {
                 //Debug.Log(target.occupied);
@@ -265,8 +266,8 @@ public class RulesEngine : MonoBehaviour
     //Event handler that selects and deselects units calls select character and/or deselect character depending on the scenario
     private void unitClicked(CharacterMovement character)
     {
-        Debug.Log("STAMINA " + character.currentStamina);
-        //Debug.Log(character + " has been clicked");
+        //Debug.Log("STAMINA " + character.currentStamina);
+        //Debug.Log(character.gameObject.transform.position + " has been clicked");
         if (activeTeam == Character.Type.FRIENDLY && !moving)
         {
             if (selected == null) //if not unit is selected select unit clicked

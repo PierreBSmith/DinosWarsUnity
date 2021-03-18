@@ -16,4 +16,4 @@ MonoBehaviour:
   walkable: 0
   avoidBonus: 0
   defResBonus: 0
-  movementBonus: 0
+  movementBonus: -3

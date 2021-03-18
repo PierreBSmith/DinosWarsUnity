@@ -14,6 +14,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     [HideInInspector]
     public SpriteRenderer _sprite;
     [HideInInspector]
+    public SpriteRenderer[] _theRealSprites;
+    [HideInInspector]
     public Animator _animator;
 
     [Header("Stamina Implementation")]
@@ -60,9 +62,17 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         GetCurrentTile();
         currentTile.occupied = this;
         _sprite = GetComponent<SpriteRenderer>();
+        if(!_sprite)
+        {
+            _theRealSprites = GetComponentsInChildren<SpriteRenderer>();
+            baseFlipState = _theRealSprites[0].flipX;
+        }
+        else
+        {
+            baseFlipState = _sprite.flipX;
+        }
         _animator = GetComponent<Animator>();
         inventory = GetComponent<CharacterInventory>();
-        baseFlipState = _sprite.flipX;
     }
 
     //This takes in a path and moves the unit along that path
@@ -115,14 +125,34 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         currentStamina = character.maxStamina;
         hasMoved = false;
         hasAttacked = false;
-        _sprite.color = Color.white;
+        if(_sprite)
+        {
+            _sprite.color = Color.white;
+        }
+        else
+        {
+            foreach(SpriteRenderer sprite in _theRealSprites)
+            {
+                sprite.color = Color.white;
+            }
+        }
         _animator.enabled = true;
         _animator.Play("Idle", 0, 0f);
     }
 
     public void ResetTemp()
     {
-        _sprite.color = Color.white;
+        if(_sprite)
+        {
+            _sprite.color = Color.white;
+        }
+        else
+        {
+            foreach(SpriteRenderer sprite in _theRealSprites)
+            {
+                sprite.color = Color.white;
+            }
+        }
         _animator.enabled = true;
         _animator.Play("Idle", 0, 0f);
     }
@@ -359,22 +389,62 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 {
                     if(character.type != Character.Type.ENEMY)
                     {
-                        _sprite.flipX = !baseFlipState;
+                        if(_sprite)
+                        {
+                            _sprite.flipX = !baseFlipState;
+                        }
+                        else
+                        {
+                            foreach(SpriteRenderer sprite in _theRealSprites)
+                            {
+                                sprite.flipX = !baseFlipState;
+                            }
+                        }
                     }
                     else
                     {
-                        _sprite.flipX = baseFlipState;
+                        if(_sprite)
+                        {
+                            _sprite.flipX = baseFlipState;
+                        }
+                        else
+                        {
+                            foreach(SpriteRenderer sprite in _theRealSprites)
+                            {
+                                sprite.flipX = baseFlipState;
+                            }
+                        }
                     }
                 }
                 else
                 {
                     if(character.type != Character.Type.ENEMY)
                     {
-                        _sprite.flipX = baseFlipState;
+                        if(_sprite)
+                        {
+                            _sprite.flipX = baseFlipState;
+                        }
+                        else
+                        {
+                            foreach(SpriteRenderer sprite in _theRealSprites)
+                            {
+                                sprite.flipX = baseFlipState;
+                            }
+                        }
                     }
                     else
                     {
-                        _sprite.flipX = !baseFlipState;
+                        if(_sprite)
+                        {
+                            _sprite.flipX = !baseFlipState;
+                        }
+                        else
+                        {
+                            foreach(SpriteRenderer sprite in _theRealSprites)
+                            {
+                                sprite.flipX = !baseFlipState;
+                            }
+                        }
                     }
                 }
                 SetVelocity();

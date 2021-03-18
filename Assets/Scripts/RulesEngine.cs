@@ -239,7 +239,17 @@ public class RulesEngine : MonoBehaviour
     private void characterDone(CharacterMovement character)
     {
         activeList.Remove(character);
-        selected._sprite.color = Color.gray;
+        if(selected._sprite)
+        {
+            selected._sprite.color = Color.gray;
+        }
+        else
+        {
+            foreach(SpriteRenderer sprite in selected._theRealSprites)
+            {
+                sprite.color = Color.gray;
+            }
+        }
         selected._animator.enabled = false;
     }
     //Event handler that is called by character when it stops moving.
@@ -247,7 +257,17 @@ public class RulesEngine : MonoBehaviour
     {
         moving = false;
 
-        selected._sprite.flipX = selected.baseFlipState;
+        if(selected._sprite)
+        {
+            selected._sprite.flipX = selected.baseFlipState;
+        }
+        else
+        {
+            foreach(SpriteRenderer sprite in selected._theRealSprites)
+            {
+                sprite.flipX = selected.baseFlipState;
+            }
+        }
         if (selected && selected.currentStamina <= 0)
         {
             characterDone(selected);

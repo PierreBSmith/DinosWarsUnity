@@ -23,7 +23,7 @@ MonoBehaviour:
   attackDamage: 1
   grounded: 0
   maxStamina: 50
-  attackStaminaCost: 0
+  attackStaminaCost: 20
   maxHP: 20
   str: 0
   skll: 0

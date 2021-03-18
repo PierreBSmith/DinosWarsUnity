@@ -231,14 +231,13 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         Queue<TileBehaviour> process = new Queue<TileBehaviour>();
         process.Enqueue(currentTile);
         currentTile.visited = true;
-
+        GetExtraRange();
         while(process.Count > 0)
         {
             TileBehaviour tile = process.Dequeue();
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
-            
-            if(tile.distance <= (character.moveRange + extraMovementRange) && (!tile.occupied || tile == currentTile))//|| tile.occupied && tile.occupied.character.type == this.character.type
+            if(tile.distance <= Math.Min((character.moveRange + extraMovementRange),currentStamina/character.moveRange) && (!tile.occupied || tile == currentTile))//|| tile.occupied && tile.occupied.character.type == this.character.type
             {
                 //These checks are for stamina usage stuff
                 if(tile.distance <= character.moveRange && (!tile.occupied || tile == currentTile))
@@ -253,9 +252,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 selectableTiles.Add(tile);
                 tile.selectable = true;
             }
-            
             //This looks for more tiles that can be moved to
-            if(tile.distance < (character.moveRange + extraMovementRange))
+            if(tile.distance < Math.Min((character.moveRange + extraMovementRange), currentStamina / character.moveRange))
             {
                 foreach(TileBehaviour t in tile.neighbours)
                 {

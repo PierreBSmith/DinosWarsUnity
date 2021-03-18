@@ -239,8 +239,8 @@ public class RulesEngine : MonoBehaviour
     private void characterDone(CharacterMovement character)
     {
         activeList.Remove(character);
-        selected._sprite.color = Color.gray;
-        selected._animator.enabled = false;
+        character._sprite.color = Color.gray;
+        character._animator.enabled = false;
     }
     //Event handler that is called by character when it stops moving.
     private void doneMoving()
@@ -327,7 +327,8 @@ public class RulesEngine : MonoBehaviour
             _combatManager.GainEXP(selected, character, selected.inventory.equippedWeapon.might, killed);
         }
         attacking = false;
-        activeList.Remove(selected);
+        selected.hasAttacked = true;
+        //activeList.Remove(selected);
         doneMoving();
     }
 

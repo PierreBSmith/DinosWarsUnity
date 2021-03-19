@@ -10349,5 +10349,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lulum
       objectReference: {fileID: 0}
+    - target: {fileID: 2674879904396295069, guid: 2374aa2cf7920c343b2f01b24eda1dc8,
+        type: 3}
+      propertyPath: inventory.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674879904396295069, guid: 2374aa2cf7920c343b2f01b24eda1dc8,
+        type: 3}
+      propertyPath: inventory.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8dd586581afe96449bdbd562792b8014,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2374aa2cf7920c343b2f01b24eda1dc8, type: 3}

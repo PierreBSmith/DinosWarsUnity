@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 7074888760654069885, guid: a13c75a4749a29545bd628beeb1e08de, type: 3}
   characterName: Lulum
-  level: 1
+  level: 4
   curEXP: 0
   moveSpeed: 3
-  moveRange: 4
+  moveRange: 2
   type: 0
   attackRange: 0
   attackDamage: 0
   grounded: 1
   maxStamina: 50
-  attackStaminaCost: 0
+  attackStaminaCost: 20
   maxHP: 10
   str: 0
   skll: 0

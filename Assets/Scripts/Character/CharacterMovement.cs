@@ -219,22 +219,30 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             TileBehaviour tile = process.Dequeue();
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
-            if (tile.distance <= (character.attackRange) && tile != currentTile)//&& !tile.hasUnit
+            if (tile.distance <= (inventory.equippedWeapon.range) && tile != currentTile)//&& !tile.hasUnit
             {
                 //These checks are for stamina usage stuff
 
                 //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
                 selectableTiles.Add(tile);
                 tile.selectable = true;
-                if (tile.occupied && tile.occupied.character.type != character.type)
+                if (tile.occupied)
                 {
-                    //Gets all units in attack range that aren't on their team
-                    attackableList.Add(tile.occupied);
+                    if(inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT && tile.occupied.character.type == character.type 
+                        && tile.occupied.currHP < tile.occupied.character.maxHP)
+                    {
+                        attackableList.Add(tile.occupied);
+                    }
+                    else if(tile.occupied.character.type != character.type)
+                    {
+                        //Gets all units in attack range that aren't on their team
+                        attackableList.Add(tile.occupied);
+                    }
                 }
             }
 
             //This looks for more tiles that can be moved to
-            if (tile.distance < (character.attackRange))
+            if (tile.distance < (inventory.equippedWeapon.range))
             {
                 foreach (TileBehaviour t in tile.neighbours)
                 {

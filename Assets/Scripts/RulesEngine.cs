@@ -39,12 +39,23 @@ public class RulesEngine : MonoBehaviour
             if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
             {
                 combatForecastUI.SetActive(true);
-                combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>());
+                combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>(),
+                                                                                                    _combatManager.GetDamageDealt(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
+                                                                                                    _combatManager.GetAttackSpeed(selected) - _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) >= 5 ? true : false,
+                                                                                                    _combatManager.GetHitRate(selected), _combatManager.GetCritChance(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
+                                                                                                    _combatManager.GetDamageDealt(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected),
+                                                                                                    _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) - _combatManager.GetAttackSpeed(selected) >= 5 ? true : false,
+                                                                                                    _combatManager.GetHitRate(hover.collider.gameObject.GetComponent<CharacterMovement>()),
+                                                                                                    _combatManager.GetCritChance(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected));
             }
             else
             {
                 combatForecastUI.SetActive(false);
             }
+        }
+        else
+        {
+            combatForecastUI.SetActive(false);
         }
         
     }
@@ -239,8 +250,19 @@ public class RulesEngine : MonoBehaviour
 
     private void characterDone(CharacterMovement character)
     {
+        Debug.Log(character.gameObject.name);
         activeList.Remove(character);
-        character._sprite.color = Color.gray;
+        if(character._sprite)
+        {
+            character._sprite.color = Color.gray;
+        }
+        else
+        {
+            foreach(SpriteRenderer sprite in character._theRealSprites)
+            {
+                sprite.color = Color.gray;
+            }
+        }
         character._animator.enabled = false;
     }
     //Event handler that is called by character when it stops moving.
@@ -248,7 +270,17 @@ public class RulesEngine : MonoBehaviour
     {
         moving = false;
 
-        selected._sprite.flipX = selected.baseFlipState;
+        if(selected._sprite)
+        {
+            selected._sprite.flipX = selected.baseFlipState;
+        }
+        else
+        {
+            foreach(SpriteRenderer sprite in selected._theRealSprites)
+            {
+                sprite.flipX = selected.baseFlipState;
+            }
+        }
         if (selected && selected.currentStamina <= 0)
         {
             characterDone(selected);
@@ -312,8 +344,8 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
-        bool killed = false;
-        character.currHP -= selected.inventory.equippedWeapon.might;
+        //character.currHP -= selected.inventory.equippedWeapon.might;
+        /*
         selected.currentStamina -= selected.character.attackStaminaCost;
         Debug.Log(character.name + " has " + character.currHP + " HP left");
         if(character.currHP <= 0)
@@ -323,9 +355,23 @@ public class RulesEngine : MonoBehaviour
         }
         selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
         Debug.Log(selected.inventory.equippedWeapon.uses);
+        */
+        bool killed = false;
+        if(_combatManager.CombatExchange(selected, character))
+        {
+            if(selected.currHP <= 0)
+            {
+                KillUnit(selected);
+            }
+            else
+            {
+                KillUnit(character);
+                killed = true;
+            }
+        }
         if(selected.character.type == Character.Type.FRIENDLY)
         {
-            _combatManager.GainEXP(selected, character, selected.inventory.equippedWeapon.might, killed);
+            _combatManager.GainEXP(selected, character, _combatManager.GetDamageDealt(selected, character), killed);
         }
         attacking = false;
         selected.hasAttacked = true;

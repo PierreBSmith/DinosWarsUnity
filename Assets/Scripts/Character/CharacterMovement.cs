@@ -134,6 +134,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         currentStamina = character.maxStamina;
         hasMoved = false;
         hasAttacked = false;
+        usedInventory = false;
         if(_sprite)
         {
             _sprite.color = Color.white;

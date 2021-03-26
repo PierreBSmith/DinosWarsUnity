@@ -131,7 +131,11 @@ public class InventoryMenu : MonoBehaviour
                         if(selectedItem.consumableType == Item.CONSUMABLE.MEDICINE)
                         {
                             //TODO: Medicine effect
-                            Debug.Log("Using medicine");
+                            selectedCharacter.currHP += selectedItem.amountToHeal;
+                            if(selectedCharacter.currHP > selectedCharacter.character.maxHP)
+                            {
+                                selectedCharacter.currHP = selectedCharacter.character.maxHP;
+                            }
                             selectedItem.uses--;
                             selectedMode = false; //You use the medicine and that's it really.
                             selectedItem = null;

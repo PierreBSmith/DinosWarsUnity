@@ -275,7 +275,7 @@ public class Combat : MonoBehaviour
     public int GetDamageDealt(CharacterMovement playerUnit, CharacterMovement enemyUnit)
     {
        int attack = playerUnit.character.str + playerUnit.inventory.equippedWeapon.might;
-       int defense = 0; //any terrain bonuses they get
+       int defense = enemyUnit.currentTile.tile.defResBonus; //any terrain bonuses they get
        switch(playerUnit.inventory.equippedWeapon.weaponType)
         {
             case Item.WEAPON.CLUB:

@@ -190,7 +190,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void GetCurrentTile()
     {
         currentTile = GetTargetTile(gameObject);
-        Debug.Log("Curr tile is " + currentTile);
+        //Debug.Log("Curr tile is " + currentTile);
         //currentTile.unit = gameObject;
     }
 

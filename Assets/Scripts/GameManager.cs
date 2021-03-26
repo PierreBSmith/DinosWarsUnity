@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject combatForecastUIPrefab;
     private GameObject combatForecastUI;
+    [SerializeField]
+    private GameObject tileInfoUIPrefab;
+    private GameObject tileInfoUI;
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
@@ -67,8 +70,12 @@ public class GameManager : MonoBehaviour
         combatForecastUI = GameObject.Instantiate(combatForecastUIPrefab);
         combatForecastUI.SetActive(false);
 
+        tileInfoUI = GameObject.Instantiate(tileInfoUIPrefab);
+        tileInfoUI.SetActive(false);
+
         var RulesEngine = FindObjectOfType<RulesEngine>();
-        RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
+        RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
+            tileInfoUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
 
     }
 

@@ -15,7 +15,7 @@ MonoBehaviour:
   image: {fileID: 4449054687570518734, guid: 442cfc654f36a2d4d8e6e08faed6a879, type: 3}
   characterName: Asku
   level: 2
-  curEXP: 57
+  curEXP: 49
   moveSpeed: 3
   moveRange: 3
   type: 0
@@ -24,9 +24,9 @@ MonoBehaviour:
   grounded: 1
   maxStamina: 50
   attackStaminaCost: 20
-  maxHP: 10
+  maxHP: 11
   str: 5
-  skll: 3
+  skll: 4
   spd: 4
   lck: 6
   def: 2

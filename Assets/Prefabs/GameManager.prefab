@@ -50,7 +50,14 @@ MonoBehaviour:
   friendList:
   - {fileID: 0}
   - {fileID: 0}
-  InventoryUIPrefab: {fileID: 0}
-  inventoryUI: {fileID: 0}
+  - {fileID: 0}
+  InventoryUIPrefab: {fileID: 9161443336704710998, guid: 073267c3ca492e74ba61ae77108508fe,
+    type: 3}
+  CharacterDataUIPrefab: {fileID: 6025683909822000330, guid: abdbb07c09bdef348ae57a111d9010a7,
+    type: 3}
+  combatForecastUIPrefab: {fileID: 1464314319373454227, guid: 5f258780fc4b6a44b95e4464b160246f,
+    type: 3}
+  tileInfoUIPrefab: {fileID: 8144767683819900362, guid: 1683972f5ba6e9b4dad4c83a67dcd4b8,
+    type: 3}
   allItems:
   - {fileID: 11400000, guid: 21ce90ad2ee476b48a49a3de9eb152d2, type: 2}

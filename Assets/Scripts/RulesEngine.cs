@@ -18,6 +18,7 @@ public class RulesEngine : MonoBehaviour
     private GameObject inventoryUI;
     private GameObject characterData;
     private GameObject combatForecastUI;
+    private GameObject tileInfoUI;
 
     private RaycastHit2D hover;
     [SerializeField]
@@ -33,36 +34,56 @@ public class RulesEngine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(attacking)
+        hover = Physics2D.Raycast(new Vector2(playerCamera.ScreenToWorldPoint(Input.mousePosition).x, playerCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+        if(hover)
         {
-            hover = Physics2D.Raycast(new Vector2(playerCamera.ScreenToWorldPoint(Input.mousePosition).x, playerCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
-            if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
+            if(attacking)
             {
-                combatForecastUI.SetActive(true);
-                combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>(),
-                                                                                                    _combatManager.GetDamageDealt(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                    _combatManager.GetAttackSpeed(selected) - _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) >= 5 ? true : false,
-                                                                                                    _combatManager.GetHitRate(selected), _combatManager.GetCritChance(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                    _combatManager.GetDamageDealt(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected),
-                                                                                                    _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) - _combatManager.GetAttackSpeed(selected) >= 5 ? true : false,
-                                                                                                    _combatManager.GetHitRate(hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                    _combatManager.GetCritChance(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected));
+                if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
+                {
+                    combatForecastUI.SetActive(true);
+                    combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>(),
+                                                                                                        _combatManager.GetDamageDealt(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
+                                                                                                        _combatManager.GetAttackSpeed(selected) - _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) >= 5 ? true : false,
+                                                                                                        _combatManager.GetHitRate(selected), _combatManager.GetCritChance(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
+                                                                                                        _combatManager.GetDamageDealt(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected),
+                                                                                                        _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) - _combatManager.GetAttackSpeed(selected) >= 5 ? true : false,
+                                                                                                        _combatManager.GetHitRate(hover.collider.gameObject.GetComponent<CharacterMovement>()),
+                                                                                                        _combatManager.GetCritChance(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected));
+                }
+                else
+                {
+                    combatForecastUI.SetActive(false);
+                }
             }
             else
             {
                 combatForecastUI.SetActive(false);
+                if(hover.collider.gameObject.tag == "Player" || hover.collider.gameObject.tag == "Enemy")
+                {
+                    //if the mouse hovers over a player
+                    OpenCharacterData(hover.collider.gameObject.GetComponent<CharacterMovement>());
+                    OpenTileUI(hover.collider.gameObject.GetComponent<CharacterMovement>().currentTile.tile);
+                }
+                else if (hover.collider.gameObject.tag == "Tile")
+                {
+                    CloseCharacterData();
+                    OpenTileUI(hover.collider.gameObject.GetComponent<TileBehaviour>().tile);
+                }
             }
         }
         else
         {
+            //This is absolutely making sure everything closes out!
+            CloseCharacterData();
+            CloseTileUI();
             combatForecastUI.SetActive(false);
         }
-        
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
-        GameObject characterData, GameObject combatForecastUI)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -91,6 +112,7 @@ public class RulesEngine : MonoBehaviour
         this.inventoryUI = inventoryUI;
         this.characterData = characterData;
         this.combatForecastUI = combatForecastUI;
+        this.tileInfoUI = tileInfoUI;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -415,6 +437,17 @@ public class RulesEngine : MonoBehaviour
         characterData.SetActive(false);
     }
 
+    private void OpenTileUI(Tile tile)
+    {
+        tileInfoUI.SetActive(true);
+        tileInfoUI.transform.GetChild(0).gameObject.GetComponent<TileInfoUI>().OpenTileInfoUI(tile);
+    }
+
+    private void CloseTileUI()
+    {
+        tileInfoUI.SetActive(false);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
@@ -423,14 +456,12 @@ public class RulesEngine : MonoBehaviour
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
             character.RemoveSelectableTiles();
-            OpenCharacterData(selected);
             selected._animator.SetBool("selected", true);
             Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position) / 64;
             selected.turnOnPanel(screenPos);
         }
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
-            OpenCharacterData(selected);
             selected._animator.SetBool("selected", true);
             selected.DisplayRange(true, false);
         }
@@ -440,7 +471,6 @@ public class RulesEngine : MonoBehaviour
     //helper function called from unitClicked(), and doneMoving()
     private void deselectCharacter()
     {
-        CloseCharacterData();
         selected.turnOffPanel();
         selected.DisplayRange(false, false);
         selected._animator.SetBool("selected", false);

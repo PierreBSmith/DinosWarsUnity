@@ -380,6 +380,10 @@ public class Combat : MonoBehaviour
         }
         else
         {
+            if(playerUnit.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+            {
+                playerUnit.character.curEXP += BASE_EXP_HEAL;
+            }
             playerUnit.character.curEXP += EXPFromDamageDealt(playerUnit, enemyUnit) + EXTRA_FOR_KILL;
             //with probably a lot more stuff. Like enemy level, promotions, and other stuff. Probably like debuffs or something?
         }

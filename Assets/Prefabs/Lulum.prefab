@@ -270,6 +270,7 @@ MonoBehaviour:
   currHP: 0
   baseFlipState: 0
   inventory: {fileID: 0}
+  usedInventory: 0
   position: {x: 0, y: 0}
   clicked:
     m_PersistentCalls:
@@ -300,7 +301,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33349e164ea7e854e8d678753eb52525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: []
+  startingWeapon: {fileID: 11400000, guid: 8dd586581afe96449bdbd562792b8014, type: 2}
+  startingAccessory: {fileID: 0}
+  startingInventory: []
+  inventory:
+  - {fileID: 11400000, guid: 8dd586581afe96449bdbd562792b8014, type: 2}
   equippedWeapon: {fileID: 0}
   equippedAccessory: {fileID: 0}
 --- !u!1 &2674879904405755597

@@ -20,8 +20,6 @@ public class Character : ScriptableObject
     public int moveSpeed = 3; //This is SPEED THE CHARACTER MOVES IN GAME!!! Not the stat -_-;
     public int moveRange;
     public Type type;
-    public int attackRange;
-    public int attackDamage;
     public bool grounded;
     public int maxStamina;
     public int attackStaminaCost;

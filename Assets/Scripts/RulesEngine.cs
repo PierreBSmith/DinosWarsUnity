@@ -370,18 +370,6 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
-        //character.currHP -= selected.inventory.equippedWeapon.might;
-        /*
-        selected.currentStamina -= selected.character.attackStaminaCost;
-        Debug.Log(character.name + " has " + character.currHP + " HP left");
-        if(character.currHP <= 0)
-        {
-            KillUnit(character);
-            killed = true;
-        }
-        selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
-        Debug.Log(selected.inventory.equippedWeapon.uses);
-        */
         bool killed = false;
         if(_combatManager.CombatExchange(selected, character))
         {

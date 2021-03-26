@@ -371,7 +371,6 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
-        bool killed = false;
         if(_combatManager.CombatExchange(selected, character))
         {
             if(selected.currHP <= 0)
@@ -381,12 +380,7 @@ public class RulesEngine : MonoBehaviour
             else
             {
                 KillUnit(character);
-                killed = true;
             }
-        }
-        if(selected.character.type == Character.Type.FRIENDLY)
-        {
-            _combatManager.GainEXP(selected, character, _combatManager.GetDamageDealt(selected, character), killed);
         }
         attacking = false;
         selected.hasAttacked = true;

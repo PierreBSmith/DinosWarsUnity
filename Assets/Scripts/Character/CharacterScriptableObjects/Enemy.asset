@@ -19,16 +19,17 @@ MonoBehaviour:
   moveSpeed: 3
   moveRange: 3
   type: 1
+  isBoss: 0
   grounded: 1
   maxStamina: 50
   attackStaminaCost: 20
-  maxHP: 10
+  maxHP: 25
   str: 3
   skll: 2
   spd: 3
   lck: 2
   def: 3
-  res: 3
+  res: 0
   hpGrowth: 0
   strGrowth: 0
   skllGrowth: 0

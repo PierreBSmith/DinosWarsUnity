@@ -47,6 +47,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   friendList:
   - {fileID: 0}
   - {fileID: 0}
@@ -69,3 +71,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2f8831e9bab016047876dd0776002834, type: 2}
   - {fileID: 11400000, guid: f54e85cae41022c479fbc84a41b18ccb, type: 2}
   - {fileID: 11400000, guid: 664667c597701cb408e736eb2927b41b, type: 2}
+  - {fileID: 11400000, guid: cf25cc8d95f1d0042beea11350acb430, type: 2}

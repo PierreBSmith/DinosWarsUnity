@@ -19,6 +19,7 @@ MonoBehaviour:
   moveSpeed: 3
   moveRange: 3
   type: 0
+  isBoss: 0
   grounded: 1
   maxStamina: 50
   attackStaminaCost: 20

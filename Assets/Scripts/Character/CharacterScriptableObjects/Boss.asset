@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
   m_Name: Boss
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: e6cf1558685f5dd49875f758fb999212, type: 3}
   characterName: Boss
   level: 1
   curEXP: 0
@@ -20,16 +20,16 @@ MonoBehaviour:
   moveRange: 3
   type: 1
   isBoss: 1
-  grounded: 0
-  maxStamina: 0
-  attackStaminaCost: 0
-  maxHP: 0
-  str: 0
-  skll: 0
-  spd: 0
-  lck: 0
-  def: 0
-  res: 0
+  grounded: 1
+  maxStamina: 80
+  attackStaminaCost: 10
+  maxHP: 30
+  str: 5
+  skll: 3
+  spd: 2
+  lck: 2
+  def: 5
+  res: 4
   hpGrowth: 0
   strGrowth: 0
   skllGrowth: 0

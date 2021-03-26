@@ -28,13 +28,14 @@ public class Combat : MonoBehaviour
     {
         if(playerUnit.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
         {
-            enemyUnit.currHP -= playerUnit.inventory.equippedWeapon.might;
+            enemyUnit.currHP += (int)(playerUnit.character.str * 1.5f);
             playerUnit.currentStamina -= playerUnit.character.attackStaminaCost;
             if(enemyUnit.currHP > enemyUnit.character.maxHP)
             {
                 enemyUnit.currHP = enemyUnit.character.maxHP;
             }
             playerUnit.inventory.equippedWeapon.uses--;
+            GainEXP(playerUnit, enemyUnit, playerUnit.inventory.equippedWeapon.might, false);
         }
         else
         {
@@ -57,6 +58,7 @@ public class Combat : MonoBehaviour
             }//Check if enemy dead
             if(enemyUnit.currHP <= 0)
             {
+                GainEXP(playerUnit, enemyUnit, GetDamageDealt(playerUnit, enemyUnit), true);
                 return true;
             }
 
@@ -104,6 +106,7 @@ public class Combat : MonoBehaviour
                 }//Check if enemy dead
                 if(enemyUnit.currHP <= 0)
                 {
+                    GainEXP(playerUnit, enemyUnit, GetDamageDealt(playerUnit, enemyUnit), true);
                     return true;
                 }
             }
@@ -131,6 +134,10 @@ public class Combat : MonoBehaviour
                     return true;
                 }
             }
+        }
+        if(playerUnit.character.type == Character.Type.FRIENDLY)
+        {
+            GainEXP(playerUnit, enemyUnit, GetDamageDealt(playerUnit, enemyUnit), false);
         }
         return false;
     }
@@ -365,10 +372,14 @@ public class Combat : MonoBehaviour
         return attack - defense;
     }
 
-    public void GainEXP(CharacterMovement playerUnit, CharacterMovement enemyUnit, int damageDealt, bool killedEnemy)
+    private void GainEXP(CharacterMovement playerUnit, CharacterMovement enemyUnit, int damageDealt, bool killedEnemy)
     {
         if(!killedEnemy) //If the enemy did not die
         {
+            if(playerUnit.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+            {
+                playerUnit.character.curEXP += BASE_EXP_HEAL;
+            }
             if(damageDealt == 0)
             {
                 playerUnit.character.curEXP++; //Ya only get 1 EXP if ya don't do anything LUL
@@ -380,10 +391,6 @@ public class Combat : MonoBehaviour
         }
         else
         {
-            if(playerUnit.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
-            {
-                playerUnit.character.curEXP += BASE_EXP_HEAL;
-            }
             playerUnit.character.curEXP += EXPFromDamageDealt(playerUnit, enemyUnit) + EXTRA_FOR_KILL;
             //with probably a lot more stuff. Like enemy level, promotions, and other stuff. Probably like debuffs or something?
         }

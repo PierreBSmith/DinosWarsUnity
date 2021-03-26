@@ -22,3 +22,5 @@ MonoBehaviour:
   avoid: 30
   weight: 5
   crit: 0
+  consumableType: 0
+  amountToHeal: 0

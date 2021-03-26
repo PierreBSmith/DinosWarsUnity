@@ -42,6 +42,9 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     [Header("Inventory")]
     [HideInInspector]
     public CharacterInventory inventory;
+    [HideInInspector]
+    public bool usedInventory = false;
+
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
@@ -92,7 +95,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         if (!hasMoved)
         {
-            DisplayRange(true, false);
+            DisplayRange(true, false, false);
             turnOffPanel();
         }
     }
@@ -112,7 +115,14 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         if (!hasAttacked && currentStamina >= character.attackStaminaCost)
         {
-            DisplayRange(true, true);
+            if(inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+            {
+                DisplayRange(true, true, true);
+            }
+            else
+            {
+                DisplayRange(true, true, false);
+            }
             //Debug.Log(selectableTiles.Count);
             turnOffPanel();
             unitAttacking.Invoke(this);
@@ -358,7 +368,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         //Debug.Log(path.Count);
         StartCoroutine(followPath());
-        DisplayRange(false, false);
+        DisplayRange(false, false, false);
     }
 
     private IEnumerator followPath()
@@ -646,7 +656,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     }
 
     //This is for displaying movement range
-    public void DisplayRange(bool toActivate, bool isAttackRange)
+    public void DisplayRange(bool toActivate, bool isAttackRange, bool isHeal)
     {
         if(toActivate) //If activated, we highlight all the tiles
         {
@@ -663,7 +673,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             //We just call this to ensure that we get the selectable tiles.
             foreach(TileBehaviour tile in selectableTiles)
             {
-                tile.setMask(isAttackRange, character.type);
+                tile.setMask(isAttackRange, isHeal, character.type);
             }
         }
         else
@@ -707,12 +717,17 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         {
             canvas.transform.Find("ActionMenu").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = false;
         }
+        if(usedInventory)
+        {
+            canvas.transform.Find("ActionMenu").transform.Find("ItemButton").gameObject.GetComponent<Button>().interactable = false;
+        }
     }
 
     public void turnOffPanel()
     {
         canvas.transform.Find("ActionMenu").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = true;
         canvas.transform.Find("ActionMenu").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = true;
+        canvas.transform.Find("ActionMenu").transform.Find("ItemButton").gameObject.GetComponent<Button>().interactable = true;
         canvas.gameObject.SetActive(false);
     }
 }

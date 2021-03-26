@@ -257,7 +257,7 @@ public class Combat : MonoBehaviour
         {
             avoid = 0;
         }
-        return avoid //+ any terrain bonus + stamina penalties :(
+        return avoid; //+ any terrain bonus + stamina penalties :(
     }
 
     public int GetCritChance(CharacterMovement playerUnit, CharacterMovement enemyUnit)

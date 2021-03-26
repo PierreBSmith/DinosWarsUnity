@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   itemName: Heal
-  uses: 30
+  uses: 29
   weaponType: 6
   range: 1
-  might: -10
+  might: 0
   hit: 100
   avoid: 0
   weight: 0

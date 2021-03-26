@@ -59,5 +59,10 @@ MonoBehaviour:
     type: 3}
   tileInfoUIPrefab: {fileID: 8144767683819900362, guid: 1683972f5ba6e9b4dad4c83a67dcd4b8,
     type: 3}
+  healUIPrefab: {fileID: 7722825986377612718, guid: 0611ee720dec55748b002c4f92d0a537,
+    type: 3}
   allItems:
   - {fileID: 11400000, guid: 21ce90ad2ee476b48a49a3de9eb152d2, type: 2}
+  - {fileID: 11400000, guid: 7731dce2871bfd94cbb4cbc02bcb4e07, type: 2}
+  - {fileID: 11400000, guid: 8dd586581afe96449bdbd562792b8014, type: 2}
+  - {fileID: 11400000, guid: bf9d352cbb0c48c43953f0e94aba8d72, type: 2}

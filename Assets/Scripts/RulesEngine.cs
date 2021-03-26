@@ -19,6 +19,7 @@ public class RulesEngine : MonoBehaviour
     private GameObject characterData;
     private GameObject combatForecastUI;
     private GameObject tileInfoUI;
+    private GameObject healUI;
 
     private RaycastHit2D hover;
     [SerializeField]
@@ -41,27 +42,28 @@ public class RulesEngine : MonoBehaviour
             {
                 if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
                 {
-                    combatForecastUI.SetActive(true);
-                    combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>(),
-                                                                                                        _combatManager.GetDamageDealt(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                        _combatManager.GetAttackSpeed(selected) - _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) >= 5 ? true : false,
-                                                                                                        _combatManager.GetHitRate(selected), _combatManager.GetCritChance(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                        _combatManager.GetDamageDealt(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected),
-                                                                                                        _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) - _combatManager.GetAttackSpeed(selected) >= 5 ? true : false,
-                                                                                                        _combatManager.GetHitRate(hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                        _combatManager.GetCritChance(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected));
+                    if(selected.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+                    {
+                        OpenHealUI(selected, hover.collider.gameObject.GetComponent<CharacterMovement>());
+                    }
+                    else
+                    {
+                        OpenCombatForecast(selected, hover.collider.gameObject.GetComponent<CharacterMovement>());
+                    }
                 }
                 else
                 {
-                    combatForecastUI.SetActive(false);
+                    CloseCombatForecast();
+                    CloseHealUI();
                 }
             }
             else
             {
-                combatForecastUI.SetActive(false);
+                CloseCombatForecast();
+                CloseHealUI();
                 if(hover.collider.gameObject.tag == "Player" || hover.collider.gameObject.tag == "Enemy")
                 {
-                    //if the mouse hovers over a player
+                    //if the mouse hovers over a unit
                     OpenCharacterData(hover.collider.gameObject.GetComponent<CharacterMovement>());
                     OpenTileUI(hover.collider.gameObject.GetComponent<CharacterMovement>().currentTile.tile);
                 }
@@ -77,13 +79,14 @@ public class RulesEngine : MonoBehaviour
             //This is absolutely making sure everything closes out!
             CloseCharacterData();
             CloseTileUI();
-            combatForecastUI.SetActive(false);
+            CloseCombatForecast();
+            CloseHealUI();
         }
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
-        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -113,6 +116,7 @@ public class RulesEngine : MonoBehaviour
         this.characterData = characterData;
         this.combatForecastUI = combatForecastUI;
         this.tileInfoUI = tileInfoUI;
+        this.healUI = healUI;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -426,6 +430,17 @@ public class RulesEngine : MonoBehaviour
         inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().OpenInventoryUIMenu(selected, selected.inventory);
     }
 
+    private void CloseInventoryMenu()
+    {
+        inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().CloseInventoryUI();
+        selected.usedInventory = CheckIfInventoryWasUsed();
+    }
+
+    private bool CheckIfInventoryWasUsed()
+    {
+        return inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().used;
+    }
+
     private void OpenCharacterData(CharacterMovement character)
     {
         characterData.SetActive(true);
@@ -448,6 +463,35 @@ public class RulesEngine : MonoBehaviour
         tileInfoUI.SetActive(false);
     }
 
+    private void OpenCombatForecast(CharacterMovement player, CharacterMovement enemy)
+    {
+        combatForecastUI.SetActive(true);
+        combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, enemy,
+                                                                                                        _combatManager.GetDamageDealt(selected, enemy),
+                                                                                                        _combatManager.GetAttackSpeed(selected) - _combatManager.GetAttackSpeed(enemy) >= 5 ? true : false,
+                                                                                                        _combatManager.GetHitRate(selected), _combatManager.GetCritChance(selected, enemy),
+                                                                                                        _combatManager.GetDamageDealt(enemy, selected),
+                                                                                                        _combatManager.GetAttackSpeed(enemy) - _combatManager.GetAttackSpeed(selected) >= 5 ? true : false,
+                                                                                                        _combatManager.GetHitRate(enemy),
+                                                                                                        _combatManager.GetCritChance(enemy, selected));
+    }
+
+    private void CloseCombatForecast()
+    {
+        combatForecastUI.SetActive(false);
+    }
+
+    private void OpenHealUI(CharacterMovement user, CharacterMovement target)
+    {
+        healUI.SetActive(true);
+        healUI.transform.GetChild(0).GetComponent<HealUI>().OpenHealUI(user, target);
+    }
+
+    private void CloseHealUI()
+    {
+        healUI.SetActive(false);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
@@ -463,7 +507,7 @@ public class RulesEngine : MonoBehaviour
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
             selected._animator.SetBool("selected", true);
-            selected.DisplayRange(true, false);
+            selected.DisplayRange(true, false, false);
         }
         //board.showMoveRange(character);
     }
@@ -472,7 +516,8 @@ public class RulesEngine : MonoBehaviour
     private void deselectCharacter()
     {
         selected.turnOffPanel();
-        selected.DisplayRange(false, false);
+        CloseInventoryMenu();
+        selected.DisplayRange(false, false, false);
         selected._animator.SetBool("selected", false);
         selected._animator.Play("Idle", 0, 0f);
         attacking = false;

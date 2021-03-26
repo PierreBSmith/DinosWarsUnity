@@ -23,6 +23,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject tileInfoUIPrefab;
     private GameObject tileInfoUI;
+    [SerializeField]
+    private GameObject healUIPrefab;
+    private GameObject healUI;
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
@@ -73,9 +76,12 @@ public class GameManager : MonoBehaviour
         tileInfoUI = GameObject.Instantiate(tileInfoUIPrefab);
         tileInfoUI.SetActive(false);
 
+        healUI = GameObject.Instantiate(healUIPrefab);
+        healUI.SetActive(false);
+
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
-            tileInfoUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
+            tileInfoUI, healUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
 
     }
 

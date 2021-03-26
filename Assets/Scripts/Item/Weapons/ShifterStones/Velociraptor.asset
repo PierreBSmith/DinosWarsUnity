@@ -21,6 +21,6 @@ MonoBehaviour:
   hit: 65
   avoid: 20
   weight: 15
-  crit: 0
+  crit: 5
   consumableType: 0
   amountToHeal: 0

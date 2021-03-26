@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 79986f9469dbd474488fd934fae56300, type: 3}
   m_Name: FlintSpear
   m_EditorClassIdentifier: Assembly-CSharp::Item
   type: 0
@@ -19,8 +19,8 @@ MonoBehaviour:
   range: 1
   might: 10
   hit: 60
-  avoid: 30
-  weight: 5
+  avoid: 20
+  weight: 10
   crit: 0
   consumableType: 0
   amountToHeal: 0

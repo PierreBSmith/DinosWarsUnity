@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RulesEngine : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class RulesEngine : MonoBehaviour
     private GameObject combatForecastUI;
     private GameObject tileInfoUI;
     private GameObject healUI;
-
+    public GameObject endGame;
     private RaycastHit2D hover;
     [SerializeField]
     private Camera playerCamera;
@@ -399,10 +400,13 @@ public class RulesEngine : MonoBehaviour
         if(character.character.type == Character.Type.FRIENDLY)
         {
             friendlyList.Remove(character);
+            StartCoroutine(endOfGame(character));
+            
         }
         else if (character.character.type == Character.Type.ENEMY)
         {
             enemyList.Remove(character);
+            StartCoroutine(endOfGame(character));
         }
         else
         {
@@ -411,7 +415,24 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         character.gameObject.SetActive(false);
     }
+    private IEnumerator endOfGame(CharacterMovement character)
+    {
+        if (character.character.characterName == "Asku" || character.character.characterName == "Tatam")
+        {
+            endGame.gameObject.SetActive(true);
+            endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Lose";
+            yield return new WaitForSeconds(seconds: 5);
+            Application.Quit();
+        }
+        if (enemyList.Count == 0)
+        {
+            endGame.gameObject.SetActive(true);
+            endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Win";
+            yield return new WaitForSeconds(seconds: 5);
+            Application.Quit();
+        }
 
+    }
     private void OpenInventoryMenu(CharacterMovement character)
     {
         inventoryUI.SetActive(true);

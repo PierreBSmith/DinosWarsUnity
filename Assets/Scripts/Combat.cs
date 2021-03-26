@@ -10,8 +10,10 @@ public class Combat : MonoBehaviour
 
     private const int MAX_EXP_TO_LEVEL = 100;
     private const int BASE_EXP_GAIN = 20; //For now, we will tweak upon play test
+    private const int BASE_EXP_HEAL = 10;
     private const int EXTRA_FOR_KILL = 30;
     private const int NUM_OF_STATS = 7;//There are 7 stats to calculate if they go up :D
+    private const int MINIMUM_STAMINA = 0;
 
     private const int DOUBLING_MAGIC_NUMBER = 5;
     private const int WEAPON_ADVANTAGE = 10;
@@ -19,12 +21,15 @@ public class Combat : MonoBehaviour
     private const int WEAPON_DAMAGE_DISADVANTAGE = 1;
     private const int WEAPON_DISADVANTAGE = 10;
 
+    private const int LOW_STAMINA_PENALTY = 10;
+
     //We still need to implement critical percentages.
     public bool CombatExchange(CharacterMovement playerUnit, CharacterMovement enemyUnit)
     {
         if(playerUnit.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
         {
             enemyUnit.currHP -= playerUnit.inventory.equippedWeapon.might;
+            playerUnit.currentStamina -= playerUnit.character.attackStaminaCost;
             if(enemyUnit.currHP > enemyUnit.character.maxHP)
             {
                 enemyUnit.currHP = enemyUnit.character.maxHP;
@@ -35,32 +40,48 @@ public class Combat : MonoBehaviour
         {
             int playerAccuracy = GetAccuracy(playerUnit, enemyUnit);
             int hitChance = Random.Range(0, 101); //Random number in range 0 - 100
+            playerUnit.currentStamina -= playerUnit.character.attackStaminaCost;
             if (hitChance <= playerAccuracy)
             {
                 //Hit enemy
-                enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit);
+                int critChance = Random.Range(0,101);
+                if(critChance <= GetCritChance(playerUnit, enemyUnit))
+                {
+                    enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit) * 3;
+                }
+                else
+                {
+                    enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit);
+                }
                 playerUnit.inventory.equippedWeapon.uses--;
             }//Check if enemy dead
             if(enemyUnit.currHP <= 0)
             {
                 return true;
             }
-            playerUnit.currentStamina -= playerUnit.character.attackStaminaCost;
 
             //Enemy phase of attack
             hitChance = Random.Range(0, 101); //new Random number!
             int enemyAccuracy = GetAccuracy(enemyUnit, playerUnit);
+            enemyUnit.currentStamina -= enemyUnit.character.attackStaminaCost;
             if(hitChance <= enemyAccuracy)
             {
                 //Get hit
-                playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                int critChance = Random.Range(0,101);
+                if(critChance <= GetCritChance(enemyUnit, playerUnit))
+                {
+                    playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
+                }
+                else
+                {
+                    playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                }
                 enemyUnit.inventory.equippedWeapon.uses--;
             } //Check if player dead
             if(playerUnit.currHP <= 0)
             {
                 return true;
             }
-            enemyUnit.currentStamina -= enemyUnit.character.attackStaminaCost;
 
             //Second player hit
             if(GetAttackSpeed(playerUnit) - GetAttackSpeed(enemyUnit) >= DOUBLING_MAGIC_NUMBER)
@@ -70,7 +91,15 @@ public class Combat : MonoBehaviour
                 if (hitChance <= playerAccuracy)
                 {
                     //Hit enemy
-                    enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit);
+                    int critChance = Random.Range(0,101);
+                    if(critChance <= GetCritChance(playerUnit, enemyUnit))
+                    {
+                        enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit) * 3;
+                    }
+                    else
+                    {
+                        enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit);
+                    }
                     playerUnit.inventory.equippedWeapon.uses--;
                 }//Check if enemy dead
                 if(enemyUnit.currHP <= 0)
@@ -85,9 +114,18 @@ public class Combat : MonoBehaviour
                 if (hitChance <= enemyAccuracy)
                 {
                     //Hit enemy
-                    playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                    int critChance = Random.Range(0,101);
+                    if(critChance <= GetCritChance(enemyUnit, playerUnit))
+                    {
+                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
+                    }
+                    else
+                    {
+                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                    }
                     enemyUnit.inventory.equippedWeapon.uses--;
-                }//Check if enemy dead
+                }
+                //Check if enemy dead
                 if(playerUnit.currHP <= 0)
                 {
                     return true;
@@ -192,6 +230,14 @@ public class Combat : MonoBehaviour
                 }
                 break;
         }
+        if(playerUnit.currentStamina <= MINIMUM_STAMINA)
+        {
+            accuracy -= LOW_STAMINA_PENALTY;
+        }
+        if(accuracy < 0)
+        {
+            accuracy = 0;
+        }
         return accuracy;
     }
 
@@ -202,7 +248,16 @@ public class Combat : MonoBehaviour
 
     private int GetAvoid(CharacterMovement unit)
     {
-        return GetAttackSpeed(unit) * 2 + unit.character.lck; //+ any terrain bonus + stamina penalties :(
+        int avoid = GetAttackSpeed(unit) * 2 + unit.character.lck + unit.currentTile.tile.avoidBonus;
+        if(unit.currentStamina <= MINIMUM_STAMINA)
+        {
+            avoid -= LOW_STAMINA_PENALTY;
+        }
+        if (avoid < 0)
+        {
+            avoid = 0;
+        }
+        return avoid //+ any terrain bonus + stamina penalties :(
     }
 
     public int GetCritChance(CharacterMovement playerUnit, CharacterMovement enemyUnit)

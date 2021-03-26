@@ -10,29 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
-  m_Name: Tatam
+  m_Name: Enemy
   m_EditorClassIdentifier: 
-  image: {fileID: -7630343930561710917, guid: c8f5ec9ae28975a44ae8610332f495f1, type: 3}
-  characterName: Tatam
+  image: {fileID: 21300000, guid: e6cf1558685f5dd49875f758fb999212, type: 3}
+  characterName: enemy
   level: 1
   curEXP: 0
   moveSpeed: 3
   moveRange: 3
-  type: 0
-  grounded: 1
+  type: 1
+  grounded: 0
   maxStamina: 50
   attackStaminaCost: 20
-  maxHP: 13
-  str: 4
-  skll: 5
-  spd: 4
-  lck: 5
-  def: 4
-  res: 0
-  hpGrowth: 35
-  strGrowth: 40
-  skllGrowth: 50
-  spdGrowth: 30
-  lckGrowth: 35
-  defGrowth: 25
-  resGrowth: 10
+  maxHP: 10
+  str: 3
+  skll: 2
+  spd: 3
+  lck: 2
+  def: 3
+  res: 3
+  hpGrowth: 0
+  strGrowth: 0
+  skllGrowth: 0
+  spdGrowth: 0
+  lckGrowth: 0
+  defGrowth: 0
+  resGrowth: 0

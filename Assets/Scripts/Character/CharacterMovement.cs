@@ -695,7 +695,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         //Debug.Log(screenPos);
         canvas.gameObject.SetActive(true);
-        if(screenPos.x < 3)
+        if(screenPos.x < 5)
         {
             canvas.transform.position = new Vector3(this.transform.position.x + (float)1.5,canvas.transform.position.y,canvas.transform.position.z);
         }
@@ -703,7 +703,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         {
             canvas.transform.position = new Vector3(this.transform.position.x - (float)(1.5), canvas.transform.position.y, canvas.transform.position.z);
         }
-        if (screenPos.y < 3)
+        if (screenPos.y < 5)
         {
             canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y + (canvas.GetComponent<RectTransform>().sizeDelta.y) - 1, canvas.transform.position.z);
         }

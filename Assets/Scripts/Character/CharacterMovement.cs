@@ -230,39 +230,42 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             TileBehaviour tile = process.Dequeue();
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
-            if (tile.distance <= (inventory.equippedWeapon.range) && tile != currentTile)//&& !tile.hasUnit
+            if(inventory.equippedWeapon)
             {
-                //These checks are for stamina usage stuff
-
-                //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
-                selectableTiles.Add(tile);
-                tile.selectable = true;
-                if (tile.occupied)
+                if (tile.distance <= (inventory.equippedWeapon.range) && tile != currentTile)//&& !tile.hasUnit
                 {
-                    if(inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT && tile.occupied.character.type == character.type 
-                        && tile.occupied.currHP < tile.occupied.character.maxHP)
+                    //These checks are for stamina usage stuff
+
+                    //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
+                    selectableTiles.Add(tile);
+                    tile.selectable = true;
+                    if (tile.occupied)
                     {
-                        attackableList.Add(tile.occupied);
-                    }
-                    else if(tile.occupied.character.type != character.type)
-                    {
-                        //Gets all units in attack range that aren't on their team
-                        attackableList.Add(tile.occupied);
+                        if(inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT && tile.occupied.character.type == character.type 
+                            && tile.occupied.currHP < tile.occupied.character.maxHP)
+                        {
+                            attackableList.Add(tile.occupied);
+                        }
+                        else if(tile.occupied.character.type != character.type)
+                        {
+                            //Gets all units in attack range that aren't on their team
+                            attackableList.Add(tile.occupied);
+                        }
                     }
                 }
-            }
 
-            //This looks for more tiles that can be moved to
-            if (tile.distance < (inventory.equippedWeapon.range))
-            {
-                foreach (TileBehaviour t in tile.neighbours)
+                //This looks for more tiles that can be moved to
+                if (tile.distance < (inventory.equippedWeapon.range))
                 {
-                    if (!t.visited)
+                    foreach (TileBehaviour t in tile.neighbours)
                     {
-                        t.parent = tile;
-                        t.visited = true;
-                        t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
-                        process.Enqueue(t);
+                        if (!t.visited)
+                        {
+                            t.parent = tile;
+                            t.visited = true;
+                            t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
+                            process.Enqueue(t);
+                        }
                     }
                 }
             }

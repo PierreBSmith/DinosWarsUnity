@@ -6986,6 +6986,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3560550314923276769, guid: 93f132c4154b64c4cb501d402c70867a,
+        type: 3}
+      propertyPath: startingWeapon
+      value: 
+      objectReference: {fileID: 11400000, guid: 21ce90ad2ee476b48a49a3de9eb152d2,
+        type: 2}
     - target: {fileID: 5746745259714195091, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: m_RootOrder
@@ -8366,11 +8372,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1530659137712090023, guid: ef5831127022cbe458cc79c4aaf97f7c,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7502293019651381161, guid: ef5831127022cbe458cc79c4aaf97f7c,
         type: 3}
       propertyPath: m_RootOrder
@@ -8431,11 +8432,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tatam
       objectReference: {fileID: 0}
-    - target: {fileID: 9153381931229254102, guid: ef5831127022cbe458cc79c4aaf97f7c,
-        type: 3}
-      propertyPath: m_SortingOrder
-      value: 5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef5831127022cbe458cc79c4aaf97f7c, type: 3}
 --- !u!114 &1758795784 stripped
@@ -8457,6 +8453,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3560550314923276769, guid: 93f132c4154b64c4cb501d402c70867a,
+        type: 3}
+      propertyPath: startingWeapon
+      value: 
+      objectReference: {fileID: 11400000, guid: f54e85cae41022c479fbc84a41b18ccb,
+        type: 2}
     - target: {fileID: 5746745259714195091, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: m_RootOrder
@@ -10126,34 +10128,6 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
         type: 3}
-      propertyPath: InventoryUIPrefab
-      value: 
-      objectReference: {fileID: 9161443336704710998, guid: 073267c3ca492e74ba61ae77108508fe,
-        type: 3}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
-      propertyPath: enemyList.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
-      propertyPath: CharacterDataUIPrefab
-      value: 
-      objectReference: {fileID: 6025683909822000330, guid: abdbb07c09bdef348ae57a111d9010a7,
-        type: 3}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
-      propertyPath: friendList.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
-      propertyPath: combatForecastUIPrefab
-      value: 
-      objectReference: {fileID: 1464314319373454227, guid: 5f258780fc4b6a44b95e4464b160246f,
-        type: 3}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
       propertyPath: enemyList.Array.data[0]
       value: 
       objectReference: {fileID: 934546250}
@@ -10326,6 +10300,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3560550314923276769, guid: 93f132c4154b64c4cb501d402c70867a,
+        type: 3}
+      propertyPath: startingWeapon
+      value: 
+      objectReference: {fileID: 11400000, guid: 664667c597701cb408e736eb2927b41b,
+        type: 2}
     - target: {fileID: 5746745259714195091, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: m_RootOrder

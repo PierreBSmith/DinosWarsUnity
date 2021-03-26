@@ -78,7 +78,7 @@ SpriteRenderer:
   m_Sprite: {fileID: -7630343930561710917, guid: c8f5ec9ae28975a44ae8610332f495f1,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 1
+  m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -186,9 +186,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33349e164ea7e854e8d678753eb52525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingWeapon: {fileID: 0}
+  startingWeapon: {fileID: 11400000, guid: 21ce90ad2ee476b48a49a3de9eb152d2, type: 2}
   startingAccessory: {fileID: 0}
-  startingInventory: []
+  startingInventory:
+  - {fileID: 11400000, guid: 7731dce2871bfd94cbb4cbc02bcb4e07, type: 2}
+  - {fileID: 11400000, guid: bf9d352cbb0c48c43953f0e94aba8d72, type: 2}
   inventory: []
   equippedWeapon: {fileID: 0}
   equippedAccessory: {fileID: 0}
@@ -228,6 +230,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3897610358644645910, guid: d58c001801f24724aaa2567dbcf0cbef,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3897610358644645910, guid: d58c001801f24724aaa2567dbcf0cbef,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: -883918997
       objectReference: {fileID: 0}
     - target: {fileID: 4182909857890475466, guid: d58c001801f24724aaa2567dbcf0cbef,
         type: 3}

@@ -15,9 +15,9 @@ public class CharacterInventory : MonoBehaviour
     [SerializeField]
     private List<Item> startingInventory = new List<Item>(MAX_INVENTORY_SPACE);
 
-    //[HideInInspector]
+    [HideInInspector]
     public List<Item> inventory = new List<Item>(MAX_INVENTORY_SPACE);
-    //[HideInInspector]
+    [HideInInspector]
     public Item equippedWeapon;
     [HideInInspector]
     public Item equippedAccessory;

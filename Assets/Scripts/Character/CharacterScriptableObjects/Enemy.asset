@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Enemy
   m_EditorClassIdentifier: 
   image: {fileID: 21300000, guid: e6cf1558685f5dd49875f758fb999212, type: 3}
-  characterName: enemy
+  characterName: Enemy
   level: 1
   curEXP: 0
   moveSpeed: 3
   moveRange: 3
   type: 1
-  grounded: 0
+  grounded: 1
   maxStamina: 50
   attackStaminaCost: 20
   maxHP: 10

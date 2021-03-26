@@ -205,7 +205,7 @@ public class RulesEngine : MonoBehaviour
                 //Debug.Log(target.occupied);
                 attackCharacter(target.occupied);
             }
-            else if(!activeList[0].hasMoved)
+            else if(!activeList[0].hasMoved && !activeList[0].character.isBoss)
             {
                 activeList[0].EnemyFindPath(target);
                 //Debug.Log(activeList[0].name);

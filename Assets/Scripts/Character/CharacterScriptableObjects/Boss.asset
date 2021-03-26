@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
+  m_Name: Boss
+  m_EditorClassIdentifier: 
+  image: {fileID: 0}
+  characterName: Boss
+  level: 1
+  curEXP: 0
+  moveSpeed: 3
+  moveRange: 3
+  type: 1
+  isBoss: 1
+  grounded: 0
+  maxStamina: 0
+  attackStaminaCost: 0
+  maxHP: 0
+  str: 0
+  skll: 0
+  spd: 0
+  lck: 0
+  def: 0
+  res: 0
+  hpGrowth: 0
+  strGrowth: 0
+  skllGrowth: 0
+  spdGrowth: 0
+  lckGrowth: 0
+  defGrowth: 0
+  resGrowth: 0

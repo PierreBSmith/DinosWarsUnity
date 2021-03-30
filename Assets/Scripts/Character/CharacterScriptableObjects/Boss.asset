@@ -10,30 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
-  m_Name: Asku
+  m_Name: Boss
   m_EditorClassIdentifier: 
-  image: {fileID: 4449054687570518734, guid: 442cfc654f36a2d4d8e6e08faed6a879, type: 3}
-  characterName: Asku
+  image: {fileID: 21300000, guid: e6cf1558685f5dd49875f758fb999212, type: 3}
+  characterName: Boss
   level: 1
   curEXP: 0
   moveSpeed: 3
   moveRange: 3
-  type: 0
-  isBoss: 0
+  type: 1
+  isBoss: 1
   grounded: 1
-  maxStamina: 50
-  attackStaminaCost: 20
-  maxHP: 11
-  str: 3
-  skll: 4
-  spd: 5
-  lck: 6
-  def: 2
-  res: 1
-  hpGrowth: 35
-  strGrowth: 30
-  skllGrowth: 35
-  spdGrowth: 40
-  lckGrowth: 35
-  defGrowth: 25
-  resGrowth: 15
+  maxStamina: 80
+  attackStaminaCost: 10
+  maxHP: 30
+  str: 5
+  skll: 3
+  spd: 2
+  lck: 2
+  def: 5
+  res: 4
+  hpGrowth: 0
+  strGrowth: 0
+  skllGrowth: 0
+  spdGrowth: 0
+  lckGrowth: 0
+  defGrowth: 0
+  resGrowth: 0

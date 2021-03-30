@@ -17,24 +17,23 @@ MonoBehaviour:
   level: 1
   curEXP: 0
   moveSpeed: 3
-  moveRange: 5
-  type: 1
-  attackRange: 1
-  attackDamage: 1
-  grounded: 0
+  moveRange: 3
+  type: 0
+  isBoss: 0
+  grounded: 1
   maxStamina: 50
   attackStaminaCost: 20
-  maxHP: 20
-  str: 0
-  skll: 0
-  spd: 0
-  lck: 0
-  def: 0
+  maxHP: 13
+  str: 4
+  skll: 5
+  spd: 4
+  lck: 5
+  def: 4
   res: 0
-  hpGrowth: 0
-  strGrowth: 0
-  skllGrowth: 0
-  spdGrowth: 0
-  lckGrowth: 0
-  defGrowth: 0
-  resGrowth: 0
+  hpGrowth: 35
+  strGrowth: 40
+  skllGrowth: 50
+  spdGrowth: 30
+  lckGrowth: 35
+  defGrowth: 25
+  resGrowth: 10

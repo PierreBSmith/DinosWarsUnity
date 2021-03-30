@@ -14,27 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 7074888760654069885, guid: a13c75a4749a29545bd628beeb1e08de, type: 3}
   characterName: Lulum
-  level: 4
+  level: 1
   curEXP: 0
   moveSpeed: 3
   moveRange: 2
   type: 0
-  attackRange: 0
-  attackDamage: 0
   grounded: 1
   maxStamina: 50
   attackStaminaCost: 20
   maxHP: 10
-  str: 0
-  skll: 0
-  spd: 0
-  lck: 0
+  str: 2
+  skll: 4
+  spd: 3
+  lck: 5
   def: 0
-  res: 0
-  hpGrowth: 0
-  strGrowth: 0
-  skllGrowth: 0
-  spdGrowth: 0
-  lckGrowth: 0
-  defGrowth: 0
-  resGrowth: 0
+  res: 3
+  hpGrowth: 20
+  strGrowth: 30
+  skllGrowth: 35
+  spdGrowth: 25
+  lckGrowth: 60
+  defGrowth: 5
+  resGrowth: 35

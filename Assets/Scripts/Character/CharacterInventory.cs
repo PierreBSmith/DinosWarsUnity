@@ -8,8 +8,16 @@ public class CharacterInventory : MonoBehaviour
 
     private const int MAX_INVENTORY_SPACE = 5;
 
+    [SerializeField]
+    private Item startingWeapon;
+    [SerializeField]
+    private Item startingAccessory;
+    [SerializeField]
+    private List<Item> startingInventory = new List<Item>(MAX_INVENTORY_SPACE);
+
+    [HideInInspector]
     public List<Item> inventory = new List<Item>(MAX_INVENTORY_SPACE);
-    //[HideInInspector]
+    [HideInInspector]
     public Item equippedWeapon;
     [HideInInspector]
     public Item equippedAccessory;
@@ -18,7 +26,30 @@ public class CharacterInventory : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         //We should have a flag in gameManager or something that says THIS IS THE START OF THE GAME so we can give them a starting weapon, otherwise, just give them to weapon they already have.
-        equippedWeapon = (Item)Instantiate(gameManager.allItems.Find(x => x.name == "FlintSpear"));
+        if(startingWeapon)
+        {
+            equippedWeapon = (Item)Instantiate(gameManager.allItems.Find(x => x == startingWeapon));
+        }
+        else
+        {
+            equippedWeapon = null;
+        }
+        if(startingAccessory)
+        {
+            equippedAccessory = (Item)Instantiate(gameManager.allItems.Find(x => x == startingAccessory));
+        }
+        else
+        {
+            equippedAccessory = null;
+        }
+
+        if(startingInventory.Count > 0)
+        {
+            foreach(Item item in startingInventory)
+            {
+                inventory.Add((Item)Instantiate(gameManager.allItems.Find(x => x == item)));
+            }
+        }
     }
 
     public void EquipWeapon(Item weapon)

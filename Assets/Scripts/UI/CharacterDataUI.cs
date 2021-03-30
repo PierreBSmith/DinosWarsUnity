@@ -13,6 +13,7 @@ public class CharacterDataUI : MonoBehaviour
     public Text maxStam;
     public Text level;
     public Text exp;
+    public Text equippedWeapon;
 
     public void OpenCharacterUI(CharacterMovement character)
     {
@@ -24,5 +25,6 @@ public class CharacterDataUI : MonoBehaviour
         maxStam.text = character.character.maxStamina.ToString();
         level.text = character.character.level.ToString();
         exp.text = character.character.curEXP.ToString();
+        equippedWeapon.text = character.inventory.equippedWeapon.itemName;
     }
 }

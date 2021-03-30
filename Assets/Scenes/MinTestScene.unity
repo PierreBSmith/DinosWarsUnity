@@ -3354,29 +3354,6 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
         type: 3}
-      propertyPath: InventoryUIPrefab
-      value: 
-      objectReference: {fileID: 9161443336704710998, guid: 073267c3ca492e74ba61ae77108508fe,
-        type: 3}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
-      propertyPath: CharacterDataUIPrefab
-      value: 
-      objectReference: {fileID: 6025683909822000330, guid: abdbb07c09bdef348ae57a111d9010a7,
-        type: 3}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
-      propertyPath: friendList.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
-      propertyPath: combatForecastUIPrefab
-      value: 
-      objectReference: {fileID: 1464314319373454227, guid: 5f258780fc4b6a44b95e4464b160246f,
-        type: 3}
-    - target: {fileID: 3819083766790658348, guid: 69bf8f75f538d81439dd587afb45cdda,
-        type: 3}
       propertyPath: enemyList.Array.data[0]
       value: 
       objectReference: {fileID: 1464197540}
@@ -10355,13 +10332,7 @@ PrefabInstance:
     - target: {fileID: 2674879904396295069, guid: 2374aa2cf7920c343b2f01b24eda1dc8,
         type: 3}
       propertyPath: inventory.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2674879904396295069, guid: 2374aa2cf7920c343b2f01b24eda1dc8,
-        type: 3}
-      propertyPath: inventory.Array.data[0]
-      value: 
-      objectReference: {fileID: 11400000, guid: 8dd586581afe96449bdbd562792b8014,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2374aa2cf7920c343b2f01b24eda1dc8, type: 3}

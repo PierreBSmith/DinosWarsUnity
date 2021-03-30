@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RulesEngine : MonoBehaviour
 {
@@ -18,7 +19,9 @@ public class RulesEngine : MonoBehaviour
     private GameObject inventoryUI;
     private GameObject characterData;
     private GameObject combatForecastUI;
-
+    private GameObject tileInfoUI;
+    private GameObject healUI;
+    public GameObject endGame;
     private RaycastHit2D hover;
     [SerializeField]
     private Camera playerCamera;
@@ -33,36 +36,58 @@ public class RulesEngine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(attacking)
+        hover = Physics2D.Raycast(new Vector2(playerCamera.ScreenToWorldPoint(Input.mousePosition).x, playerCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+        if(hover)
         {
-            hover = Physics2D.Raycast(new Vector2(playerCamera.ScreenToWorldPoint(Input.mousePosition).x, playerCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
-            if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
+            if(attacking)
             {
-                combatForecastUI.SetActive(true);
-                combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, hover.collider.gameObject.GetComponent<CharacterMovement>(),
-                                                                                                    _combatManager.GetDamageDealt(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                    _combatManager.GetAttackSpeed(selected) - _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) >= 5 ? true : false,
-                                                                                                    _combatManager.GetHitRate(selected), _combatManager.GetCritChance(selected, hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                    _combatManager.GetDamageDealt(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected),
-                                                                                                    _combatManager.GetAttackSpeed(hover.collider.gameObject.GetComponent<CharacterMovement>()) - _combatManager.GetAttackSpeed(selected) >= 5 ? true : false,
-                                                                                                    _combatManager.GetHitRate(hover.collider.gameObject.GetComponent<CharacterMovement>()),
-                                                                                                    _combatManager.GetCritChance(hover.collider.gameObject.GetComponent<CharacterMovement>(), selected));
+                if(selected.attackableList.Contains(hover.collider.gameObject.GetComponent<CharacterMovement>()))
+                {
+                    if(selected.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+                    {
+                        OpenHealUI(selected, hover.collider.gameObject.GetComponent<CharacterMovement>());
+                    }
+                    else
+                    {
+                        OpenCombatForecast(selected, hover.collider.gameObject.GetComponent<CharacterMovement>());
+                    }
+                }
+                else
+                {
+                    CloseCombatForecast();
+                    CloseHealUI();
+                }
             }
             else
             {
-                combatForecastUI.SetActive(false);
+                CloseCombatForecast();
+                CloseHealUI();
+                if(hover.collider.gameObject.tag == "Player" || hover.collider.gameObject.tag == "Enemy")
+                {
+                    //if the mouse hovers over a unit
+                    OpenCharacterData(hover.collider.gameObject.GetComponent<CharacterMovement>());
+                    OpenTileUI(hover.collider.gameObject.GetComponent<CharacterMovement>().currentTile.tile);
+                }
+                else if (hover.collider.gameObject.tag == "Tile")
+                {
+                    CloseCharacterData();
+                    OpenTileUI(hover.collider.gameObject.GetComponent<TileBehaviour>().tile);
+                }
             }
         }
         else
         {
-            combatForecastUI.SetActive(false);
+            //This is absolutely making sure everything closes out!
+            CloseCharacterData();
+            CloseTileUI();
+            CloseCombatForecast();
+            CloseHealUI();
         }
-        
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
-        GameObject characterData, GameObject combatForecastUI)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -91,6 +116,8 @@ public class RulesEngine : MonoBehaviour
         this.inventoryUI = inventoryUI;
         this.characterData = characterData;
         this.combatForecastUI = combatForecastUI;
+        this.tileInfoUI = tileInfoUI;
+        this.healUI = healUI;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -178,7 +205,7 @@ public class RulesEngine : MonoBehaviour
                 //Debug.Log(target.occupied);
                 attackCharacter(target.occupied);
             }
-            else if(!activeList[0].hasMoved)
+            else if(!activeList[0].hasMoved && !activeList[0].character.isBoss)
             {
                 activeList[0].EnemyFindPath(target);
                 //Debug.Log(activeList[0].name);
@@ -344,19 +371,6 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character)
     {
-        //character.currHP -= selected.inventory.equippedWeapon.might;
-        /*
-        selected.currentStamina -= selected.character.attackStaminaCost;
-        Debug.Log(character.name + " has " + character.currHP + " HP left");
-        if(character.currHP <= 0)
-        {
-            KillUnit(character);
-            killed = true;
-        }
-        selected.inventory.equippedWeapon.uses--;//This should go down everytime the unit attacks
-        Debug.Log(selected.inventory.equippedWeapon.uses);
-        */
-        bool killed = false;
         if(_combatManager.CombatExchange(selected, character))
         {
             if(selected.currHP <= 0)
@@ -366,12 +380,7 @@ public class RulesEngine : MonoBehaviour
             else
             {
                 KillUnit(character);
-                killed = true;
             }
-        }
-        if(selected.character.type == Character.Type.FRIENDLY)
-        {
-            _combatManager.GainEXP(selected, character, _combatManager.GetDamageDealt(selected, character), killed);
         }
         attacking = false;
         selected.hasAttacked = true;
@@ -385,10 +394,13 @@ public class RulesEngine : MonoBehaviour
         if(character.character.type == Character.Type.FRIENDLY)
         {
             friendlyList.Remove(character);
+            StartCoroutine(endOfGame(character));
+            
         }
         else if (character.character.type == Character.Type.ENEMY)
         {
             enemyList.Remove(character);
+            StartCoroutine(endOfGame(character));
         }
         else
         {
@@ -397,11 +409,39 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         character.gameObject.SetActive(false);
     }
+    private IEnumerator endOfGame(CharacterMovement character)
+    {
+        if (character.character.characterName == "Asku" || character.character.characterName == "Tatam")
+        {
+            endGame.gameObject.SetActive(true);
+            endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Lose";
+            yield return new WaitForSeconds(seconds: 5);
+            Application.Quit();
+        }
+        if (enemyList.Count == 0)
+        {
+            endGame.gameObject.SetActive(true);
+            endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Win";
+            yield return new WaitForSeconds(seconds: 5);
+            Application.Quit();
+        }
 
+    }
     private void OpenInventoryMenu(CharacterMovement character)
     {
         inventoryUI.SetActive(true);
         inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().OpenInventoryUIMenu(selected, selected.inventory);
+    }
+
+    private void CloseInventoryMenu()
+    {
+        inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().CloseInventoryUI();
+        selected.usedInventory = CheckIfInventoryWasUsed();
+    }
+
+    private bool CheckIfInventoryWasUsed()
+    {
+        return inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().used;
     }
 
     private void OpenCharacterData(CharacterMovement character)
@@ -415,6 +455,46 @@ public class RulesEngine : MonoBehaviour
         characterData.SetActive(false);
     }
 
+    private void OpenTileUI(Tile tile)
+    {
+        tileInfoUI.SetActive(true);
+        tileInfoUI.transform.GetChild(0).gameObject.GetComponent<TileInfoUI>().OpenTileInfoUI(tile);
+    }
+
+    private void CloseTileUI()
+    {
+        tileInfoUI.SetActive(false);
+    }
+
+    private void OpenCombatForecast(CharacterMovement player, CharacterMovement enemy)
+    {
+        combatForecastUI.SetActive(true);
+        combatForecastUI.transform.GetChild(0).GetComponent<CombatForcastUI>().OpenMenu(selected, enemy,
+                                                                                                        _combatManager.GetDamageDealt(selected, enemy),
+                                                                                                        _combatManager.GetAttackSpeed(selected) - _combatManager.GetAttackSpeed(enemy) >= 5 ? true : false,
+                                                                                                        _combatManager.GetHitRate(selected), _combatManager.GetCritChance(selected, enemy),
+                                                                                                        _combatManager.GetDamageDealt(enemy, selected),
+                                                                                                        _combatManager.GetAttackSpeed(enemy) - _combatManager.GetAttackSpeed(selected) >= 5 ? true : false,
+                                                                                                        _combatManager.GetHitRate(enemy),
+                                                                                                        _combatManager.GetCritChance(enemy, selected));
+    }
+
+    private void CloseCombatForecast()
+    {
+        combatForecastUI.SetActive(false);
+    }
+
+    private void OpenHealUI(CharacterMovement user, CharacterMovement target)
+    {
+        healUI.SetActive(true);
+        healUI.transform.GetChild(0).GetComponent<HealUI>().OpenHealUI(user, target);
+    }
+
+    private void CloseHealUI()
+    {
+        healUI.SetActive(false);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
@@ -423,16 +503,14 @@ public class RulesEngine : MonoBehaviour
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
             character.RemoveSelectableTiles();
-            OpenCharacterData(selected);
             selected._animator.SetBool("selected", true);
             Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position) / 64;
             selected.turnOnPanel(screenPos);
         }
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
-            OpenCharacterData(selected);
             selected._animator.SetBool("selected", true);
-            selected.DisplayRange(true, false);
+            selected.DisplayRange(true, false, false);
         }
         //board.showMoveRange(character);
     }
@@ -440,9 +518,9 @@ public class RulesEngine : MonoBehaviour
     //helper function called from unitClicked(), and doneMoving()
     private void deselectCharacter()
     {
-        CloseCharacterData();
         selected.turnOffPanel();
-        selected.DisplayRange(false, false);
+        CloseInventoryMenu();
+        selected.DisplayRange(false, false, false);
         selected._animator.SetBool("selected", false);
         selected._animator.Play("Idle", 0, 0f);
         attacking = false;

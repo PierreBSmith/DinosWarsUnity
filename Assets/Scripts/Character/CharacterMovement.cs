@@ -42,6 +42,9 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     [Header("Inventory")]
     [HideInInspector]
     public CharacterInventory inventory;
+    [HideInInspector]
+    public bool usedInventory = false;
+
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
     public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
@@ -92,7 +95,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         if (!hasMoved)
         {
-            DisplayRange(true, false);
+            DisplayRange(true, false, false);
             turnOffPanel();
         }
     }
@@ -112,7 +115,14 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         if (!hasAttacked && currentStamina >= character.attackStaminaCost)
         {
-            DisplayRange(true, true);
+            if(inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+            {
+                DisplayRange(true, true, true);
+            }
+            else
+            {
+                DisplayRange(true, true, false);
+            }
             //Debug.Log(selectableTiles.Count);
             turnOffPanel();
             unitAttacking.Invoke(this);
@@ -124,6 +134,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         currentStamina = character.maxStamina;
         hasMoved = false;
         hasAttacked = false;
+        usedInventory = false;
         if(_sprite)
         {
             _sprite.color = Color.white;
@@ -190,7 +201,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public void GetCurrentTile()
     {
         currentTile = GetTargetTile(gameObject);
-        Debug.Log("Curr tile is " + currentTile);
+        //Debug.Log("Curr tile is " + currentTile);
         //currentTile.unit = gameObject;
     }
 
@@ -220,39 +231,42 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             TileBehaviour tile = process.Dequeue();
             //checks if the distance of that tile is within the movement range.
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
-            if (tile.distance <= (inventory.equippedWeapon.range) && tile != currentTile)//&& !tile.hasUnit
+            if(inventory.equippedWeapon)
             {
-                //These checks are for stamina usage stuff
-
-                //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
-                selectableTiles.Add(tile);
-                tile.selectable = true;
-                if (tile.occupied)
+                if (tile.distance <= (inventory.equippedWeapon.range) && tile != currentTile)//&& !tile.hasUnit
                 {
-                    if(inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT && tile.occupied.character.type == character.type 
-                        && tile.occupied.currHP < tile.occupied.character.maxHP)
+                    //These checks are for stamina usage stuff
+
+                    //Adds tile to selectable Tile list if it's within movement range and there's nothing else on the tile
+                    selectableTiles.Add(tile);
+                    tile.selectable = true;
+                    if (tile.occupied)
                     {
-                        attackableList.Add(tile.occupied);
-                    }
-                    else if(tile.occupied.character.type != character.type)
-                    {
-                        //Gets all units in attack range that aren't on their team
-                        attackableList.Add(tile.occupied);
+                        if(inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT && tile.occupied.character.type == character.type 
+                            && tile.occupied.currHP < tile.occupied.character.maxHP)
+                        {
+                            attackableList.Add(tile.occupied);
+                        }
+                        else if(tile.occupied.character.type != character.type)
+                        {
+                            //Gets all units in attack range that aren't on their team
+                            attackableList.Add(tile.occupied);
+                        }
                     }
                 }
-            }
 
-            //This looks for more tiles that can be moved to
-            if (tile.distance < (inventory.equippedWeapon.range))
-            {
-                foreach (TileBehaviour t in tile.neighbours)
+                //This looks for more tiles that can be moved to
+                if (tile.distance < (inventory.equippedWeapon.range))
                 {
-                    if (!t.visited)
+                    foreach (TileBehaviour t in tile.neighbours)
                     {
-                        t.parent = tile;
-                        t.visited = true;
-                        t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
-                        process.Enqueue(t);
+                        if (!t.visited)
+                        {
+                            t.parent = tile;
+                            t.visited = true;
+                            t.distance = 1 + tile.distance; //if it's a child of the parent node, then it's on tile farther than the parent tile
+                            process.Enqueue(t);
+                        }
                     }
                 }
             }
@@ -358,7 +372,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         //Debug.Log(path.Count);
         StartCoroutine(followPath());
-        DisplayRange(false, false);
+        DisplayRange(false, false, false);
     }
 
     private IEnumerator followPath()
@@ -646,7 +660,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     }
 
     //This is for displaying movement range
-    public void DisplayRange(bool toActivate, bool isAttackRange)
+    public void DisplayRange(bool toActivate, bool isAttackRange, bool isHeal)
     {
         if(toActivate) //If activated, we highlight all the tiles
         {
@@ -663,7 +677,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             //We just call this to ensure that we get the selectable tiles.
             foreach(TileBehaviour tile in selectableTiles)
             {
-                tile.setMask(isAttackRange, character.type);
+                tile.setMask(isAttackRange, isHeal, character.type);
             }
         }
         else
@@ -682,7 +696,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     {
         //Debug.Log(screenPos);
         canvas.gameObject.SetActive(true);
-        if(screenPos.x < 3)
+        if(screenPos.x < 5)
         {
             canvas.transform.position = new Vector3(this.transform.position.x + (float)1.5,canvas.transform.position.y,canvas.transform.position.z);
         }
@@ -690,7 +704,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         {
             canvas.transform.position = new Vector3(this.transform.position.x - (float)(1.5), canvas.transform.position.y, canvas.transform.position.z);
         }
-        if (screenPos.y < 3)
+        if (screenPos.y < 5)
         {
             canvas.transform.position = new Vector3(canvas.transform.position.x, this.transform.position.y + (canvas.GetComponent<RectTransform>().sizeDelta.y) - 1, canvas.transform.position.z);
         }
@@ -707,12 +721,17 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         {
             canvas.transform.Find("ActionMenu").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = false;
         }
+        if(usedInventory)
+        {
+            canvas.transform.Find("ActionMenu").transform.Find("ItemButton").gameObject.GetComponent<Button>().interactable = false;
+        }
     }
 
     public void turnOffPanel()
     {
         canvas.transform.Find("ActionMenu").transform.Find("attackButton").gameObject.GetComponent<Button>().interactable = true;
         canvas.transform.Find("ActionMenu").transform.Find("moveButton").gameObject.GetComponent<Button>().interactable = true;
+        canvas.transform.Find("ActionMenu").transform.Find("ItemButton").gameObject.GetComponent<Button>().interactable = true;
         canvas.gameObject.SetActive(false);
     }
 }

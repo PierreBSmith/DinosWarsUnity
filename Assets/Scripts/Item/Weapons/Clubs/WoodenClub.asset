@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79986f9469dbd474488fd934fae56300, type: 3}
-  m_Name: HealStaff
+  m_Name: WoodenClub
   m_EditorClassIdentifier: 
   type: 0
-  itemName: Heal
-  uses: 30
-  weaponType: 6
+  itemName: Wooden Club
+  uses: 20
+  weaponType: 0
   range: 1
-  might: 0
-  hit: 100
-  avoid: 0
-  weight: 0
+  might: 10
+  hit: 70
+  avoid: 30
+  weight: 5
   crit: 0
   consumableType: 0
   amountToHeal: 0

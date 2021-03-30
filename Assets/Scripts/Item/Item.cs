@@ -32,6 +32,7 @@ public class Item : ScriptableObject
         KEY
     }
 
+    [Header("DON'T FORGET TO ADD THE ITEM TO THE GAME MANAGER!!!!!!!!")]
     public TYPE type;
     public string itemName;
     public int uses; //number of times you can use this, or durability of weapon

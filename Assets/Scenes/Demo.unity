@@ -6176,11 +6176,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lulum
       objectReference: {fileID: 0}
-    - target: {fileID: 3910339729631132316, guid: 2374aa2cf7920c343b2f01b24eda1dc8,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2374aa2cf7920c343b2f01b24eda1dc8, type: 3}
 --- !u!4 &1070932095 stripped

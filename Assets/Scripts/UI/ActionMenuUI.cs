@@ -5,9 +5,7 @@ using UnityEngine.UI;
 
 public class ActionMenuUI : MonoBehaviour
 {
-    [SerializeField]
     private RulesEngine _rulesEngine;
-
     [SerializeField]
     private Button moveButton;
     [SerializeField]
@@ -24,6 +22,7 @@ public class ActionMenuUI : MonoBehaviour
 
     void Awake()
     {
+        _rulesEngine = GameObject.Find("RulesEngine").GetComponent<RulesEngine>();
         _menuAnchor = GetComponent<RectTransform>();
         _animator = GetComponent<Animator>();
     }
@@ -62,7 +61,6 @@ public class ActionMenuUI : MonoBehaviour
         actionButton.interactable = true;
         itemButton.interactable = true;
         selectedCharacter = null;
-        gameObject.transform.parent.gameObject.SetActive(false);
     }
 
     public void MoveButtonClicked()
@@ -87,14 +85,12 @@ public class ActionMenuUI : MonoBehaviour
                 selectedCharacter.DisplayRange(true, true, false);
             }
             _rulesEngine.unitAttacking(selectedCharacter);
-            CloseActionMenu();
         }
     }
 
     public void ItemButtonClicked()
     {
         _rulesEngine.OpenInventoryMenu(selectedCharacter);
-        CloseActionMenu();
     }
 
     public void PassButtonClicked()

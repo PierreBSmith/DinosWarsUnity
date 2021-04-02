@@ -279,7 +279,8 @@ public class RulesEngine : MonoBehaviour
 
     private void characterDone(CharacterMovement character)
     {
-        Debug.Log(character.gameObject.name);
+        //Debug.Log(character.gameObject.name);
+        selected = character;
         activeList.Remove(character);
         if(character._sprite)
         {
@@ -355,19 +356,13 @@ public class RulesEngine : MonoBehaviour
     public void passTurn(CharacterMovement character)
     {
         characterDone(character);
-        //deselectCharacter();
         doneMoving();
-        /*
-        if (activeList.Count == 0)
-        {
-            doneMoving();
-        }
-        */
     }
 
     public void unitAttacking(CharacterMovement character)
     {
         attacking = true;
+        CloseActionUI();
         characterData.SetActive(false);
     }
 
@@ -431,6 +426,7 @@ public class RulesEngine : MonoBehaviour
     }
     public void OpenInventoryMenu(CharacterMovement character)
     {
+        CloseActionUI();
         inventoryUI.SetActive(true);
         inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().OpenInventoryUIMenu(selected, selected.inventory);
     }
@@ -503,6 +499,12 @@ public class RulesEngine : MonoBehaviour
         actionMenuUI.transform.GetChild(0).GetComponent<ActionMenuUI>().OpenActionMenu(character);
     }
 
+    private void CloseActionUI()
+    {
+        actionMenuUI.transform.GetChild(0).GetComponent<ActionMenuUI>().CloseActionMenu();
+        actionMenuUI.SetActive(false);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
@@ -527,7 +529,7 @@ public class RulesEngine : MonoBehaviour
     private void deselectCharacter()
     {
         //selected.turnOffPanel();
-        actionMenuUI.transform.GetChild(0).GetComponent<ActionMenuUI>().CloseActionMenu();
+        CloseActionUI();
         CloseInventoryMenu();
         selected.DisplayRange(false, false, false);
         selected._animator.SetBool("selected", false);

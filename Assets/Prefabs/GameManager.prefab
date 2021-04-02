@@ -53,6 +53,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  actionMenuUIPrefab: {fileID: 643616569248706954, guid: cc1a3c0332c49cb429eac2cc84dd78ee,
+    type: 3}
   InventoryUIPrefab: {fileID: 9161443336704710998, guid: 073267c3ca492e74ba61ae77108508fe,
     type: 3}
   CharacterDataUIPrefab: {fileID: 6025683909822000330, guid: abdbb07c09bdef348ae57a111d9010a7,

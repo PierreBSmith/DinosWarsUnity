@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     private GameObject[] tiles;
     [Header("UI Menus")]
     [SerializeField]
+    private GameObject actionMenuUIPrefab;
+    private GameObject actionMenuUI;
+    [SerializeField]
     private GameObject InventoryUIPrefab;
     private GameObject inventoryUI;
     [SerializeField]
@@ -64,6 +67,9 @@ public class GameManager : MonoBehaviour
         }
         tiles = GameObject.FindGameObjectsWithTag("Tile");
 
+        actionMenuUI = GameObject.Instantiate(actionMenuUIPrefab);
+        actionMenuUI.SetActive(false);
+
         inventoryUI = GameObject.Instantiate(InventoryUIPrefab);
         inventoryUI.SetActive(false);
 
@@ -81,7 +87,7 @@ public class GameManager : MonoBehaviour
 
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
-            tileInfoUI, healUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
+            tileInfoUI, healUI, actionMenuUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
 
     }
 

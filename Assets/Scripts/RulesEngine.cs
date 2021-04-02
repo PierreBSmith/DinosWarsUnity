@@ -16,6 +16,7 @@ public class RulesEngine : MonoBehaviour
     private bool attacking = false;
     private List<CharacterMovement> activeList;
 
+    private GameObject actionMenuUI;
     private GameObject inventoryUI;
     private GameObject characterData;
     private GameObject combatForecastUI;
@@ -87,7 +88,7 @@ public class RulesEngine : MonoBehaviour
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
-        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI, GameObject actionMenuUI)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -113,6 +114,7 @@ public class RulesEngine : MonoBehaviour
             tile.GetComponent<TileBehaviour>().clicked.AddListener(moveFriendly);
         }
 
+        this.actionMenuUI = actionMenuUI;
         this.inventoryUI = inventoryUI;
         this.characterData = characterData;
         this.combatForecastUI = combatForecastUI;
@@ -350,7 +352,7 @@ public class RulesEngine : MonoBehaviour
         }
     }
 
-    private void passTurn(CharacterMovement character)
+    public void passTurn(CharacterMovement character)
     {
         characterDone(character);
         //deselectCharacter();
@@ -363,7 +365,7 @@ public class RulesEngine : MonoBehaviour
         */
     }
 
-    private void unitAttacking(CharacterMovement character)
+    public void unitAttacking(CharacterMovement character)
     {
         attacking = true;
         characterData.SetActive(false);
@@ -427,7 +429,7 @@ public class RulesEngine : MonoBehaviour
         }
 
     }
-    private void OpenInventoryMenu(CharacterMovement character)
+    public void OpenInventoryMenu(CharacterMovement character)
     {
         inventoryUI.SetActive(true);
         inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().OpenInventoryUIMenu(selected, selected.inventory);
@@ -495,17 +497,23 @@ public class RulesEngine : MonoBehaviour
         healUI.SetActive(false);
     }
 
+    private void OpenActionUI(CharacterMovement character)
+    {
+        actionMenuUI.SetActive(true);
+        actionMenuUI.transform.GetChild(0).GetComponent<ActionMenuUI>().OpenActionMenu(character);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
-        
         selected = character;
         if (character.character.type == Character.Type.FRIENDLY && activeList.Contains(character)) //if friendly character with actions left show action panel
         {
             character.RemoveSelectableTiles();
             selected._animator.SetBool("selected", true);
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position) / 64;
-            selected.turnOnPanel(screenPos);
+            //Vector3 screenPos = Camera.main.WorldToScreenPoint(character.transform.position) / 64;
+            //selected.turnOnPanel(screenPos);
+            OpenActionUI(selected);
         }
         else if (character.character.type == Character.Type.ENEMY && activeTeam != Character.Type.ENEMY) //else if enemy show move range
         {
@@ -518,7 +526,8 @@ public class RulesEngine : MonoBehaviour
     //helper function called from unitClicked(), and doneMoving()
     private void deselectCharacter()
     {
-        selected.turnOffPanel();
+        //selected.turnOffPanel();
+        actionMenuUI.transform.GetChild(0).GetComponent<ActionMenuUI>().CloseActionMenu();
         CloseInventoryMenu();
         selected.DisplayRange(false, false, false);
         selected._animator.SetBool("selected", false);

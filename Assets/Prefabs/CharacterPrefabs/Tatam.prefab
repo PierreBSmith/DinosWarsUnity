@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5081127352791551084}
   - component: {fileID: 900048284}
   - component: {fileID: 1636047156705099995}
+  - component: {fileID: -2714808305650047514}
   m_Layer: 0
   m_Name: Tatam
   m_TagString: Enemy
@@ -137,6 +138,7 @@ MonoBehaviour:
   baseFlipState: 0
   inventory: {fileID: 0}
   usedInventory: 0
+  skills: {fileID: 0}
   position: {x: 0, y: 0}
   clicked:
     m_PersistentCalls:
@@ -194,6 +196,20 @@ MonoBehaviour:
   inventory: []
   equippedWeapon: {fileID: 0}
   equippedAccessory: {fileID: 0}
+--- !u!114 &-2714808305650047514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7502293019651381166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c69e51f741226b4286037e8e6135161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterSkillsList: []
+  CharacterClass: {fileID: 11400000, guid: 271b6c22d79f2f84db8b9bb3e1f9827b, type: 2}
 --- !u!1001 &5264795539509326272
 PrefabInstance:
   m_ObjectHideFlags: 0

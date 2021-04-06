@@ -44,6 +44,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public CharacterInventory inventory;
     [HideInInspector]
     public bool usedInventory = false;
+    [HideInInspector]
+    public CharacterSkills skills;
 
     public Vector2Int position; //This might not need to be here
     public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
@@ -75,6 +77,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
         }
         _animator = GetComponent<Animator>();
         inventory = GetComponent<CharacterInventory>();
+        skills = GetComponent<CharacterSkills>();
     }
 
     //This takes in a path and moves the unit along that path

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4952553201212230000}
   - component: {fileID: 7016115591382791510}
   - component: {fileID: 3560550314923276769}
+  - component: {fileID: -4484245742925362178}
   - component: {fileID: 8524163103424185760}
   m_Layer: 0
   m_Name: Enemy
@@ -136,6 +137,7 @@ MonoBehaviour:
   baseFlipState: 0
   inventory: {fileID: 0}
   usedInventory: 0
+  skills: {fileID: 0}
   position: {x: 0, y: 0}
   clicked:
     m_PersistentCalls:
@@ -172,6 +174,20 @@ MonoBehaviour:
   inventory: []
   equippedWeapon: {fileID: 0}
   equippedAccessory: {fileID: 0}
+--- !u!114 &-4484245742925362178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5746745259714195092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c69e51f741226b4286037e8e6135161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterSkillsList: []
+  CharacterClass: {fileID: 11400000, guid: 271b6c22d79f2f84db8b9bb3e1f9827b, type: 2}
 --- !u!95 &8524163103424185760
 Animator:
   serializedVersion: 3

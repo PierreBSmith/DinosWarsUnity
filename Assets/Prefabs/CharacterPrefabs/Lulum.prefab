@@ -177,6 +177,7 @@ GameObject:
   - component: {fileID: 2674879904396295059}
   - component: {fileID: 2674879904396295058}
   - component: {fileID: 2674879904396295069}
+  - component: {fileID: 2620074833553507716}
   m_Layer: 0
   m_Name: Lulum
   m_TagString: Player
@@ -271,6 +272,7 @@ MonoBehaviour:
   baseFlipState: 0
   inventory: {fileID: 0}
   usedInventory: 0
+  skills: {fileID: 0}
   position: {x: 0, y: 0}
   clicked:
     m_PersistentCalls:
@@ -308,6 +310,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8dd586581afe96449bdbd562792b8014, type: 2}
   equippedWeapon: {fileID: 0}
   equippedAccessory: {fileID: 0}
+--- !u!114 &2620074833553507716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2674879904396295068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c69e51f741226b4286037e8e6135161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterSkillsList: []
+  CharacterClass: {fileID: 11400000, guid: 271b6c22d79f2f84db8b9bb3e1f9827b, type: 2}
 --- !u!1 &2674879904405755597
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &3929609196497145109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2861536417890586708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c69e51f741226b4286037e8e6135161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterSkillsList: []
+  CharacterClass: {fileID: 0}
 --- !u!1001 &7527400003046407872
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -71,7 +85,7 @@ PrefabInstance:
     - target: {fileID: 5746745259714195092, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: m_Name
-      value: Boss
+      value: Boss Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7016115591382791510, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
@@ -81,3 +95,9 @@ PrefabInstance:
         type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93f132c4154b64c4cb501d402c70867a, type: 3}
+--- !u!1 &2861536417890586708 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5746745259714195092, guid: 93f132c4154b64c4cb501d402c70867a,
+    type: 3}
+  m_PrefabInstance: {fileID: 7527400003046407872}
+  m_PrefabAsset: {fileID: 0}

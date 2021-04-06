@@ -693,6 +693,39 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
 
     }
 
+    public void DisplayRange(bool toActivate, bool isAttackRange, bool isHeal, ActionMenuUI actionPanel)
+    {
+        actionPanel.CloseActionMenu();
+        if(toActivate) //If activated, we highlight all the tiles
+        {
+            if (isAttackRange)
+            {
+                FindAttackableTiles();
+                //Debug.Log("PIERRE IS PEPE");
+            }
+            else
+            {
+                FindSelectableTiles();//Finds all them delicious selectable tiles.
+
+            }
+            //We just call this to ensure that we get the selectable tiles.
+            foreach(TileBehaviour tile in selectableTiles)
+            {
+                tile.setMask(isAttackRange, isHeal, character.type);
+            }
+        }
+        else
+        {
+            //We don't need to call FindSelectableTiles() cuz we've already found them once.
+            foreach(TileBehaviour tile in selectableTiles)
+            {
+                tile.clearMask();
+            }
+
+        }
+
+    }
+
     public void turnOnPanel(Vector3 screenPos)
     {
         //Debug.Log(screenPos);

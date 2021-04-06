@@ -361,7 +361,6 @@ public class RulesEngine : MonoBehaviour
     public void unitAttacking(CharacterMovement character)
     {
         attacking = true;
-        CloseActionUI();
         characterData.SetActive(false);
     }
 
@@ -434,7 +433,6 @@ public class RulesEngine : MonoBehaviour
     {
         inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().CloseInventoryUI();
         selected.usedInventory = CheckIfInventoryWasUsed();
-        Debug.Log(selected.usedInventory);
     }
 
     private bool CheckIfInventoryWasUsed()
@@ -502,7 +500,7 @@ public class RulesEngine : MonoBehaviour
     private void CloseActionUI()
     {
         actionMenuUI.transform.GetChild(0).GetComponent<ActionMenuUI>().CloseActionMenu();
-        actionMenuUI.SetActive(false);
+        //actionMenuUI.SetActive(false);
     }
 
     //Helper function called from unitClicked()
@@ -529,8 +527,11 @@ public class RulesEngine : MonoBehaviour
     private void deselectCharacter()
     {
         //selected.turnOffPanel();
-        CloseActionUI();
-        CloseInventoryMenu();
+        if(selected.character.type == Character.Type.FRIENDLY)
+        {
+            CloseActionUI();
+            CloseInventoryMenu();
+        }
         selected.DisplayRange(false, false, false);
         selected._animator.SetBool("selected", false);
         selected._animator.Play("Idle", 0, 0f);

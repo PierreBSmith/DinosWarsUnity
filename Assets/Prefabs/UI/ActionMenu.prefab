@@ -617,11 +617,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 750bbdae2d75ab647b5cc30f30848880, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rulesEngine: {fileID: 5004682262866697941, guid: e796542c3834d4a41970d0754462616b,
-    type: 3}
   moveButton: {fileID: 643616570929141416}
   actionButton: {fileID: 643616570095729410}
   itemButton: {fileID: 643616570287919119}
+  passButton: {fileID: 643616569694301392}
   actionText: {fileID: 643616570469101725}
   _animator: {fileID: 0}
 --- !u!95 &319708977

@@ -12,6 +12,8 @@ public class ActionMenuUI : MonoBehaviour
     private Button actionButton;
     [SerializeField]
     private Button itemButton;
+    [SerializeField]
+    private Button passButton;
 
     [SerializeField]
     private Text actionText;
@@ -19,6 +21,7 @@ public class ActionMenuUI : MonoBehaviour
     private CharacterMovement selectedCharacter;
     [HideInInspector]
     public Animator _animator;
+    private const float CLOSE_ANIMATION_LENGTH = 0.750f;
 
     void Awake()
     {
@@ -29,6 +32,7 @@ public class ActionMenuUI : MonoBehaviour
 
     public void OpenActionMenu(CharacterMovement character)
     {
+        _animator.SetBool("closeMenu", false);
         selectedCharacter = character;
         _menuAnchor.anchoredPosition = Camera.main.WorldToScreenPoint(selectedCharacter.gameObject.transform.position);
 
@@ -65,18 +69,30 @@ public class ActionMenuUI : MonoBehaviour
 
     public void CloseActionMenu()
     {
+        StartCoroutine(ClosingAnimation());
+    }
+
+    private IEnumerator ClosingAnimation()
+    {
+        _animator.SetBool("closeMenu", true);
+        moveButton.interactable = false;
+        actionButton.interactable = false;
+        itemButton.interactable = false;
+        passButton.interactable = false;
+        yield return new WaitForSeconds(CLOSE_ANIMATION_LENGTH);
         moveButton.interactable = true;
         actionButton.interactable = true;
         itemButton.interactable = true;
+        passButton.interactable = true;
         selectedCharacter = null;
+        transform.parent.gameObject.SetActive(false);
     }
 
     public void MoveButtonClicked()
     {
         if(!selectedCharacter.hasMoved)
         {
-            selectedCharacter.DisplayRange(true, false, false);
-            CloseActionMenu();
+            selectedCharacter.DisplayRange(true, false, false, this);
         }
     }
 
@@ -86,11 +102,11 @@ public class ActionMenuUI : MonoBehaviour
         {
             if(selectedCharacter.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
             {
-                selectedCharacter.DisplayRange(true,true,true);
+                selectedCharacter.DisplayRange(true,true,true, this);
             }
             else
             {
-                selectedCharacter.DisplayRange(true, true, false);
+                selectedCharacter.DisplayRange(true, true, false, this);
             }
             _rulesEngine.unitAttacking(selectedCharacter);
         }

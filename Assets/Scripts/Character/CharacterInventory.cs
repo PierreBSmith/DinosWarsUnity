@@ -42,14 +42,22 @@ public class CharacterInventory : MonoBehaviour
         {
             equippedAccessory = null;
         }
-
+        
+        int index = 0;
         if(startingInventory.Count > 0)
         {
             foreach(Item item in startingInventory)
             {
                 inventory.Add((Item)Instantiate(gameManager.allItems.Find(x => x == item)));
+                index++;
             }
         }
+        if(index < MAX_INVENTORY_SPACE - 1)
+        {
+            inventory.Add(null); //place holders
+            index++;
+        }
+
     }
 
     public void EquipWeapon(Item weapon)

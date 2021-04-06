@@ -233,7 +233,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             //TODO: probably have a sort of checker to see how many extra tiles the unit can move depending on stamina left over :D
             if(inventory.equippedWeapon)
             {
-                if (tile.distance <= (inventory.equippedWeapon.range) && tile != currentTile)//&& !tile.hasUnit
+                if ((tile.distance <= inventory.equippedWeapon.maxRange && tile.distance >= inventory.equippedWeapon.minRange)
+                    && tile != currentTile)//&& !tile.hasUnit
                 {
                     //These checks are for stamina usage stuff
 
@@ -256,7 +257,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 }
 
                 //This looks for more tiles that can be moved to
-                if (tile.distance < (inventory.equippedWeapon.range))
+                if (tile.distance < inventory.equippedWeapon.maxRange)
                 {
                     foreach (TileBehaviour t in tile.neighbours)
                     {

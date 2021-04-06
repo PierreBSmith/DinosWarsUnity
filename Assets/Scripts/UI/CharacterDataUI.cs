@@ -25,6 +25,13 @@ public class CharacterDataUI : MonoBehaviour
         maxStam.text = character.character.maxStamina.ToString();
         level.text = character.character.level.ToString();
         exp.text = character.character.curEXP.ToString();
-        equippedWeapon.text = character.inventory.equippedWeapon.itemName;
+        if(character.inventory.equippedWeapon)
+        {
+            equippedWeapon.text = character.inventory.equippedWeapon.itemName;
+        }
+        else
+        {
+            equippedWeapon.text = "None";
+        }
     }
 }

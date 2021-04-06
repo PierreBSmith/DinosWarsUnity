@@ -16,7 +16,8 @@ MonoBehaviour:
   itemName: Wooden Club
   uses: 20
   weaponType: 0
-  range: 1
+  minRange: 1
+  maxRange: 1
   might: 10
   hit: 70
   avoid: 30

@@ -205,7 +205,7 @@ public class RulesEngine : MonoBehaviour
             if(!activeList[0].hasAttacked && activeList[0].attackableList.Count > 0 && activeList[0].attackableList.Contains(target.occupied))
             {
                 //Debug.Log(target.occupied);
-                attackCharacter(target.occupied);
+                attackCharacter(target.occupied, target.distance);
             }
             else if(!activeList[0].hasMoved && !activeList[0].character.isBoss)
             {
@@ -342,8 +342,7 @@ public class RulesEngine : MonoBehaviour
             }
             else if (attacking && selected.attackableList.Contains(character))
             {
-                Debug.Log(character.name + " is being attacked");
-                attackCharacter(character);
+                attackCharacter(character, character.currentTile.distance);
             }
             else //if unit clicked is not selected and there is already a unit selected. Deselect old unit and select new unit
             {
@@ -366,9 +365,9 @@ public class RulesEngine : MonoBehaviour
         characterData.SetActive(false);
     }
 
-    private void attackCharacter(CharacterMovement character)
+    private void attackCharacter(CharacterMovement character, int range)
     {
-        if(_combatManager.CombatExchange(selected, character))
+        if(_combatManager.CombatExchange(selected, character, range))
         {
             if(selected.currHP <= 0)
             {
@@ -435,6 +434,7 @@ public class RulesEngine : MonoBehaviour
     {
         inventoryUI.transform.GetChild(0).gameObject.GetComponent<InventoryMenu>().CloseInventoryUI();
         selected.usedInventory = CheckIfInventoryWasUsed();
+        Debug.Log(selected.usedInventory);
     }
 
     private bool CheckIfInventoryWasUsed()

@@ -65,29 +65,39 @@ public class CombatForcastUI : MonoBehaviour
             selectedCharaterAccessory.text = "None";
         }
         selectedCharacterHP.text = selectedCharacter.currHP.ToString();
-        selectedCharacterMt.text = selectedMt.ToString();
-        if(selectedMt < 0)
+        if(selectedCharacter.inventory.equippedWeapon)
         {
-            selectedCharacterMt.text = "0";
-        }
-        selectedCharacterMt.text = selectedMt.ToString();
-        if(selectedDouble)
-        {
-            selectedCharacterx2Text.SetActive(true);
+            selectedCharacterMt.text = selectedMt.ToString();
+            if(selectedMt < 0)
+            {
+                selectedCharacterMt.text = "0";
+            }
+            selectedCharacterMt.text = selectedMt.ToString();
+            if(selectedDouble)
+            {
+                selectedCharacterx2Text.SetActive(true);
+            }
+            else
+            {
+                selectedCharacterx2Text.SetActive(false);
+            }
+            selectedCharacterHit.text = selectedHit.ToString();
+            if(selectedHit < 0)
+            {
+                selectedCharacterHit.text = "0";
+            }
+            selectedCharacterCrit.text = selectedCrit.ToString();
+            if(selectedCrit < 0)
+            {
+                selectedCharacterCrit.text = "0";
+            }
         }
         else
         {
+            selectedCharacterMt.text = "-";
             selectedCharacterx2Text.SetActive(false);
-        }
-        selectedCharacterHit.text = selectedHit.ToString();
-        if(selectedHit < 0)
-        {
-            selectedCharacterHit.text = "0";
-        }
-        selectedCharacterCrit.text = selectedCrit.ToString();
-        if(selectedCrit < 0)
-        {
-            selectedCharacterCrit.text = "0";
+            selectedCharacterHit.text = "-";
+            selectedCharacterCrit.text = "-";
         }
 
         enemyName.text = enemyCharacter.character.characterName;
@@ -108,28 +118,40 @@ public class CombatForcastUI : MonoBehaviour
             enemyAccessory.text = "None";
         }
         enemyHP.text = enemyCharacter.currHP.ToString();
-        enemyMt.text = enemyMight.ToString();
-        if(enemyMight < 0)
+        if (!enemyCharacter.inventory.equippedWeapon 
+            || enemyCharacter.inventory.equippedWeapon.maxRange < selectedCharacter.inventory.equippedWeapon.minRange
+            || enemyCharacter.inventory.equippedWeapon.minRange > selectedCharacter.inventory.equippedWeapon.maxRange)
         {
-            enemyMt.text = "0";
-        }
-        if(enemyDouble)
-        {
-            enemyx2Text.SetActive(true);
-        }
-        else
-        {
+            enemyMt.text = "-";
             enemyx2Text.SetActive(false);
+            enemyHit.text = "-";
+            enemyCrit.text = "-";
         }
-        enemyHit.text = enemyHt.ToString();
-        if(enemyHt < 0)
+        else if(enemyCharacter.inventory.equippedWeapon) 
         {
-            enemyHit.text = "0";
-        }
-        enemyCrit.text = enemyCritical.ToString();
-        if(enemyCritical < 0)
-        {
-            enemyCrit.text = "0";
+            enemyMt.text = enemyMight.ToString();
+            if(enemyMight < 0)
+            {
+                enemyMt.text = "0";
+            }
+            if(enemyDouble)
+            {
+                enemyx2Text.SetActive(true);
+            }
+            else
+            {
+                enemyx2Text.SetActive(false);
+            }
+            enemyHit.text = enemyHt.ToString();
+            if(enemyHt < 0)
+            {
+                enemyHit.text = "0";
+            }
+            enemyCrit.text = enemyCritical.ToString();
+            if(enemyCritical < 0)
+            {
+                enemyCrit.text = "0";
+            }
         }
     }
 }

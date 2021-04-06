@@ -16,7 +16,8 @@ MonoBehaviour:
   itemName: Flint Axe
   uses: 20
   weaponType: 2
-  range: 1
+  minRange: 1
+  maxRange: 1
   might: 15
   hit: 55
   avoid: 30

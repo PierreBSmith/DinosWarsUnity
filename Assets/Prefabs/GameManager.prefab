@@ -45,13 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyList:
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   friendList:
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   actionMenuUIPrefab: {fileID: 643616569248706954, guid: cc1a3c0332c49cb429eac2cc84dd78ee,
     type: 3}
@@ -74,3 +68,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f54e85cae41022c479fbc84a41b18ccb, type: 2}
   - {fileID: 11400000, guid: 664667c597701cb408e736eb2927b41b, type: 2}
   - {fileID: 11400000, guid: cf25cc8d95f1d0042beea11350acb430, type: 2}
+  - {fileID: 11400000, guid: 7a7265409cad7134a9c93cd6c2b891b6, type: 2}

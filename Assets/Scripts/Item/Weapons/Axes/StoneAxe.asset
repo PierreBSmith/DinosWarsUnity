@@ -16,7 +16,8 @@ MonoBehaviour:
   itemName: Stone Axe
   uses: 30
   weaponType: 2
-  range: 1
+  minRange: 1
+  maxRange: 1
   might: 20
   hit: 65
   avoid: 15

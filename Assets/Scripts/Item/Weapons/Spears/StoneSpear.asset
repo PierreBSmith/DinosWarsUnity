@@ -16,7 +16,8 @@ MonoBehaviour:
   itemName: Stone Spear
   uses: 20
   weaponType: 1
-  range: 1
+  minRange: 1
+  maxRange: 1
   might: 15
   hit: 75
   avoid: 20

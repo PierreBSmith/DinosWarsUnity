@@ -16,7 +16,8 @@ MonoBehaviour:
   itemName: Velociraptor
   uses: 40
   weaponType: 7
-  range: 1
+  minRange: 1
+  maxRange: 1
   might: 15
   hit: 65
   avoid: 20

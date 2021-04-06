@@ -40,7 +40,8 @@ public class Item : ScriptableObject
     //The following values are if the item is a weapon
     [Header("Weapon Variables")]
     public WEAPON weaponType;
-    public int range;
+    public int minRange;
+    public int maxRange;
     public int might;
     public int hit;
     public int avoid;

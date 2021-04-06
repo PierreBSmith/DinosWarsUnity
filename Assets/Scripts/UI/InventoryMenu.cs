@@ -35,6 +35,7 @@ public class InventoryMenu : MonoBehaviour
     public void OpenInventoryUIMenu(CharacterMovement character, CharacterInventory inventory)
     {
         selectedCharacter = character;
+        selectedItem = null;
         if(inventory.equippedWeapon)
         {
             equippedWeapon.transform.GetChild(0).gameObject.GetComponent<Text>().text = inventory.equippedWeapon.itemName;
@@ -92,7 +93,6 @@ public class InventoryMenu : MonoBehaviour
     public void OnButtonClick()
     {
         Button selectedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
-        Debug.Log(selectedButton.name);
         if(!selectedMode) //If nothing was selected before hand
         {
             selectedMode = true;
@@ -125,7 +125,6 @@ public class InventoryMenu : MonoBehaviour
                 if(selectedItemName != "") //If there is an item in that slot, find item from inventory
                 {
                     selectedItem = selectedCharacter.inventory.inventory[firstIndex];
-                    Debug.Log("Found item: " + selectedItem.itemName);
                     if(selectedItem.type == Item.TYPE.CONSUMABLE)
                     {
                         if(selectedItem.consumableType == Item.CONSUMABLE.MEDICINE)
@@ -201,7 +200,7 @@ public class InventoryMenu : MonoBehaviour
                     selectedCharacter.inventory.equippedAccessory = selectedItem;
                     selectedCharacter.inventory.inventory.Remove(selectedItem);
                 }
-                //Slot to slot transferring
+                //To slot
                 else
                 {
                     //This for loop gets the index of the second button
@@ -212,6 +211,7 @@ public class InventoryMenu : MonoBehaviour
                             secondIndex = i;
                         }
                     }
+                    //Slot to slot transferring
                     if(GetButtonText(selectedButton).text == "")
                     {
                         //If nothing in slot
@@ -219,7 +219,18 @@ public class InventoryMenu : MonoBehaviour
                         GetUsesText(selectedButton).text = GetUsesText(firstSelectedButton).text;
                         GetButtonText(firstSelectedButton).text = "";
                         GetUsesText(firstSelectedButton).text = "";
-                        selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
+                        if(firstSelectedButton == equippedWeapon)
+                        {
+                            selectedCharacter.inventory.equippedWeapon = null;
+                        }
+                        else if(firstSelectedButton == equippedAccessory)
+                        {
+                            selectedCharacter.inventory.equippedAccessory = null;
+                        }
+                        else
+                        {
+                            selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
+                        }
                         selectedCharacter.inventory.inventory.Insert(secondIndex, selectedItem);
                     }
                     else
@@ -230,8 +241,19 @@ public class InventoryMenu : MonoBehaviour
                         GetButtonText(firstSelectedButton).text = tempItem.itemName;
                         GetUsesText(firstSelectedButton).text = tempItem.uses.ToString();
 
-                        selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
+                        if(firstSelectedButton == equippedWeapon)
+                        {
+                            selectedCharacter.inventory.equippedWeapon = tempItem;
+                        }
+                        else if(firstSelectedButton == equippedAccessory)
+                        {
+                            selectedCharacter.inventory.equippedAccessory = tempItem;
+                        }
+                        else
+                        {
+                            selectedCharacter.inventory.inventory.RemoveAt(firstIndex);
                         selectedCharacter.inventory.inventory.Insert(firstIndex, tempItem); //This replaces the first selected slot with the second
+                        }
                         selectedCharacter.inventory.inventory.RemoveAt(secondIndex); 
                         selectedCharacter.inventory.inventory.Insert(secondIndex, selectedItem); //This replaces the second selected slot with the fist
                     }
@@ -243,6 +265,7 @@ public class InventoryMenu : MonoBehaviour
                 if(selectedButton == equippedWeapon)
                 {
                     //Move weapon into inventory
+                    Debug.Log(equippedWeapon);
                     GetButtonText(firstSelectedButton).text = GetButtonText(selectedButton).text;
                     GetUsesText(firstSelectedButton).text = GetUsesText(selectedButton).text;
                     GetButtonText(selectedButton).text = "";

@@ -24,8 +24,9 @@ public class Combat : MonoBehaviour
     private const int LOW_STAMINA_PENALTY = 10;
 
     //We still need to implement critical percentages.
-    public bool CombatExchange(CharacterMovement playerUnit, CharacterMovement enemyUnit)
+    public bool CombatExchange(CharacterMovement playerUnit, CharacterMovement enemyUnit, int range)
     {
+        //HEALINGUUUUUU.
         if(playerUnit.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
         {
             enemyUnit.currHP += (int)(playerUnit.character.str * 1.5f);
@@ -39,6 +40,7 @@ public class Combat : MonoBehaviour
         }
         else
         {
+            //Combat
             int playerAccuracy = GetAccuracy(playerUnit, enemyUnit);
             int hitChance = Random.Range(0, 101); //Random number in range 0 - 100
             playerUnit.currentStamina -= playerUnit.character.attackStaminaCost;
@@ -63,26 +65,32 @@ public class Combat : MonoBehaviour
             }
 
             //Enemy phase of attack
-            hitChance = Random.Range(0, 101); //new Random number!
-            int enemyAccuracy = GetAccuracy(enemyUnit, playerUnit);
-            enemyUnit.currentStamina -= enemyUnit.character.attackStaminaCost;
-            if(hitChance <= enemyAccuracy)
+            //First must check if enemy can counter attack
+            int enemyAccuracy = 0;
+            if(enemyUnit.inventory.equippedWeapon &&
+                range >= enemyUnit.inventory.equippedWeapon.minRange && range <= enemyUnit.inventory.equippedWeapon.maxRange)
             {
-                //Get hit
-                int critChance = Random.Range(0,101);
-                if(critChance <= GetCritChance(enemyUnit, playerUnit))
+                hitChance = Random.Range(0, 101); //new Random number!
+                enemyAccuracy = GetAccuracy(enemyUnit, playerUnit);
+                enemyUnit.currentStamina -= enemyUnit.character.attackStaminaCost;
+                if(hitChance <= enemyAccuracy)
                 {
-                    playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
-                }
-                else
+                    //Get hit
+                    int critChance = Random.Range(0,101);
+                    if(critChance <= GetCritChance(enemyUnit, playerUnit))
+                    {
+                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
+                    }
+                    else
+                    {
+                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                    }
+                    enemyUnit.inventory.equippedWeapon.uses--;
+                } //Check if player dead
+                if(playerUnit.currHP <= 0)
                 {
-                    playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                    return true;
                 }
-                enemyUnit.inventory.equippedWeapon.uses--;
-            } //Check if player dead
-            if(playerUnit.currHP <= 0)
-            {
-                return true;
             }
 
             //Second player hit
@@ -110,28 +118,32 @@ public class Combat : MonoBehaviour
                     return true;
                 }
             }
-            else if (GetAttackSpeed(enemyUnit) - GetAttackSpeed(playerUnit) >= DOUBLING_MAGIC_NUMBER)
+            //Enemy double fricking sadge :(
+            if(enemyUnit.inventory.equippedWeapon &&
+                range >= enemyUnit.inventory.equippedWeapon.minRange && range <= enemyUnit.inventory.equippedWeapon.maxRange)
             {
-                //Enemy double fricking sadge :(
-                hitChance = Random.Range(0, 101); //Another new Random;
-                if (hitChance <= enemyAccuracy)
+                if (GetAttackSpeed(enemyUnit) - GetAttackSpeed(playerUnit) >= DOUBLING_MAGIC_NUMBER)
                 {
-                    //Hit enemy
-                    int critChance = Random.Range(0,101);
-                    if(critChance <= GetCritChance(enemyUnit, playerUnit))
+                    hitChance = Random.Range(0, 101); //Another new Random;
+                    if (hitChance <= enemyAccuracy)
                     {
-                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
+                        //Hit enemy
+                        int critChance = Random.Range(0,101);
+                        if(critChance <= GetCritChance(enemyUnit, playerUnit))
+                        {
+                            playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
+                        }
+                        else
+                        {
+                            playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                        }
+                        enemyUnit.inventory.equippedWeapon.uses--;
                     }
-                    else
+                    //Check if enemy dead
+                    if(playerUnit.currHP <= 0)
                     {
-                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                        return true;
                     }
-                    enemyUnit.inventory.equippedWeapon.uses--;
-                }
-                //Check if enemy dead
-                if(playerUnit.currHP <= 0)
-                {
-                    return true;
                 }
             }
         }
@@ -145,97 +157,104 @@ public class Combat : MonoBehaviour
 
     public int GetAttackSpeed(CharacterMovement unit)
     {
-        int burden = unit.inventory.equippedWeapon.weight - unit.character.str;
-        if(burden < 0)
+        if(unit.inventory.equippedWeapon)
         {
-            burden = 0;
+            int burden = unit.inventory.equippedWeapon.weight - unit.character.str;
+            if(burden < 0)
+            {
+                burden = 0;
+            }
+            return unit.character.spd - burden;
         }
-        return unit.character.spd - burden;
+        return 0;
     }
 
     public int GetAccuracy(CharacterMovement playerUnit, CharacterMovement enemyUnit)
     {
         int accuracy = GetHitRate(playerUnit) - GetAvoid(enemyUnit);
-        switch(playerUnit.inventory.equippedWeapon.weaponType)
+        if(playerUnit.inventory.equippedWeapon && enemyUnit.inventory.equippedWeapon)
         {
-            case Item.WEAPON.CLUB:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.SPEAR:
-                        accuracy += WEAPON_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.AXE:
-                        accuracy -= WEAPON_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                break;
-            case Item.WEAPON.SPEAR:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.AXE:
-                        accuracy += WEAPON_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.CLUB:
-                        accuracy -= WEAPON_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                break;
-            case Item.WEAPON.AXE:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.CLUB:
-                        accuracy += WEAPON_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.SPEAR:
-                        accuracy -= WEAPON_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                break;
-            case Item.WEAPON.CURSE:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.ANIMA:
-                        accuracy += WEAPON_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.SPIRIT:
-                        accuracy -= WEAPON_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                break;
-            case Item.WEAPON.ANIMA:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.SPIRIT:
-                        accuracy += WEAPON_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.CURSE:
-                        accuracy -= WEAPON_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                break;
-            case Item.WEAPON.SPIRIT:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.CURSE:
-                        accuracy += WEAPON_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.ANIMA:
-                        accuracy -= WEAPON_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                break;
+            switch(playerUnit.inventory.equippedWeapon.weaponType)
+            {
+                case Item.WEAPON.CLUB:
+                    switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                    {
+                        case Item.WEAPON.SPEAR:
+                            accuracy += WEAPON_ADVANTAGE;
+                            break;
+                        case Item.WEAPON.AXE:
+                            accuracy -= WEAPON_DISADVANTAGE;
+                            break;
+                        default:
+                            break; //Does nothing :D
+                    }
+                    break;
+                case Item.WEAPON.SPEAR:
+                    switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                    {
+                        case Item.WEAPON.AXE:
+                            accuracy += WEAPON_ADVANTAGE;
+                            break;
+                        case Item.WEAPON.CLUB:
+                            accuracy -= WEAPON_DISADVANTAGE;
+                            break;
+                        default:
+                            break; //Does nothing :D
+                    }
+                    break;
+                case Item.WEAPON.AXE:
+                    switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                    {
+                        case Item.WEAPON.CLUB:
+                            accuracy += WEAPON_ADVANTAGE;
+                            break;
+                        case Item.WEAPON.SPEAR:
+                            accuracy -= WEAPON_DISADVANTAGE;
+                            break;
+                        default:
+                            break; //Does nothing :D
+                    }
+                    break;
+                case Item.WEAPON.CURSE:
+                    switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                    {
+                        case Item.WEAPON.ANIMA:
+                            accuracy += WEAPON_ADVANTAGE;
+                            break;
+                        case Item.WEAPON.SPIRIT:
+                            accuracy -= WEAPON_DISADVANTAGE;
+                            break;
+                        default:
+                            break; //Does nothing :D
+                    }
+                    break;
+                case Item.WEAPON.ANIMA:
+                    switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                    {
+                        case Item.WEAPON.SPIRIT:
+                            accuracy += WEAPON_ADVANTAGE;
+                            break;
+                        case Item.WEAPON.CURSE:
+                            accuracy -= WEAPON_DISADVANTAGE;
+                            break;
+                        default:
+                            break; //Does nothing :D
+                    }
+                    break;
+                case Item.WEAPON.SPIRIT:
+                    switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                    {
+                        case Item.WEAPON.CURSE:
+                            accuracy += WEAPON_ADVANTAGE;
+                            break;
+                        case Item.WEAPON.ANIMA:
+                            accuracy -= WEAPON_DISADVANTAGE;
+                            break;
+                        default:
+                            break; //Does nothing :D
+                    }
+                    break;
+            }
         }
         if(playerUnit.currentStamina <= MINIMUM_STAMINA)
         {
@@ -250,7 +269,12 @@ public class Combat : MonoBehaviour
 
     public int GetHitRate(CharacterMovement unit)
     {
-        return unit.character.skll + (int)(unit.character.lck * 0.5) + unit.inventory.equippedWeapon.hit;
+        int weaponBonus = 0;
+        if(unit.inventory.equippedWeapon)
+        {
+            weaponBonus = unit.inventory.equippedWeapon.hit;
+        }
+        return unit.character.skll + (int)(unit.character.lck * 0.5) + weaponBonus;
     }
 
     private int GetAvoid(CharacterMovement unit)
@@ -269,105 +293,117 @@ public class Combat : MonoBehaviour
 
     public int GetCritChance(CharacterMovement playerUnit, CharacterMovement enemyUnit)
     {
-        return (int)(playerUnit.character.skll/2) + playerUnit.inventory.equippedWeapon.crit - enemyUnit.character.lck;
+        int weaponBonus = 0;
+        if(playerUnit.inventory.equippedWeapon)
+        {
+            weaponBonus = playerUnit.inventory.equippedWeapon.crit;
+        }
+        return (int)(playerUnit.character.skll/2) + weaponBonus - enemyUnit.character.lck;
     }
 
     public int GetDamageDealt(CharacterMovement playerUnit, CharacterMovement enemyUnit)
     {
-       int attack = playerUnit.character.str + playerUnit.inventory.equippedWeapon.might;
-       int defense = enemyUnit.currentTile.tile.defResBonus; //any terrain bonuses they get
-       switch(playerUnit.inventory.equippedWeapon.weaponType)
+        int attack = playerUnit.character.str; 
+        if(playerUnit.inventory.equippedWeapon)
+        { 
+            attack += playerUnit.inventory.equippedWeapon.might;
+        }
+        int defense = enemyUnit.currentTile.tile.defResBonus; //any terrain bonuses they get
+        if(playerUnit.inventory.equippedWeapon && enemyUnit.inventory.equippedWeapon)
         {
-            case Item.WEAPON.CLUB:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.SPEAR:
-                        attack += WEAPON_DAMAGE_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.AXE:
-                        attack -= WEAPON_DAMAGE_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                defense += enemyUnit.character.def;
-                break;
-            case Item.WEAPON.SPEAR:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.AXE:
-                        attack += WEAPON_DAMAGE_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.CLUB:
-                        attack -= WEAPON_DAMAGE_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                defense += enemyUnit.character.def;
-                break;
-            case Item.WEAPON.AXE:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
+            switch(playerUnit.inventory.equippedWeapon.weaponType)
                 {
                     case Item.WEAPON.CLUB:
-                        attack += WEAPON_DAMAGE_ADVANTAGE;
+                        switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                        {
+                            case Item.WEAPON.SPEAR:
+                                attack += WEAPON_DAMAGE_ADVANTAGE;
+                                break;
+                            case Item.WEAPON.AXE:
+                                attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                                break;
+                            default:
+                                break; //Does nothing :D
+                        }
+                        defense += enemyUnit.character.def;
                         break;
                     case Item.WEAPON.SPEAR:
-                        attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                        switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                        {
+                            case Item.WEAPON.AXE:
+                                attack += WEAPON_DAMAGE_ADVANTAGE;
+                                break;
+                            case Item.WEAPON.CLUB:
+                                attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                                break;
+                            default:
+                                break; //Does nothing :D
+                        }
+                        defense += enemyUnit.character.def;
                         break;
-                    default:
-                        break; //Does nothing :D
-                }
-                defense += enemyUnit.character.def;
-                break;
-            case Item.WEAPON.CURSE:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.ANIMA:
-                        attack += WEAPON_DAMAGE_ADVANTAGE;
-                        break;
-                    case Item.WEAPON.SPIRIT:
-                        attack -= WEAPON_DAMAGE_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                defense += enemyUnit.character.res;
-                break;
-            case Item.WEAPON.ANIMA:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.SPIRIT:
-                        attack += WEAPON_DAMAGE_ADVANTAGE;
+                    case Item.WEAPON.AXE:
+                        switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                        {
+                            case Item.WEAPON.CLUB:
+                                attack += WEAPON_DAMAGE_ADVANTAGE;
+                                break;
+                            case Item.WEAPON.SPEAR:
+                                attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                                break;
+                            default:
+                                break; //Does nothing :D
+                        }
+                        defense += enemyUnit.character.def;
                         break;
                     case Item.WEAPON.CURSE:
-                        attack -= WEAPON_DAMAGE_DISADVANTAGE;
-                        break;
-                    default:
-                        break; //Does nothing :D
-                }
-                defense += enemyUnit.character.res;
-                break;
-            case Item.WEAPON.SPIRIT:
-                switch(enemyUnit.inventory.equippedWeapon.weaponType)
-                {
-                    case Item.WEAPON.CURSE:
-                        attack += WEAPON_ADVANTAGE;
+                        switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                        {
+                            case Item.WEAPON.ANIMA:
+                                attack += WEAPON_DAMAGE_ADVANTAGE;
+                                break;
+                            case Item.WEAPON.SPIRIT:
+                                attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                                break;
+                            default:
+                                break; //Does nothing :D
+                        }
+                        defense += enemyUnit.character.res;
                         break;
                     case Item.WEAPON.ANIMA:
-                        attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                        switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                        {
+                            case Item.WEAPON.SPIRIT:
+                                attack += WEAPON_DAMAGE_ADVANTAGE;
+                                break;
+                            case Item.WEAPON.CURSE:
+                                attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                                break;
+                            default:
+                                break; //Does nothing :D
+                        }
+                        defense += enemyUnit.character.res;
                         break;
-                    default:
-                        break; //Does nothing :D
-                }
-                defense += enemyUnit.character.res;
-                break;
-            case Item.WEAPON.BOW:
-                defense += enemyUnit.character.def;
-                break;
-            case Item.WEAPON.SHIFTER:
-                defense += enemyUnit.character.res;
-                break;
+                    case Item.WEAPON.SPIRIT:
+                        switch(enemyUnit.inventory.equippedWeapon.weaponType)
+                        {
+                            case Item.WEAPON.CURSE:
+                                attack += WEAPON_ADVANTAGE;
+                                break;
+                            case Item.WEAPON.ANIMA:
+                                attack -= WEAPON_DAMAGE_DISADVANTAGE;
+                                break;
+                            default:
+                                break; //Does nothing :D
+                        }
+                        defense += enemyUnit.character.res;
+                        break;
+                    case Item.WEAPON.BOW:
+                        defense += enemyUnit.character.def;
+                        break;
+                    case Item.WEAPON.SHIFTER:
+                        defense += enemyUnit.character.res;
+                        break;
+            }
         }
         return attack - defense;
     }

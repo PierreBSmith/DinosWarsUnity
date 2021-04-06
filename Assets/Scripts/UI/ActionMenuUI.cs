@@ -32,9 +32,16 @@ public class ActionMenuUI : MonoBehaviour
         selectedCharacter = character;
         _menuAnchor.anchoredPosition = Camera.main.WorldToScreenPoint(selectedCharacter.gameObject.transform.position);
 
-        if(character.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+        if(character.inventory.equippedWeapon)
         {
-            actionText.text = "Heal";
+            if(character.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
+            {
+                actionText.text = "Heal";
+            }
+            else
+            {
+                actionText.text = "Attack";
+            }
         }
         else
         {
@@ -45,7 +52,8 @@ public class ActionMenuUI : MonoBehaviour
         {
             moveButton.interactable = false;
         }
-        if(character.hasAttacked || character.currentStamina < character.character.attackStaminaCost)
+        if(character.hasAttacked || character.currentStamina < character.character.attackStaminaCost
+            || !character.inventory.equippedWeapon)
         {
             actionButton.interactable = false;
         }

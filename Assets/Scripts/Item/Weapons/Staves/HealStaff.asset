@@ -16,7 +16,8 @@ MonoBehaviour:
   itemName: Heal
   uses: 30
   weaponType: 6
-  range: 1
+  minRange: 1
+  maxRange: 1
   might: 0
   hit: 100
   avoid: 0

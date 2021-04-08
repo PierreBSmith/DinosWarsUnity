@@ -527,7 +527,7 @@ public class RulesEngine : MonoBehaviour
     private void deselectCharacter()
     {
         //selected.turnOffPanel();
-        if(selected.character.type == Character.Type.FRIENDLY)
+        if(selected.character.type == Character.Type.FRIENDLY && actionMenuUI.active)
         {
             CloseActionUI();
             CloseInventoryMenu();

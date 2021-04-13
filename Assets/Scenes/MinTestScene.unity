@@ -409,12 +409,12 @@ PrefabInstance:
     - target: {fileID: 5746745259714195091, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 5746745259714195091, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 5746745259714195091, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
@@ -2712,6 +2712,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6810940104956947843, guid: 2e556c55c39fd474a8ed217e48cfcec6,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6810940104956947843, guid: 2e556c55c39fd474a8ed217e48cfcec6,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6810940104964243664, guid: 2e556c55c39fd474a8ed217e48cfcec6,
         type: 3}
       propertyPath: m_RootOrder
@@ -2771,6 +2781,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Viizi
+      objectReference: {fileID: 0}
+    - target: {fileID: 6810940106315259242, guid: 2e556c55c39fd474a8ed217e48cfcec6,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6810940106315259242, guid: 2e556c55c39fd474a8ed217e48cfcec6,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e556c55c39fd474a8ed217e48cfcec6, type: 3}

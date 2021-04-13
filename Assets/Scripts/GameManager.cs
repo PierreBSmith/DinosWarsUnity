@@ -29,11 +29,14 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject healUIPrefab;
     private GameObject healUI;
+    [SerializeField]
+    private GameObject combatNumberPrefab;
+    private GameObject combatNumber;
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
 
-    void Start()
+    void Awake()
     {
         /*
         //Initializes the map, friendly units, and enemy units so it can hand it to RulesEngine. Currently uses prefab references that are given to it in the Unity development client.
@@ -84,6 +87,8 @@ public class GameManager : MonoBehaviour
 
         healUI = GameObject.Instantiate(healUIPrefab);
         healUI.SetActive(false);
+
+        combatNumber = GameObject.Instantiate(combatNumberPrefab);
 
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,

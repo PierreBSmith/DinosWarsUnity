@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Combat : MonoBehaviour
 {
@@ -23,6 +24,18 @@ public class Combat : MonoBehaviour
 
     private const int LOW_STAMINA_PENALTY = 10;
 
+    private const float COMBAT_ANIMATION_LENGTH = 0.5f;
+
+    private GameObject combatNumber;
+    private Text combatNumberText;
+
+    void Start()
+    {
+        combatNumber = GameObject.FindWithTag("CombatNumber");
+        combatNumber.SetActive(false);
+        combatNumberText = combatNumber.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>();
+    }
+
     //We still need to implement critical percentages.
     public bool CombatExchange(CharacterMovement playerUnit, CharacterMovement enemyUnit, int range)
     {
@@ -40,6 +53,12 @@ public class Combat : MonoBehaviour
         }
         else
         {
+            //Gotta calculate the heading of the two first.
+            int headingX = (int)enemyUnit.currentTile.gameObject.transform.position.x - (int)playerUnit.currentTile.gameObject.transform.position.x;
+            int headingY = (int)enemyUnit.currentTile.gameObject.transform.position.y - (int)playerUnit.currentTile.gameObject.transform.position.y;
+            bool hit = false; //This is if the unit hit or not. Is used for combat animation
+            int damage = 0;
+
             //Combat
             int playerAccuracy = GetAccuracy(playerUnit, enemyUnit);
             int hitChance = Random.Range(0, 101); //Random number in range 0 - 100
@@ -47,17 +66,26 @@ public class Combat : MonoBehaviour
             if (hitChance <= playerAccuracy)
             {
                 //Hit enemy
+                hit = true;
                 int critChance = Random.Range(0,101);
                 if(critChance <= GetCritChance(playerUnit, enemyUnit))
                 {
-                    enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit) * 3;
+                    damage = GetDamageDealt(playerUnit, enemyUnit) * 3;
+                    enemyUnit.currHP -= damage;
                 }
                 else
                 {
-                    enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit);
+                    damage = GetDamageDealt(playerUnit, enemyUnit);
+                    enemyUnit.currHP -= damage;
                 }
                 playerUnit.inventory.equippedWeapon.uses--;
-            }//Check if enemy dead
+            }
+            else
+            {
+                hit = false;
+            }
+                //Check if enemy dead
+            StartCoroutine(CombatAnimation(playerUnit, headingX, headingY, hit, damage));
             if(enemyUnit.currHP <= 0)
             {
                 GainEXP(playerUnit, enemyUnit, GetDamageDealt(playerUnit, enemyUnit), true);
@@ -76,17 +104,26 @@ public class Combat : MonoBehaviour
                 if(hitChance <= enemyAccuracy)
                 {
                     //Get hit
+                    hit = true;
                     int critChance = Random.Range(0,101);
                     if(critChance <= GetCritChance(enemyUnit, playerUnit))
                     {
-                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
+                        damage = GetDamageDealt(enemyUnit, playerUnit) * 3;
+                        playerUnit.currHP -= damage;
                     }
                     else
                     {
-                        playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                        damage = GetDamageDealt(enemyUnit, playerUnit);
+                        playerUnit.currHP -= damage;
                     }
                     enemyUnit.inventory.equippedWeapon.uses--;
-                } //Check if player dead
+                }
+                else
+                {
+                    hit = false;
+                }
+                //StartCoroutine(CombatAnimation(enemyUnit, -headingX, -headingY, hit damage)); //pass in opposite since the enemy acts in the opposite direction
+                 //Check if player dead
                 if(playerUnit.currHP <= 0)
                 {
                     return true;
@@ -101,17 +138,26 @@ public class Combat : MonoBehaviour
                 if (hitChance <= playerAccuracy)
                 {
                     //Hit enemy
+                    hit = true;
                     int critChance = Random.Range(0,101);
                     if(critChance <= GetCritChance(playerUnit, enemyUnit))
                     {
-                        enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit) * 3;
+                        damage = GetDamageDealt(playerUnit, enemyUnit) * 3;
+                        enemyUnit.currHP -= damage;
                     }
                     else
                     {
-                        enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit);
+                        damage = GetDamageDealt(playerUnit, enemyUnit);
+                        enemyUnit.currHP -= damage;
                     }
                     playerUnit.inventory.equippedWeapon.uses--;
-                }//Check if enemy dead
+                }
+                else
+                {
+                    hit = false;
+                }
+                StartCoroutine(CombatAnimation(playerUnit, headingX, headingY, hit, damage));
+                //Check if enemy dead
                 if(enemyUnit.currHP <= 0)
                 {
                     GainEXP(playerUnit, enemyUnit, GetDamageDealt(playerUnit, enemyUnit), true);
@@ -128,17 +174,25 @@ public class Combat : MonoBehaviour
                     if (hitChance <= enemyAccuracy)
                     {
                         //Hit enemy
+                        hit = true;
                         int critChance = Random.Range(0,101);
                         if(critChance <= GetCritChance(enemyUnit, playerUnit))
                         {
-                            playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit) * 3;
+                            damage = GetDamageDealt(enemyUnit, playerUnit) * 3;
+                            playerUnit.currHP -= damage;
                         }
                         else
                         {
-                            playerUnit.currHP -= GetDamageDealt(enemyUnit, playerUnit);
+                            damage = GetDamageDealt(enemyUnit, playerUnit);
+                            playerUnit.currHP -= damage;
                         }
                         enemyUnit.inventory.equippedWeapon.uses--;
                     }
+                    else
+                    {
+                        hit = false;
+                    }
+                    //StartCoroutine(CombatAnimation(enemyUnit, -headingX, -headingY, hit, damage));
                     //Check if enemy dead
                     if(playerUnit.currHP <= 0)
                     {
@@ -508,5 +562,30 @@ public class Combat : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    private IEnumerator CombatAnimation(CharacterMovement character, int headingX, int headingY, bool hit, int damage)
+    {
+        character._animator.SetBool("attacking", true);
+        if(hit)
+        {
+            combatNumberText.text = damage.ToString();
+        }
+        else
+        {
+            combatNumberText.text = "Miss";
+        }
+        if(Mathf.Abs(headingX) >= Mathf.Abs(headingY)) //If character should jiggle in the X direction
+        {
+            character._animator.SetInteger("Xvalue", headingX);
+        }
+        else //If character should jiggle in the Y direction
+        {
+            character._animator.SetInteger("Yvalue", headingY);
+        }
+        combatNumber.SetActive(true);
+        yield return new WaitForSeconds(COMBAT_ANIMATION_LENGTH);
+        character._animator.SetBool("attacking", false);
+        combatNumber.SetActive(false);
     }
 }

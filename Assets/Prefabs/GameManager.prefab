@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3819083766790658348}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,6 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ed02b2887b684e43b2e1b6700e8febe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentLevel: 1
+  choosenLevel: 0
   enemyList:
   - {fileID: 0}
   friendList:

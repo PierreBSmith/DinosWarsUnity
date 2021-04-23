@@ -106,11 +106,13 @@ public class RulesEngine : MonoBehaviour
         activeList = new List<CharacterMovement>();
         for ( int i = 0; i < friendlies.Count ;i++) // && i < map.friendlySpawnPoints.Count
         {
+            Debug.Log(friendlies[i]);
             spawnCharacter(friendlies[i]);//, map.friendlySpawnPoints[i]);
             activeList.Add(friendlies[i]);
         }
         for( int i = 0; i < enemies.Count; i++)// && i < map.enemySpawnPoints.Count
         {
+            Debug.Log(enemies[i]);
             spawnCharacter(enemies[i]);//, map.enemySpawnPoints[i]);
         }
         foreach(GameObject tile in map)

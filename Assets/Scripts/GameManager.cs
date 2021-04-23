@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     //Game Manager that is always running in the background and handles transferring information between scenes
     // Start is called before the first frame update
-    public List<CharacterMovement> enemyList;
-    public List<CharacterMovement> friendList;
+    public bool inLevel = false;
+
+    //[HideInInspector]
+    public int currentLevel = 1;
+    [HideInInspector]
+    public int choosenLevel;
+
     //public TileBehaviour tilePrefab;
     private GameObject[] tiles;
     [Header("UI Menus")]
@@ -38,7 +44,36 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        /*
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(inLevel)
+        {
+            InitializeLevel();
+        }
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    private void InitializeLevel()
+    {
+       /*
         //Initializes the map, friendly units, and enemy units so it can hand it to RulesEngine. Currently uses prefab references that are given to it in the Unity development client.
         Tile.Type[,] tileSet = new Tile.Type[24,16]; //Placeholder map that is all grass tiles, this can be any map theoretically
         for(int i = 0; i < tileSet.GetLength(0); i++){
@@ -49,20 +84,23 @@ public class GameManager : MonoBehaviour
         Map1 map = new Map1(tileSet, new List<Vector2Int>{new Vector2Int(3,3),new Vector2Int(5,3),new Vector2Int(3,5)},
                     new List<Vector2Int>{new Vector2Int(15,13),new Vector2Int(13,13),new Vector2Int(13,15)});
                     */
+        GameObject[] locatingEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+
         List<CharacterMovement> Enemies = new List<CharacterMovement>();
        
-        foreach(var enemy in enemyList)
+        foreach(GameObject enemy in locatingEnemies)
         {
-            Enemies.Add(enemy);//TODO: Don't forget to add the instantiate back
+            Enemies.Add(enemy.GetComponent<CharacterMovement>());//TODO: Don't forget to add the instantiate back
             /*
             if (Enemies.Count >= map.enemySpawnPoints.Count)
                 break;
             */
         }
+        GameObject[] locatingPlayer = GameObject.FindGameObjectsWithTag("Player");
         List<CharacterMovement> Friends = new List<CharacterMovement>();
-        foreach(var friend in friendList)
+        foreach(GameObject player in locatingPlayer)
         {
-            Friends.Add(friend); //TODO:Don't forget to add the instantiate back
+            Friends.Add(player.GetComponent<CharacterMovement>()); //TODO:Don't forget to add the instantiate back
             /*
             if (Friends.Count >= map.friendlySpawnPoints.Count)
                 break;
@@ -92,13 +130,6 @@ public class GameManager : MonoBehaviour
 
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
-            tileInfoUI, healUI, actionMenuUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+            tileInfoUI, healUI, actionMenuUI);//, map, tilePrefab); //Initializion function that handles the rest of the game. 
     }
 }

@@ -387,7 +387,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             {
                 _animator.SetBool("moving", true);
                 moveTarget = path.Peek();
-
             }
             else {
                 RemoveSelectableTiles();

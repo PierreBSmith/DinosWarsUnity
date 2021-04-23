@@ -44,10 +44,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if(this.gameObject.scene.IsValid())
-        {
-            DontDestroyOnLoad(this.gameObject);
-        }
+        DontDestroyOnLoad(this.gameObject);
     }
 
     void OnEnable()
@@ -63,7 +60,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            combatNumber.SetActive(false);
+            if(combatNumber)
+            {
+                combatNumber.SetActive(false);
+            }
         }
     }
 

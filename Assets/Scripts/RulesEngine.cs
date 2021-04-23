@@ -29,6 +29,9 @@ public class RulesEngine : MonoBehaviour
 
     private Combat _combatManager;
 
+    private Vector3 dragOrigin;
+
+
     void Start()
     {
         _combatManager = GetComponent<Combat>();
@@ -84,6 +87,7 @@ public class RulesEngine : MonoBehaviour
             CloseCombatForecast();
             CloseHealUI();
         }
+        PanCamera();
     }
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
@@ -539,5 +543,19 @@ public class RulesEngine : MonoBehaviour
         selected = null;
         
         //board.clearMoveRange();
+    }
+
+    private void PanCamera()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            dragOrigin = playerCamera.ScreenToWorldPoint(Input.mousePosition);
+        }
+        if (Input.GetMouseButton(1))
+        {
+            Vector3 diff = dragOrigin - playerCamera.ScreenToWorldPoint(Input.mousePosition);
+            playerCamera.transform.position += diff;
+
+        }
     }
 }

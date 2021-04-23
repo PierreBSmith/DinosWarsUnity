@@ -54,6 +54,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public Canvas canvas;
     public List<CharacterMovement> attackableList = new List<CharacterMovement>();
 
+
     void Start()
     {
         currentStamina = character.maxStamina;
@@ -87,7 +88,8 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //}
     public void OnPointerClick(PointerEventData eventData)
     {
-        clicked.Invoke(this);
+        if (eventData.button == PointerEventData.InputButton.Left)
+            clicked.Invoke(this);
         //Debug.Log("Character");
     }
     //Button Panel functions

@@ -19842,6 +19842,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4484245742925362178, guid: 93f132c4154b64c4cb501d402c70867a,
+        type: 3}
+      propertyPath: CharacterSkillsList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3560550314923276769, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: startingWeapon

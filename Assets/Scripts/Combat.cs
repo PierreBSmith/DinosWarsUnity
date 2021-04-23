@@ -48,7 +48,7 @@ public class Combat : MonoBehaviour
                 int critChance = Random.Range(0,101);
                 if(critChance <= GetCritChance(playerUnit, enemyUnit))
                 {
-                    enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit) * 3;
+                    enemyUnit.currHP -= GetDamageDealt(playerUnit, enemyUnit) * playerUnit.character.critDamage;
                 }
                 else
                 {

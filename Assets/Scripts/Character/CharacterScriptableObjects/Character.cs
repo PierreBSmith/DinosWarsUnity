@@ -24,6 +24,7 @@ public class Character : ScriptableObject
     public bool grounded;
     public int maxStamina;
     public int attackStaminaCost;
+    public int critDamage;
     //TODO: Put all unit stats, Inventory, etc also in here
     [Header("Stats Affected by Growths")]
     public int maxHP;

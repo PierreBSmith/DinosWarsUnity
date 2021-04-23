@@ -14,8 +14,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public int choosenLevel;
 
-    public List<CharacterMovement> enemyList;
-    public List<CharacterMovement> friendList;
     //public TileBehaviour tilePrefab;
     private GameObject[] tiles;
     [Header("UI Menus")]
@@ -86,20 +84,23 @@ public class GameManager : MonoBehaviour
         Map1 map = new Map1(tileSet, new List<Vector2Int>{new Vector2Int(3,3),new Vector2Int(5,3),new Vector2Int(3,5)},
                     new List<Vector2Int>{new Vector2Int(15,13),new Vector2Int(13,13),new Vector2Int(13,15)});
                     */
+        GameObject[] locatingEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+
         List<CharacterMovement> Enemies = new List<CharacterMovement>();
        
-        foreach(var enemy in enemyList)
+        foreach(GameObject enemy in locatingEnemies)
         {
-            Enemies.Add(enemy);//TODO: Don't forget to add the instantiate back
+            Enemies.Add(enemy.GetComponent<CharacterMovement>());//TODO: Don't forget to add the instantiate back
             /*
             if (Enemies.Count >= map.enemySpawnPoints.Count)
                 break;
             */
         }
+        GameObject[] locatingPlayer = GameObject.FindGameObjectsWithTag("Player");
         List<CharacterMovement> Friends = new List<CharacterMovement>();
-        foreach(var friend in friendList)
+        foreach(GameObject player in locatingPlayer)
         {
-            Friends.Add(friend); //TODO:Don't forget to add the instantiate back
+            Friends.Add(player.GetComponent<CharacterMovement>()); //TODO:Don't forget to add the instantiate back
             /*
             if (Friends.Count >= map.friendlySpawnPoints.Count)
                 break;

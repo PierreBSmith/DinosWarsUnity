@@ -385,7 +385,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             {
                 _animator.SetBool("moving", true);
                 moveTarget = path.Peek();
-
             }
             else {
                 RemoveSelectableTiles();
@@ -584,7 +583,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     { 
         //ComputeNeighboringTiles();
         //GetCurrentTile();
-        Debug.Log(target);
         FindSelectableTiles();
 
         List<TileBehaviour> openList = new List<TileBehaviour>(); //tiles to visit

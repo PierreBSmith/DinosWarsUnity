@@ -584,6 +584,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     { 
         //ComputeNeighboringTiles();
         //GetCurrentTile();
+        Debug.Log(target);
         FindSelectableTiles();
 
         List<TileBehaviour> openList = new List<TileBehaviour>(); //tiles to visit

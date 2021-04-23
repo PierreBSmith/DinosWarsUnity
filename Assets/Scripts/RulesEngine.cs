@@ -413,13 +413,13 @@ public class RulesEngine : MonoBehaviour
     }
     private IEnumerator endOfGame(CharacterMovement character)
     {
+        GameObject gameManager = GameObject.Find("GameManager");
         if (character.character.characterName == "Asku" || character.character.characterName == "Tatam")
         {
             endGame.gameObject.SetActive(true);
             endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Lose";
             yield return new WaitForSeconds(seconds: 5);
             //Application.Quit();
-            SceneManager.LoadScene("WorldMap");
         }
         if (enemyList.Count == 0)
         {
@@ -427,12 +427,11 @@ public class RulesEngine : MonoBehaviour
             endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Win";
             yield return new WaitForSeconds(seconds: 5);
             //Application.Quit();
-            GameObject gameManager = GameObject.Find("GameManager");
             gameManager.GetComponent<GameManager>().currentLevel++;
-            gameManager.GetComponent<GameManager>().inLevel = false;
             SceneManager.LoadScene("WorldMap");
         }
-
+        gameManager.GetComponent<GameManager>().inLevel = false;
+        SceneManager.LoadScene("WorldMap");
     }
     public void OpenInventoryMenu(CharacterMovement character)
     {

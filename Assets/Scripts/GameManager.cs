@@ -1,11 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     //Game Manager that is always running in the background and handles transferring information between scenes
     // Start is called before the first frame update
+    public bool inLevel = false;
+
+    //[HideInInspector]
+    public int currentLevel = 1;
+    [HideInInspector]
+    public int choosenLevel;
+
     public List<CharacterMovement> enemyList;
     public List<CharacterMovement> friendList;
     //public TileBehaviour tilePrefab;
@@ -38,7 +46,36 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        /*
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(inLevel)
+        {
+            InitializeLevel();
+        }
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    private void InitializeLevel()
+    {
+       /*
         //Initializes the map, friendly units, and enemy units so it can hand it to RulesEngine. Currently uses prefab references that are given to it in the Unity development client.
         Tile.Type[,] tileSet = new Tile.Type[24,16]; //Placeholder map that is all grass tiles, this can be any map theoretically
         for(int i = 0; i < tileSet.GetLength(0); i++){
@@ -92,13 +129,6 @@ public class GameManager : MonoBehaviour
 
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
-            tileInfoUI, healUI, actionMenuUI);//, map, tilePrefab); //Initializion function that handles the rest of the game.
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+            tileInfoUI, healUI, actionMenuUI);//, map, tilePrefab); //Initializion function that handles the rest of the game. 
     }
 }

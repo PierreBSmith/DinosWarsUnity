@@ -387,6 +387,7 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             {
                 _animator.SetBool("moving", true);
                 moveTarget = path.Peek();
+                //Debug.Log(moveTarget.transform.parent + " " + this.name);
 
             }
             else {
@@ -400,12 +401,13 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
             }
             Vector3 targetPosition = moveTarget.transform.position;
             targetPosition.z -= HEIGHT_OF_UNIT_ABOVE_TILE;
-
+                
             //Calculates Unit's position
             if (Vector2.Distance(transform.position, targetPosition) >= 0.05f)
             {
                 CalculateHeading(targetPosition);
-                if(heading.x < 0)
+                
+                if (heading.x < 0)
                 {
                     if(character.type != Character.Type.ENEMY)
                     {

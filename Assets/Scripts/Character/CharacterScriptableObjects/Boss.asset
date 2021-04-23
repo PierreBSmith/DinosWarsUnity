@@ -23,12 +23,12 @@ MonoBehaviour:
   grounded: 1
   maxStamina: 80
   attackStaminaCost: 10
-  maxHP: 30
-  str: 5
+  maxHP: 25
+  str: 4
   skll: 3
   spd: 2
   lck: 2
-  def: 5
+  def: 3
   res: 4
   hpGrowth: 0
   strGrowth: 0

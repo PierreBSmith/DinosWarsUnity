@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: -6216531203884694313, guid: 5299f7422428dfb4fa3bbd55e7f1d0cb, type: 3}
   characterName: Viizi
-  level: 1
+  level: 3
   curEXP: 0
   moveSpeed: 3
   moveRange: 3
@@ -23,17 +23,17 @@ MonoBehaviour:
   grounded: 1
   maxStamina: 120
   attackStaminaCost: 10
-  maxHP: 0
-  str: 0
-  skll: 0
-  spd: 0
-  lck: 0
-  def: 0
-  res: 0
-  hpGrowth: 0
-  strGrowth: 0
-  skllGrowth: 0
-  spdGrowth: 0
-  lckGrowth: 0
-  defGrowth: 0
-  resGrowth: 0
+  maxHP: 21
+  str: 5
+  skll: 8
+  spd: 7
+  lck: 5
+  def: 3
+  res: 1
+  hpGrowth: 40
+  strGrowth: 35
+  skllGrowth: 60
+  spdGrowth: 45
+  lckGrowth: 35
+  defGrowth: 30
+  resGrowth: 20

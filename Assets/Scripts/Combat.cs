@@ -122,7 +122,7 @@ public class Combat : MonoBehaviour
                 {
                     hit = false;
                 }
-                //StartCoroutine(CombatAnimation(enemyUnit, -headingX, -headingY, hit damage)); //pass in opposite since the enemy acts in the opposite direction
+                StartCoroutine(CombatAnimation(enemyUnit, -headingX, -headingY, hit, damage)); //pass in opposite since the enemy acts in the opposite direction
                  //Check if player dead
                 if(playerUnit.currHP <= 0)
                 {
@@ -192,7 +192,7 @@ public class Combat : MonoBehaviour
                     {
                         hit = false;
                     }
-                    //StartCoroutine(CombatAnimation(enemyUnit, -headingX, -headingY, hit, damage));
+                    StartCoroutine(CombatAnimation(enemyUnit, -headingX, -headingY, hit, damage));
                     //Check if enemy dead
                     if(playerUnit.currHP <= 0)
                     {
@@ -584,6 +584,7 @@ public class Combat : MonoBehaviour
             character._animator.SetInteger("Yvalue", headingY);
         }
         combatNumber.SetActive(true);
+        combatNumber.GetComponent<RectTransform>().anchoredPosition = Camera.main.WorldToScreenPoint(character.gameObject.transform.position);
         yield return new WaitForSeconds(COMBAT_ANIMATION_LENGTH);
         character._animator.SetBool("attacking", false);
         combatNumber.SetActive(false);

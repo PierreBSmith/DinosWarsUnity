@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class RulesEngine : MonoBehaviour
 {
@@ -417,14 +418,19 @@ public class RulesEngine : MonoBehaviour
             endGame.gameObject.SetActive(true);
             endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Lose";
             yield return new WaitForSeconds(seconds: 5);
-            Application.Quit();
+            //Application.Quit();
+            SceneManager.LoadScene("WorldMap");
         }
         if (enemyList.Count == 0)
         {
             endGame.gameObject.SetActive(true);
             endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Win";
             yield return new WaitForSeconds(seconds: 5);
-            Application.Quit();
+            //Application.Quit();
+            GameObject gameManager = GameObject.Find("GameManager");
+            gameManager.GetComponent<GameManager>().currentLevel++;
+            gameManager.GetComponent<GameManager>().inLevel = false;
+            SceneManager.LoadScene("WorldMap");
         }
 
     }

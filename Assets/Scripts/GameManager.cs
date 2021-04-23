@@ -44,7 +44,10 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        if(this.gameObject.scene.IsValid())
+        {
+            DontDestroyOnLoad(this.gameObject);
+        }
     }
 
     void OnEnable()
@@ -57,6 +60,10 @@ public class GameManager : MonoBehaviour
         if(inLevel)
         {
             InitializeLevel();
+        }
+        else
+        {
+            combatNumber.SetActive(false);
         }
     }
 
@@ -127,6 +134,7 @@ public class GameManager : MonoBehaviour
         healUI.SetActive(false);
 
         combatNumber = GameObject.Instantiate(combatNumberPrefab);
+        //combatNumber.SetActive(false);
 
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,

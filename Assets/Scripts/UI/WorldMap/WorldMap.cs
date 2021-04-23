@@ -20,6 +20,14 @@ public class WorldMap : MonoBehaviour
         DisplaySelectableLevels(gameManager.currentLevel);
     }
 
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
     private void DisplaySelectableLevels(int currentLevel)
     {
         foreach(GameObject mapIcon in mapButtons)

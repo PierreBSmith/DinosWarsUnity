@@ -657,7 +657,6 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
                 nearest = unit;
             }
         }
-        Debug.Log(nearest.GetComponent<CharacterMovement>());
         return nearest;
     }
 

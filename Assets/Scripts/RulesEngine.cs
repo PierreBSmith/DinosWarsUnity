@@ -8,9 +8,12 @@ public class RulesEngine : MonoBehaviour
 {
     //This will handle gameplay and rules while to player is in a level
     private CharacterMovement selected;
-    private List<CharacterMovement> enemyList;
-    private List<CharacterMovement> friendlyList;
-    private List<CharacterMovement> NPCList;
+    [HideInInspector]
+    public List<CharacterMovement> enemyList;
+    [HideInInspector]
+    public List<CharacterMovement> friendlyList;
+    [HideInInspector]
+    public List<CharacterMovement> NPCList;
     //private Board board;
     private Character.Type activeTeam;
     private bool moving = false;
@@ -107,13 +110,11 @@ public class RulesEngine : MonoBehaviour
         activeList = new List<CharacterMovement>();
         for ( int i = 0; i < friendlies.Count ;i++) // && i < map.friendlySpawnPoints.Count
         {
-            Debug.Log(friendlies[i]);
             spawnCharacter(friendlies[i]);//, map.friendlySpawnPoints[i]);
             activeList.Add(friendlies[i]);
         }
         for( int i = 0; i < enemies.Count; i++)// && i < map.enemySpawnPoints.Count
         {
-            Debug.Log(enemies[i]);
             spawnCharacter(enemies[i]);//, map.enemySpawnPoints[i]);
         }
         foreach(GameObject tile in map)
@@ -373,24 +374,24 @@ public class RulesEngine : MonoBehaviour
 
     private void attackCharacter(CharacterMovement character, int range)
     {
-        if(_combatManager.CombatExchange(selected, character, range))
+        _combatManager.CombatExchange(selected, character, range);
+        /*
+        if(selected.currHP <= 0)
         {
-            if(selected.currHP <= 0)
-            {
-                KillUnit(selected);
-            }
-            else
-            {
-                KillUnit(character);
-            }
+            KillUnit(selected);
         }
+        else if(character.currHP <= 0)
+        {
+            KillUnit(character);
+        }
+        */
         attacking = false;
         selected.hasAttacked = true;
         //activeList.Remove(selected);
         doneMoving();
     }
 
-
+/*
     private void KillUnit(CharacterMovement character)
     {
         if(character.character.type == Character.Type.FRIENDLY)
@@ -401,6 +402,7 @@ public class RulesEngine : MonoBehaviour
         }
         else if (character.character.type == Character.Type.ENEMY)
         {
+            Debug.Log("Enemy dying");
             enemyList.Remove(character);
             StartCoroutine(endOfGame(character));
         }
@@ -411,28 +413,7 @@ public class RulesEngine : MonoBehaviour
         deoccupyTile(character.currentTile);
         character.gameObject.SetActive(false);
     }
-    private IEnumerator endOfGame(CharacterMovement character)
-    {
-        GameObject gameManager = GameObject.Find("GameManager");
-        if (character.character.characterName == "Asku" || character.character.characterName == "Tatam")
-        {
-            endGame.gameObject.SetActive(true);
-            endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Lose";
-            yield return new WaitForSeconds(seconds: 5);
-            //Application.Quit();
-        }
-        if (enemyList.Count == 0)
-        {
-            endGame.gameObject.SetActive(true);
-            endGame.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>().text = "You Win";
-            yield return new WaitForSeconds(seconds: 5);
-            //Application.Quit();
-            gameManager.GetComponent<GameManager>().currentLevel++;
-            SceneManager.LoadScene("WorldMap");
-        }
-        gameManager.GetComponent<GameManager>().inLevel = false;
-        SceneManager.LoadScene("WorldMap");
-    }
+*/    
     public void OpenInventoryMenu(CharacterMovement character)
     {
         CloseActionUI();

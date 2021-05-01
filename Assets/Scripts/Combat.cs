@@ -33,6 +33,8 @@ public class Combat : MonoBehaviour
     private Text combatNumberText;
     private RulesEngine _rulesEngine;
 
+    private ExperienceUI experiencePanel;
+
     void Start()
     {
         combatNumber = GameObject.FindWithTag("CombatNumber");
@@ -40,6 +42,10 @@ public class Combat : MonoBehaviour
         combatNumberText = combatNumber.transform.GetChild(0).transform.GetChild(0).gameObject.GetComponent<Text>();
 
         _rulesEngine = GetComponent<RulesEngine>();
+
+        GameObject LevelUpUI = GameObject.FindWithTag("LevelUpUI");
+        experiencePanel = LevelUpUI.transform.GetChild(0).gameObject.GetComponent<ExperienceUI>();
+        experiencePanel.gameObject.SetActive(false);
     }
 
     //We still need to implement critical percentages.
@@ -320,6 +326,7 @@ public class Combat : MonoBehaviour
 
     private void GainEXP(CharacterMovement playerUnit, CharacterMovement enemyUnit, int damageDealt, bool killedEnemy)
     {
+        int startEXP = playerUnit.character.curEXP;
         if(!killedEnemy) //If the enemy did not die
         {
             if(playerUnit.inventory.equippedWeapon.weaponType == Item.WEAPON.SPIRIT)
@@ -340,6 +347,8 @@ public class Combat : MonoBehaviour
             playerUnit.character.curEXP += EXPFromDamageDealt(playerUnit, enemyUnit) + EXTRA_FOR_KILL;
             //with probably a lot more stuff. Like enemy level, promotions, and other stuff. Probably like debuffs or something?
         }
+        int newEXP = playerUnit.character.curEXP;
+        StartCoroutine(GainEXPCoroutine(playerUnit, startEXP, newEXP));
         LevelUp(playerUnit);
     }
 
@@ -676,5 +685,38 @@ public class Combat : MonoBehaviour
         yield return new WaitForSeconds(COMBAT_ANIMATION_LENGTH);
         character._animator.SetBool("attacking", false);
         combatNumber.SetActive(false);
+    }
+
+    private IEnumerator GainEXPCoroutine(CharacterMovement character, int startEXP, int newEXP)
+    {
+        experiencePanel.gameObject.SetActive(true);
+        experiencePanel.OpenExperienceUI(character, startEXP);
+        Time.timeScale = 0f;
+        yield return StartCoroutine(ExperiencePointUp(startEXP, newEXP));
+        experiencePanel.gameObject.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    private IEnumerator ExperiencePointUp(int startEXP, int newEXP)
+    {
+        int tempEXP = startEXP;
+        while(tempEXP < newEXP)
+        {
+            tempEXP++;
+            if(tempEXP >= 100)
+            {
+                tempEXP = 0;
+                newEXP = newEXP - 100;
+            }
+            yield return StartCoroutine(IncrementEXP(tempEXP));
+        }
+        yield return new WaitForSecondsRealtime(1.5f);
+    }
+
+    private IEnumerator IncrementEXP(int currentEXP)
+    {
+        experiencePanel.experienceBar.value = currentEXP;
+        experiencePanel.experienceNum.text = currentEXP.ToString();
+        yield return new WaitForSecondsRealtime(0.05f);
     }
 }

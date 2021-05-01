@@ -43,12 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ed02b2887b684e43b2e1b6700e8febe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inLevel: 0
   currentLevel: 1
   choosenLevel: 0
-  enemyList:
-  - {fileID: 0}
-  friendList:
-  - {fileID: 0}
   actionMenuUIPrefab: {fileID: 643616569248706954, guid: cc1a3c0332c49cb429eac2cc84dd78ee,
     type: 3}
   InventoryUIPrefab: {fileID: 9161443336704710998, guid: 073267c3ca492e74ba61ae77108508fe,
@@ -62,6 +59,8 @@ MonoBehaviour:
   healUIPrefab: {fileID: 7722825986377612718, guid: 0611ee720dec55748b002c4f92d0a537,
     type: 3}
   combatNumberPrefab: {fileID: 1643749486276552648, guid: 47bfa6c775675364893aa56f8ca5c0e9,
+    type: 3}
+  levelUpUIPrefab: {fileID: 2560828906934953207, guid: 196484b349a417747b43f06415898812,
     type: 3}
   allItems:
   - {fileID: 11400000, guid: 21ce90ad2ee476b48a49a3de9eb152d2, type: 2}

@@ -38,6 +38,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject combatNumberPrefab;
     private GameObject combatNumber;
+    [SerializeField]
+    private GameObject levelUpUIPrefab;
+    private GameObject levelUpUI;
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
@@ -135,6 +138,8 @@ public class GameManager : MonoBehaviour
 
         combatNumber = GameObject.Instantiate(combatNumberPrefab);
         //combatNumber.SetActive(false);
+
+        levelUpUI = GameObject.Instantiate(levelUpUIPrefab);
 
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,

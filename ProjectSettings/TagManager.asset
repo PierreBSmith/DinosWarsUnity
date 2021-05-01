@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - CombatNumber
   - GameManager
+  - LevelUpUI
   layers:
   - Default
   - TransparentFX

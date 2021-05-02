@@ -71,7 +71,17 @@ PrefabInstance:
     - target: {fileID: 5746745259714195092, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}
       propertyPath: m_Name
-      value: Boss
+      value: Boss Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6477940234082926791, guid: 93f132c4154b64c4cb501d402c70867a,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6477940234082926791, guid: 93f132c4154b64c4cb501d402c70867a,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: -883918997
       objectReference: {fileID: 0}
     - target: {fileID: 7016115591382791510, guid: 93f132c4154b64c4cb501d402c70867a,
         type: 3}

@@ -11,9 +11,8 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler
 {
     public Tile tile;
 
-    [HideInInspector]
-    public GameObject movementMask;
-    private SpriteRenderer _sprite;
+    private SpriteRenderer movementMask;
+    //private SpriteRenderer _sprite;
 
     public CharacterMovement occupied; //will be set dynamically depending on whether unit is there or not. Might not be necessary here 
     public TileEvent clicked; //Event that is thrown when the tile is clicked on
@@ -52,39 +51,39 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler
 
     void Start()
     {
-        _sprite = GetComponent<SpriteRenderer>();
+        //_sprite = GetComponent<SpriteRenderer>();
+        movementMask = transform.GetChild(1).gameObject.GetComponent<SpriteRenderer>();
+        movementMask.gameObject.SetActive(false);
     }
-
 
     //This is called when a unit is clicked to show its range of movement
     public void setMask(bool isAttack, bool isHeal, Character.Type type){
-        movementMask.SetActive(true);
+        movementMask.gameObject.SetActive(true);
         if(type == Character.Type.ENEMY || isAttack)
         {
             if(isHeal)
             {
-                _sprite.color = Color.yellow;
+                movementMask.color = Color.green;
             }
             else
             {
-                _sprite.color = Color.red;
+                movementMask.color = Color.red;
             }
         }
         else if(withinRange)
         {
-            _sprite.color = Color.cyan;
+            movementMask.color = Color.blue;
         }
         else
         {
-            _sprite.color = Color.yellow;
+            movementMask.color = Color.yellow;
         }
 
     }
     //This is called to undo display of a movement range
     public void clearMask()
     {
-        _sprite.color = Color.white;
-        movementMask.SetActive(false);
+        movementMask.gameObject.SetActive(false);
     }
 
     ////Event handler
@@ -97,14 +96,6 @@ public class TileBehaviour : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
             clicked.Invoke(this);
-    }
-
-
-    // Start is called before the first frame update
-    void Awake()
-    {
-        //Get's movementMask
-        movementMask = transform.GetChild(0).gameObject;
     }
 
     //Min's Tile Movement Stuff Down Here

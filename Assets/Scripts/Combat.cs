@@ -28,12 +28,15 @@ public class Combat : MonoBehaviour
     private const float COMBAT_ANIMATION_LENGTH = 0.5f;
 
     private bool unitKilled = false;
+    private bool levelUp = false;
+    private bool statUp = false;
 
     private GameObject combatNumber;
     private Text combatNumberText;
     private RulesEngine _rulesEngine;
 
     private ExperienceUI experiencePanel;
+    private LevelUpScreen levelUpScreen;
 
     void Start()
     {
@@ -46,6 +49,12 @@ public class Combat : MonoBehaviour
         GameObject LevelUpUI = GameObject.FindWithTag("LevelUpUI");
         experiencePanel = LevelUpUI.transform.GetChild(0).gameObject.GetComponent<ExperienceUI>();
         experiencePanel.gameObject.SetActive(false);
+        levelUpScreen = LevelUpUI.transform.GetChild(1).gameObject.GetComponent<LevelUpScreen>();
+        foreach(GameObject stat in levelUpScreen._statLine)
+        {
+            stat.transform.GetChild(2).gameObject.SetActive(false);
+        }
+        levelUpScreen.gameObject.SetActive(false);
     }
 
     //We still need to implement critical percentages.
@@ -349,7 +358,6 @@ public class Combat : MonoBehaviour
         }
         int newEXP = playerUnit.character.curEXP;
         StartCoroutine(GainEXPCoroutine(playerUnit, startEXP, newEXP));
-        LevelUp(playerUnit);
     }
 
     private int EXPFromDamageDealt(CharacterMovement playerUnit, CharacterMovement enemyUnit)
@@ -360,18 +368,11 @@ public class Combat : MonoBehaviour
 
     private void LevelUp(CharacterMovement playerUnit)
     {
-        if (playerUnit.character.curEXP >= MAX_EXP_TO_LEVEL)
-        {
-            //LEVEL UP! With growths and stuff, but for now, just uhhhhh level goes up.
-            playerUnit.character.level++;
-            playerUnit.character.curEXP -= MAX_EXP_TO_LEVEL;
-            for(int i = 0; i < NUM_OF_STATS; i++)
-            {
-                StatGrowth(playerUnit, i); //Random numbers for every single stat!
-            }
-        }
+        //LEVEL UP! With growths and stuff, but for now, just uhhhhh level goes up.
+        playerUnit.character.level++;
+        playerUnit.character.curEXP -= MAX_EXP_TO_LEVEL;
     }
-
+/*
     private void StatGrowth(CharacterMovement playerUnit, int index)
     {
         int growthFactor = Random.Range(0, 101); //Random Number 0 - 100
@@ -381,6 +382,7 @@ public class Combat : MonoBehaviour
                 if(growthFactor <= playerUnit.character.hpGrowth)
                 {
                     playerUnit.character.maxHP++;
+                    statUp = true;
                     Debug.Log("HP UP");
                 }
                 break;
@@ -388,6 +390,7 @@ public class Combat : MonoBehaviour
                 if(growthFactor <= playerUnit.character.strGrowth)
                 {
                     playerUnit.character.str++;
+                    statUp = true;
                     Debug.Log("STR UP");
                 }
                 break;
@@ -395,6 +398,7 @@ public class Combat : MonoBehaviour
                 if(growthFactor <= playerUnit.character.skllGrowth)
                 {
                     playerUnit.character.skll++;
+                    statUp = true;
                     Debug.Log("SKL UP");
                 }
                 break;
@@ -402,6 +406,7 @@ public class Combat : MonoBehaviour
                 if(growthFactor <= playerUnit.character.spdGrowth)
                 {
                     playerUnit.character.spd++;
+                    statUp = true;
                     Debug.Log("SPD UP");
                 }
                 break;
@@ -409,6 +414,7 @@ public class Combat : MonoBehaviour
                 if(growthFactor <= playerUnit.character.lckGrowth)
                 {
                     playerUnit.character.lck++;
+                    statUp = true;
                     Debug.Log("LCK UP");
                 }
                 break;
@@ -416,6 +422,7 @@ public class Combat : MonoBehaviour
                 if(growthFactor <= playerUnit.character.defGrowth)
                 {
                     playerUnit.character.def++;
+                    statUp = true;
                     Debug.Log("DEF UP");
                 }
                 break;
@@ -423,12 +430,13 @@ public class Combat : MonoBehaviour
                 if(growthFactor <= playerUnit.character.resGrowth)
                 {
                     playerUnit.character.res++;
+                    statUp = true;
                     Debug.Log("RES UP");
                 }
                 break;
         }
     }
-
+*/
     private void KillUnit(CharacterMovement character)
     {
         if(character.character.type == Character.Type.FRIENDLY)
@@ -694,6 +702,12 @@ public class Combat : MonoBehaviour
         Time.timeScale = 0f;
         yield return StartCoroutine(ExperiencePointUp(startEXP, newEXP));
         experiencePanel.gameObject.SetActive(false);
+        if(levelUp)
+        {
+            LevelUp(character);
+            yield return StartCoroutine(LevelUpChecker(character));
+        }
+        levelUp = false;
         Time.timeScale = 1f;
     }
 
@@ -703,10 +717,11 @@ public class Combat : MonoBehaviour
         while(tempEXP < newEXP)
         {
             tempEXP++;
-            if(tempEXP >= 100)
+            if(tempEXP >= MAX_EXP_TO_LEVEL)
             {
                 tempEXP = 0;
-                newEXP = newEXP - 100;
+                newEXP = newEXP - MAX_EXP_TO_LEVEL;
+                levelUp = true;
             }
             yield return StartCoroutine(IncrementEXP(tempEXP));
         }
@@ -719,4 +734,95 @@ public class Combat : MonoBehaviour
         experiencePanel.experienceNum.text = currentEXP.ToString();
         yield return new WaitForSecondsRealtime(0.05f);
     }
+
+    private IEnumerator LevelUpChecker(CharacterMovement character)
+    {
+        levelUpScreen.gameObject.SetActive(true);
+        levelUpScreen.OpenLevelUpScreen(character);
+        yield return StartCoroutine(LevelUpUI(character));
+        foreach (GameObject stat in levelUpScreen._statLine)
+        {
+            stat.transform.GetChild(2).gameObject.SetActive(false);
+        }
+        levelUpScreen.gameObject.SetActive(false);
+
+    }
+
+    private IEnumerator LevelUpUI(CharacterMovement character)
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        for(int i = 0; i < NUM_OF_STATS; i++)
+        {
+            yield return StartCoroutine(StatUpUI(character, i));
+
+        }
+        yield return new WaitForSecondsRealtime(1.5f);
+    }
+
+    private IEnumerator StatUpUI(CharacterMovement playerUnit, int statIndex)
+    {
+        int growthFactor = Random.Range(0, 101); //Random Number 0 - 100
+        switch(statIndex)
+        {
+            case 0: //HP
+                if(growthFactor <= playerUnit.character.hpGrowth)
+                {
+                    playerUnit.character.maxHP++;
+                    levelUpScreen._statLine[statIndex].transform.GetChild(1).gameObject.GetComponent<Text>().text = playerUnit.character.maxHP.ToString();
+                    levelUpScreen._statLine[statIndex].transform.GetChild(2).gameObject.SetActive(true);
+                }
+                break;
+            case 1: //Strength
+                if(growthFactor <= playerUnit.character.strGrowth)
+                {
+                    playerUnit.character.str++;
+                    levelUpScreen._statLine[statIndex].transform.GetChild(1).gameObject.GetComponent<Text>().text = playerUnit.character.str.ToString();
+                    levelUpScreen._statLine[statIndex].transform.GetChild(2).gameObject.SetActive(true);
+                }
+                break;
+            case 2: //Skill
+                if(growthFactor <= playerUnit.character.skllGrowth)
+                {
+                    playerUnit.character.skll++;
+                    levelUpScreen._statLine[statIndex].transform.GetChild(1).gameObject.GetComponent<Text>().text = playerUnit.character.skll.ToString();
+                    levelUpScreen._statLine[statIndex].transform.GetChild(2).gameObject.SetActive(true);
+                }
+                break;
+            case 3: //Speed
+                if(growthFactor <= playerUnit.character.spdGrowth)
+                {
+                    playerUnit.character.spd++;
+                    levelUpScreen._statLine[statIndex].transform.GetChild(1).gameObject.GetComponent<Text>().text = playerUnit.character.spd.ToString();
+                    levelUpScreen._statLine[statIndex].transform.GetChild(2).gameObject.SetActive(true);
+                }
+                break;
+            case 4: //Luck
+                if(growthFactor <= playerUnit.character.lckGrowth)
+                {
+                    playerUnit.character.lck++;
+                    levelUpScreen._statLine[statIndex].transform.GetChild(1).gameObject.GetComponent<Text>().text = playerUnit.character.lck.ToString();
+                    levelUpScreen._statLine[statIndex].transform.GetChild(2).gameObject.SetActive(true);
+                }
+                break;
+            case 5: //Defense
+                if(growthFactor <= playerUnit.character.defGrowth)
+                {
+                    playerUnit.character.def++;
+                    levelUpScreen._statLine[statIndex].transform.GetChild(1).gameObject.GetComponent<Text>().text = playerUnit.character.def.ToString();
+                    levelUpScreen._statLine[statIndex].transform.GetChild(2).gameObject.SetActive(true);
+                }
+                break;
+            case 6: //Resistance
+                if(growthFactor <= playerUnit.character.resGrowth)
+                {
+                    playerUnit.character.res++;
+                    levelUpScreen._statLine[statIndex].transform.GetChild(1).gameObject.GetComponent<Text>().text = playerUnit.character.res.ToString();
+                    levelUpScreen._statLine[statIndex].transform.GetChild(2).gameObject.SetActive(true);
+                }
+                break;
+        }
+        yield return new WaitForSecondsRealtime(0.1f);
+        
+    }
+
 }

@@ -52,10 +52,13 @@ public class CharacterInventory : MonoBehaviour
                 index++;
             }
         }
-        if(index < MAX_INVENTORY_SPACE - 1)
+        if(index < MAX_INVENTORY_SPACE)
         {
-            inventory.Add(null); //place holders
-            index++;
+            while(index < MAX_INVENTORY_SPACE)
+            {
+                inventory.Add(null); //place holders
+                index++;
+            }
         }
 
     }

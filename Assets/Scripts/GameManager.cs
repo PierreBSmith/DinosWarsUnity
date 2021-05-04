@@ -41,6 +41,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject levelUpUIPrefab;
     private GameObject levelUpUI;
+    [SerializeField]
+    private GameObject statusMenuPrefab;
+    private GameObject statusMenu;
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
@@ -141,8 +144,11 @@ public class GameManager : MonoBehaviour
 
         levelUpUI = GameObject.Instantiate(levelUpUIPrefab);
 
+        statusMenu = GameObject.Instantiate(statusMenuPrefab);
+        statusMenu.SetActive(false);
+
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
-            tileInfoUI, healUI, actionMenuUI);//, map, tilePrefab); //Initializion function that handles the rest of the game. 
+            tileInfoUI, healUI, actionMenuUI, statusMenu);//, map, tilePrefab); //Initializion function that handles the rest of the game. 
     }
 }

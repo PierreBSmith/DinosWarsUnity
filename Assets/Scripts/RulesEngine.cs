@@ -26,6 +26,7 @@ public class RulesEngine : MonoBehaviour
     private GameObject combatForecastUI;
     private GameObject tileInfoUI;
     private GameObject healUI;
+    private GameObject statusMenu;
     public GameObject endGame;
     private RaycastHit2D hover;
     [SerializeField]
@@ -96,7 +97,8 @@ public class RulesEngine : MonoBehaviour
 
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
-        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI, GameObject actionMenuUI)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI, GameObject actionMenuUI,
+        GameObject statusMenu)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -128,6 +130,7 @@ public class RulesEngine : MonoBehaviour
         this.combatForecastUI = combatForecastUI;
         this.tileInfoUI = tileInfoUI;
         this.healUI = healUI;
+        this.statusMenu = statusMenu;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -495,6 +498,18 @@ public class RulesEngine : MonoBehaviour
         //actionMenuUI.SetActive(false);
     }
 
+    public void OpenCharacterStatusMenu(CharacterMovement character)
+    {
+        CloseActionUI();
+        statusMenu.SetActive(true);
+        statusMenu.transform.GetChild(0).GetComponent<StatusMenu>().OpenStatusMenu(character);
+    }
+
+    private void CloseCharacterStatusMenu()
+    {
+        statusMenu.SetActive(false);
+    }
+
     //Helper function called from unitClicked()
     private void selectCharacter(CharacterMovement character)
     {
@@ -523,6 +538,7 @@ public class RulesEngine : MonoBehaviour
         {
             CloseActionUI();
             CloseInventoryMenu();
+            CloseCharacterStatusMenu();
         }
         selected.DisplayRange(false, false, false);
         selected._animator.SetBool("selected", false);

@@ -122,4 +122,10 @@ public class ActionMenuUI : MonoBehaviour
         _rulesEngine.passTurn(selectedCharacter);
         CloseActionMenu();
     }
+
+    public void StatusButtonClicked()
+    {
+        _rulesEngine.OpenCharacterStatusMenu(selectedCharacter);
+        CloseActionMenu();
+    }
 }

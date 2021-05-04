@@ -27,6 +27,7 @@ public class RulesEngine : MonoBehaviour
     private GameObject tileInfoUI;
     private GameObject healUI;
     private GameObject statusMenu;
+    private GameObject bottomMenu;
     public GameObject endGame;
     private RaycastHit2D hover;
     [SerializeField]
@@ -98,7 +99,7 @@ public class RulesEngine : MonoBehaviour
     //This is called from GameManager and sets up all the units and where they go calls board to draw the map. 
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
         GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI, GameObject actionMenuUI,
-        GameObject statusMenu)//, Map1 map, TileBehaviour tilePrefab)
+        GameObject statusMenu, GameObject bottomMenu)//, Map1 map, TileBehaviour tilePrefab)
     {
         friendlyList = friendlies;
         enemyList = enemies;
@@ -131,6 +132,7 @@ public class RulesEngine : MonoBehaviour
         this.tileInfoUI = tileInfoUI;
         this.healUI = healUI;
         this.statusMenu = statusMenu;
+        this.bottomMenu = bottomMenu;
     }
 
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
@@ -153,15 +155,9 @@ public class RulesEngine : MonoBehaviour
     //Handles which turn it is. Is called by DoneMoving. Turn cycle is Friendly>Enemy>NPC>Friendly atm. This should probably be Friendly>NPC>Enemy>Friendly.
     private void toggleTurn()
     {
-        if(friendlyList.Count == 0)
-        {
-
-        }else if(enemyList.Count == 0)
-        {
-
-        }
         if(activeTeam == Character.Type.FRIENDLY)
         {
+            bottomMenu.SetActive(false); //Turns off the "End Turn" button so players can't just skip the enemy's turn.
             activeTeam = Character.Type.ENEMY;
             foreach(CharacterMovement friend in friendlyList)
             {
@@ -183,6 +179,7 @@ public class RulesEngine : MonoBehaviour
             }
             else
             {
+                bottomMenu.SetActive(true);
                 activeTeam = Character.Type.FRIENDLY;
                 foreach(CharacterMovement enemy in enemyList)
                 {
@@ -197,6 +194,7 @@ public class RulesEngine : MonoBehaviour
             }
         }
         else {
+            bottomMenu.SetActive(true);
             activeTeam = Character.Type.FRIENDLY;
             loadActiveList(friendlyList);
         }
@@ -235,6 +233,14 @@ public class RulesEngine : MonoBehaviour
             toggleTurn(); //This should never be called but is a fail safe
         }
 
+    }
+
+    public void EndPlayerTurn()
+    {
+        foreach(CharacterMovement friendly in friendlyList)
+        {
+            passTurn(friendly);
+        }
     }
 
     //Helper function that is called from toggleTurn() that loads whichever teams units are going to be active next
@@ -292,7 +298,10 @@ public class RulesEngine : MonoBehaviour
     {
         //Debug.Log(character.gameObject.name);
         selected = character;
-        activeList.Remove(character);
+        if(activeList.Contains(character))
+        {
+            activeList.Remove(character);
+        }
         if(character._sprite)
         {
             character._sprite.color = Color.gray;

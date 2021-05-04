@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject statusMenuPrefab;
     private GameObject statusMenu;
+    [SerializeField]
+    private GameObject bottomMenuPrefab;
+    private GameObject bottomMenu;
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
@@ -147,8 +150,10 @@ public class GameManager : MonoBehaviour
         statusMenu = GameObject.Instantiate(statusMenuPrefab);
         statusMenu.SetActive(false);
 
+        bottomMenu = GameObject.Instantiate(bottomMenuPrefab);
+
         var RulesEngine = FindObjectOfType<RulesEngine>();
         RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
-            tileInfoUI, healUI, actionMenuUI, statusMenu);//, map, tilePrefab); //Initializion function that handles the rest of the game. 
+            tileInfoUI, healUI, actionMenuUI, statusMenu, bottomMenu);//, map, tilePrefab); //Initializion function that handles the rest of the game. 
     }
 }

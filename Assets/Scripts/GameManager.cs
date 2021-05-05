@@ -152,7 +152,7 @@ public class GameManager : MonoBehaviour
         bottomMenu = GameObject.Instantiate(bottomMenuPrefab);
 
         var RulesEngine = FindObjectOfType<RulesEngine>();
-        RulesEngine.init(Enemies, Friends, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
+        RulesEngine.init(Enemies, friendlyUnits, null, tiles, inventoryUI, characterDataUI, combatForecastUI,
             tileInfoUI, healUI, actionMenuUI, statusMenu, bottomMenu);//, map, tilePrefab); //Initializion function that handles the rest of the game. 
     }
 }

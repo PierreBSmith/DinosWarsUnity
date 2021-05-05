@@ -27,6 +27,7 @@ public class RulesEngine : MonoBehaviour
     private GameObject tileInfoUI;
     private GameObject healUI;
     public GameObject endGame;
+    public List<Vector2> friendlySpawnPoints;
     private RaycastHit2D hover;
     [SerializeField]
     private Camera playerCamera;
@@ -98,7 +99,7 @@ public class RulesEngine : MonoBehaviour
     public void init(List<CharacterMovement> enemies, List<CharacterMovement> friendlies, List<CharacterMovement> NPCs, GameObject[] map, GameObject inventoryUI,
         GameObject characterData, GameObject combatForecastUI, GameObject tileInfoUI, GameObject healUI, GameObject actionMenuUI)//, Map1 map, TileBehaviour tilePrefab)
     {
-        friendlyList = friendlies;
+        friendlyList = new List<CharacterMovement>();
         enemyList = enemies;
         NPCList = NPCs;
         /*
@@ -108,10 +109,12 @@ public class RulesEngine : MonoBehaviour
         board.moveCharacter.AddListener(moveFriendly);
         */
         activeList = new List<CharacterMovement>();
-        for ( int i = 0; i < friendlies.Count ;i++) // && i < map.friendlySpawnPoints.Count
+        for ( int i = 0; i < friendlies.Count && i < friendlySpawnPoints.Count; i++) // 
         {
-            spawnCharacter(friendlies[i]);//, map.friendlySpawnPoints[i]);
-            activeList.Add(friendlies[i]);
+            CharacterMovement character = Instantiate(friendlies[i]);
+            spawnCharacter(character, friendlySpawnPoints[i]);
+            activeList.Add(character);
+            friendlyList.Add(character);
         }
         for( int i = 0; i < enemies.Count; i++)// && i < map.enemySpawnPoints.Count
         {
@@ -129,8 +132,26 @@ public class RulesEngine : MonoBehaviour
         this.tileInfoUI = tileInfoUI;
         this.healUI = healUI;
     }
-
     //Helper function to spawn in characters and setup event listeners for those characters given a character object and a position
+    //First one is for units that arent in the map already second one is for units that are
+    private void spawnCharacter(CharacterMovement character, Vector2 spawn)//, Vector2Int position)
+    {
+        //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D
+        //Debug.Log("Spawning " + character.character.name);
+        character.transform.position = new Vector3(spawn.x, spawn.y, -0.5f);
+        character.clicked.AddListener(unitClicked);
+        character.passTurn.AddListener(passTurn);
+        character.doneMoving.AddListener(doneMoving);
+        character.unitAttacking.AddListener(unitAttacking);
+        character.openInventory.AddListener(OpenInventoryMenu);
+        /*
+        character.transform.position = new Vector3(position.x, position.y, -1);
+        character.position = position;
+        */
+        //TODO: Change this to RaycastHit2D
+        //board.getTerrainTile(position).occupied = character;
+    }
+
     private void spawnCharacter(CharacterMovement character)//, Vector2Int position)
     {
         //TODO: Spawning Character needs to be fixed slightly. Through set spawn points on the map :D

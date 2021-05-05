@@ -46,11 +46,11 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     public bool usedInventory = false;
 
     public Vector2Int position; //This might not need to be here
-    public CharacterEvent clicked; //Event for when Character is clicked. Is handled by RulesEngine
-    public CharacterEvent passTurn; //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
-    public UnityEvent doneMoving;
-    public CharacterEvent unitAttacking;
-    public CharacterEvent openInventory;
+    public CharacterEvent clicked = new CharacterEvent(); //Event for when Character is clicked. Is handled by RulesEngine
+    public CharacterEvent passTurn = new CharacterEvent(); //Event for when Character has stopped moving after a movement command. Is handled by RulesEngine
+    public UnityEvent doneMoving = new UnityEvent();
+    public CharacterEvent unitAttacking = new CharacterEvent();
+    public CharacterEvent openInventory = new CharacterEvent();
     public Canvas canvas;
     public List<CharacterMovement> attackableList = new List<CharacterMovement>();
 
@@ -88,8 +88,12 @@ public class CharacterMovement : MonoBehaviour, IPointerClickHandler
     //}
     public void OnPointerClick(PointerEventData eventData)
     {
+        //
         if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            //Debug.Log("Clicked " + name);
             clicked.Invoke(this);
+        }
         //Debug.Log("Character");
     }
     //Button Panel functions

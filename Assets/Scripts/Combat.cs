@@ -483,7 +483,10 @@ public class Combat : MonoBehaviour
             yield return new WaitForSecondsRealtime(5);
             //Application.Quit();
             Time.timeScale = 1f;
-            gameManager.GetComponent<GameManager>().currentLevel++;
+            if (gameManager.GetComponent<GameManager>().currentLevel == (int)gameManager.GetComponent<GameManager>().choosenLevel + 1)
+            {
+                gameManager.GetComponent<GameManager>().currentLevel++;
+            }
             gameManager.GetComponent<GameManager>().inLevel = false;
             SceneManager.LoadScene("WorldMap");
         }

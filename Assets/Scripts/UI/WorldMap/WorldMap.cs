@@ -46,6 +46,7 @@ public class WorldMap : MonoBehaviour
     public void LoadLevel(Button button)
     {
         gameManager.inLevel = true;
+        gameManager.choosenLevel = button.gameObject.GetComponent<LevelButton>().level;
         SceneManager.LoadScene(button.gameObject.GetComponent<LevelButton>().level.ToString(), LoadSceneMode.Single);
     }
 }

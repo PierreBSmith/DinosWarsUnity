@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class GameManager : MonoBehaviour
     //[HideInInspector]
     public int currentLevel = 1;
     [HideInInspector]
-    public int choosenLevel;
+    public LevelButton.LEVEL choosenLevel;
 
     //public TileBehaviour tilePrefab;
     private GameObject[] tiles;
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Memory Scriptable Values")]
     public List<Item> allItems = new List<Item>();
-
+    public List<CharacterMovement> friendlyUnits;
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -113,10 +114,9 @@ public class GameManager : MonoBehaviour
             */
         }
         GameObject[] locatingPlayer = GameObject.FindGameObjectsWithTag("Player");
-        List<CharacterMovement> Friends = new List<CharacterMovement>();
         foreach(GameObject player in locatingPlayer)
         {
-            Friends.Add(player.GetComponent<CharacterMovement>()); //TODO:Don't forget to add the instantiate back
+            friendlyUnits.Add(player.GetComponent<CharacterMovement>()); //TODO:Don't forget to add the instantiate back
             /*
             if (Friends.Count >= map.friendlySpawnPoints.Count)
                 break;
@@ -142,9 +142,8 @@ public class GameManager : MonoBehaviour
         healUI = GameObject.Instantiate(healUIPrefab);
         healUI.SetActive(false);
 
-        combatNumber = GameObject.Instantiate(combatNumberPrefab);
+        combatNumber = GameObject.Instantiate(combatNumberPrefab); 
         //combatNumber.SetActive(false);
-
         levelUpUI = GameObject.Instantiate(levelUpUIPrefab);
 
         statusMenu = GameObject.Instantiate(statusMenuPrefab);

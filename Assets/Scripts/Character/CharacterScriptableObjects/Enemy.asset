@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbab984eac048574fa1af466648ecc8e, type: 3}
   m_Name: Enemy
   m_EditorClassIdentifier: 
-  image: {fileID: 21300000, guid: e6cf1558685f5dd49875f758fb999212, type: 3}
+  image: {fileID: 21300000, guid: 5996f4c904713d64e934fe8c68c548ca, type: 3}
   characterName: Enemy
   level: 1
   curEXP: 0

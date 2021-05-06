@@ -570,6 +570,11 @@ public class RulesEngine : MonoBehaviour
             CloseInventoryMenu();
             CloseCharacterStatusMenu();
         }
+        else if (selected.character.type == Character.Type.FRIENDLY && !actionMenuUI.active)
+        {
+            CloseInventoryMenu();
+            CloseCharacterStatusMenu();
+        }
         selected.DisplayRange(false, false, false);
         selected._animator.SetBool("selected", false);
         selected._animator.Play("Idle", 0, 0f);
